@@ -1,0 +1,13 @@
+{
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "git",
+            "url": "file://../../../"
+        }
+    ],
+    "require": {
+        "bragento/magento-composer-installer": "dev-develop",
+        "magento/core": "1.9.0.1"
+    }
+}

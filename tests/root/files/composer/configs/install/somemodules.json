@@ -1,0 +1,22 @@
+{
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "git",
+            "url": "file://../../../"
+        },
+        {
+            "type": "composer",
+            "url": "http://packages.firegento.com"
+        }
+    ],
+    "require": {
+        "bragento/magento-composer-installer": "dev-develop",
+        "magento/core": "*",
+        "avstudnitz/fast-simple-import": "*",
+        "colinmollenhour/cache-backend-mongo": "*",
+        "firegento/adminmonitoring": "*",
+        "firegento/customer": "*",
+        "firegento/debug": "*"
+    }
+}
