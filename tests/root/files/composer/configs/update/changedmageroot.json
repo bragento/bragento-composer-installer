@@ -13,6 +13,6 @@
         "zetacomponents/console-tools": "dev-master"
     },
     "extra": {
-        "magento-root-dir": "root"
+        "magento-root-dir": "htdocs"
     }
 }
