@@ -164,7 +164,7 @@ class FullStackTest extends AbstractTest
         //check additional files from config file
         $this->checkFiles(
             $this->getChecks(
-                self::MODE_INSTALL,
+                self::MODE_UPDATE,
                 self::CHECK_TYPE_FILES_EXIST,
                 $configFileName
             )
