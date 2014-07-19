@@ -48,6 +48,8 @@ class Factory
         /** @todo implement package.xml and composer mappings */
         if (self::isModman($moduleDir, $fs)) {
             return new Modman($moduleDir);
+        } elseif (self::isPackage($moduleDir, $fs)) {
+            return new Package($moduleDir);
         } else {
             throw new MappingNotFoundException($package);
         }
@@ -69,6 +71,26 @@ class Factory
             $fs->joinFileUris(
                 $moduleDir,
                 Modman::MODMAN_FILE_NAME
+            )
+        );
+    }
+
+    /**
+     * isPackage
+     *
+     * @param            $moduleDir
+     * @param Filesystem $fs
+     *
+     * @return bool
+     */
+    protected static function isPackage(
+        $moduleDir,
+        Filesystem $fs
+    ) {
+        return file_exists(
+            $fs->joinFileUris(
+                $moduleDir,
+                Package::PACKAGE_XML_FILE_NAME
             )
         );
     }

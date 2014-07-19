@@ -17,6 +17,8 @@
         "colinmollenhour/cache-backend-mongo": "*",
         "firegento/adminmonitoring": "*",
         "firegento/customer": "*",
-        "firegento/debug": "*"
+        "firegento/debug": "*",
+        "connect20/a4on_mybrand": "0.1.0",
+        "connect20/ac_connector": "~1"
     }
 }
