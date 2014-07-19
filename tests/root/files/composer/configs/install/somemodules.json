@@ -3,7 +3,7 @@
     "repositories": [
         {
             "type": "git",
-            "url": "file://../../../"
+            "url": "https://github.com/bragento/bragento-composer-installer.git"
         },
         {
             "type": "composer",
