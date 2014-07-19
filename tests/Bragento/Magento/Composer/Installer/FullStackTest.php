@@ -17,6 +17,7 @@ namespace Bragento\Test\Magento\Composer\Installer;
 require_once 'tests/Bragento/Magento/Composer/Installer/TestIO.php';
 require_once 'tests/Bragento/Magento/Composer/Installer/TestApplication.php';
 
+use Bragento\Magento\Composer\Installer\Project\Config;
 use Composer\Composer;
 use Composer\Installer;
 use Composer\IO\IOInterface;
@@ -42,7 +43,7 @@ class FullStackTest extends AbstractTest
 
     const CHECK_TYPE_FILES_EXIST = 'files_exist';
 
-    const MAGENTO_BASE_DIR = 'build/magento/';
+    const BUILD_DIR = 'build/';
 
     /**
      * _testForMagento
@@ -76,13 +77,6 @@ class FullStackTest extends AbstractTest
      * @var IOInterface
      */
     protected $_io;
-
-    /**
-     * _composer
-     *
-     * @var Composer
-     */
-    protected $_composer;
 
     /**
      * origWorkingDir
@@ -122,7 +116,8 @@ class FullStackTest extends AbstractTest
     {
         return array(
             array('magentocore.json'),
-            array('somemodules.json')
+            array('somemodules.json'),
+            array('changedmageroot.json')
         );
     }
 
@@ -185,9 +180,21 @@ class FullStackTest extends AbstractTest
     {
         foreach ($files as $file) {
             $this->assertFileExists(
-                $this->getTestDir(self::MAGENTO_BASE_DIR . $file)
+                $this->getMagentoRootDir() .
+                DIRECTORY_SEPARATOR .
+                $file
             );
         }
+    }
+
+    /**
+     * getMagentoRootDir
+     *
+     * @return string
+     */
+    protected function getMagentoRootDir()
+    {
+        return Config::getInstance()->getMagentoRootDir()->getPathname();
     }
 
     /**
@@ -200,7 +207,11 @@ class FullStackTest extends AbstractTest
     protected function createFiles(array $files)
     {
         foreach ($files as $file) {
-            touch($this->getTestDir(self::MAGENTO_BASE_DIR . $file));
+            touch(
+                $this->getMagentoRootDir() .
+                DIRECTORY_SEPARATOR .
+                $file
+            );
         }
     }
 
@@ -245,11 +256,13 @@ class FullStackTest extends AbstractTest
      */
     protected function getComposer($configFileName, $mode)
     {
+
         $this->copyComposerConfigFileToBuildDir($configFileName, $mode);
         $app = new TestApplication();
         $app->setIo($this->_io);
         $composer = $app->getComposer();
-        //$composer->getPluginManager()->addPlugin(new Plugin());
+
+        Config::init($composer);
 
         return $composer;
     }

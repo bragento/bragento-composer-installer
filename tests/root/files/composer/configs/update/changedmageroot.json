@@ -1,0 +1,18 @@
+{
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://packages.firegento.com"
+        }
+    ],
+    "require": {
+        "bragento/magento-composer-installer": "dev-develop",
+        "magento/core": "*",
+        "theseer/autoload": "~1.14",
+        "zetacomponents/console-tools": "dev-master"
+    },
+    "extra": {
+        "magento-root-dir": "root"
+    }
+}
