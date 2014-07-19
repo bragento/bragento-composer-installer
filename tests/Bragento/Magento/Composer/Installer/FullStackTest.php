@@ -59,7 +59,8 @@ class FullStackTest extends AbstractTest
             'build/magento/var/test',
             'build/magento/media/test',
             'build/magento/app/etc/local.xml',
-            'build/magento/.gitignore'
+            'build/magento/.gitignore',
+            'build/magento/randomtestfile'
         );
 
     /**
