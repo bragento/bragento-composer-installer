@@ -12,10 +12,7 @@ matrix:
     - php: hhvm
 
 before_script:
-  - curl -sS https://getcomposer.org/installer | php
-  - chmod +x ./composer.phar
-  - ./composer.phar --version
-  - ./composer.phar install --dev
+  - composer install --dev
 
 script:
   - ./vendor/bin/phpunit
