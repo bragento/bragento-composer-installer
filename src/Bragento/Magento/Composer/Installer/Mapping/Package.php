@@ -28,8 +28,6 @@ use SimpleXMLElement;
  * @copyright 2014 Brandung GmbH & Co. KG
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
- *
- * @todo      implement parsing for package.xml mappings
  */
 class Package extends AbstractMapping
 {
