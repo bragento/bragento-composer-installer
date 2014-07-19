@@ -17,6 +17,7 @@ namespace Bragento\Magento\Composer\Installer\Mapping;
 use Bragento\Magento\Composer\Installer\Mapping\Exception\MappingNotFoundException;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Package\PackageInterface;
+use Symfony\Component\Finder\SplFileInfo;
 
 
 /**
@@ -35,21 +36,22 @@ class Factory
      * get
      *
      * @param PackageInterface $package
-     * @param string           $moduleDir
+     * @param SplFileInfo      $moduleDir
      *
      * @throws Exception\MappingNotFoundException
      * @return AbstractMapping
      */
     public static function get(
         PackageInterface $package,
-        $moduleDir
+        SplFileInfo $moduleDir
     ) {
         $fs = new Filesystem();
-        /** @todo implement package.xml and composer mappings */
         if (self::isModman($moduleDir, $fs)) {
-            return new Modman($moduleDir);
+            return new Modman($moduleDir, $package);
         } elseif (self::isPackage($moduleDir, $fs)) {
-            return new Package($moduleDir);
+            return new Package($moduleDir, $package);
+        } elseif (self::hasComposerMap($package)) {
+            return new Composer($moduleDir, $package);
         } else {
             throw new MappingNotFoundException($package);
         }
@@ -93,5 +95,18 @@ class Factory
                 Package::PACKAGE_XML_FILE_NAME
             )
         );
+    }
+
+    /**
+     * hasComposerMap
+     *
+     * @param PackageInterface $package
+     *
+     * @return bool
+     */
+    protected function hasComposerMap(PackageInterface $package)
+    {
+        $extra = $package->getExtra();
+        return isset($extra[Composer::COMPOSER_MAP_KEY]);
     }
 } 

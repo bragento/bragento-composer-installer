@@ -1,5 +1,5 @@
 <?php
- /**
+/**
  * Composer.php
  *
  * PHP Version 5
@@ -25,10 +25,12 @@ namespace Bragento\Magento\Composer\Installer\Mapping;
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
  *
- * @todo implement parsing for composer mappings
+ * @todo      implement parsing for composer mappings
  */
 class Composer extends AbstractMapping
 {
+    const COMPOSER_MAP_KEY = 'map';
+
     /**
      * _pathMappingTranslations
      *
@@ -43,6 +45,30 @@ class Composer extends AbstractMapping
      */
     protected function parseMappings()
     {
+        $extra = $this->getPackage()->getExtra();
 
+        if (!isset($extra[self::COMPOSER_MAP_KEY])
+            || !is_array($extra[self::COMPOSER_MAP_KEY])
+        ) {
+            return array();
+        }
+
+        return $this->translateComposerMapping($extra[self::COMPOSER_MAP_KEY]);
+    }
+
+    /**
+     * translateComposerMapping
+     *
+     * @param array $composerMap
+     *
+     * @return array
+     */
+    protected function translateComposerMapping(array $composerMap)
+    {
+        $map = array();
+        foreach ($composerMap as $mapEntry) {
+            $map[$mapEntry[0]] = $mapEntry[1];
+        }
+        return $map;
     }
 } 

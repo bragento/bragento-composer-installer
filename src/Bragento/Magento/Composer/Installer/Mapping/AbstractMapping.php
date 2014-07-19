@@ -13,8 +13,10 @@
  */
 
 namespace Bragento\Magento\Composer\Installer\Mapping;
+
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Bragento\Magento\Composer\Installer\Util\String;
+use Composer\Package\PackageInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
 
@@ -52,17 +54,27 @@ abstract class AbstractMapping
     private $_fs;
 
     /**
+     * _package
+     *
+     * @var PackageInterface
+     */
+    private $_package;
+
+    /**
      * construct mappings
      *
-     * @param SplFileInfo $moduleDir
+     * @param SplFileInfo      $moduleDir
+     * @param PackageInterface $package
      */
-    function __construct(SplFileInfo $moduleDir)
-    {
+    function __construct(
+        SplFileInfo $moduleDir,
+        PackageInterface $package
+    ) {
         $this->_fs = new Filesystem();
         $this->_moduleDir = $moduleDir;
+        $this->_package = $package;
         $this->_mappingsArray = $this->parseMappings();
     }
-
 
 
     /**
@@ -105,6 +117,16 @@ abstract class AbstractMapping
     protected function getModuleDir()
     {
         return $this->_moduleDir;
+    }
+
+    /**
+     * getPackage
+     *
+     * @return PackageInterface
+     */
+    protected function getPackage()
+    {
+        return $this->_package;
     }
 
 

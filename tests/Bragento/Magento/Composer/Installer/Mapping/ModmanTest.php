@@ -15,6 +15,7 @@
 namespace Bragento\Test\Magento\Composer\Installer\Mapping;
 
 use Bragento\Magento\Composer\Installer\Mapping\Modman;
+use Composer\Package\Package;
 
 /**
  * Class ModmanTest
@@ -43,7 +44,10 @@ class ModmanTest extends AbstractMappingTest
     public function testParseCorrectModmanFiles($filename, $mappingsCount)
     {
         $this->copyModmanFileToBuildDir($filename);
-        $mapping = new Modman($this->getBuildDir());
+        $mapping = new Modman(
+            $this->getBuildDir(),
+            new Package('test/package', '1.0.0', '1.0.0')
+        );
         $this->assertEquals(
             $mappingsCount,
             count($mapping->getMappingsArray())
@@ -77,7 +81,10 @@ class ModmanTest extends AbstractMappingTest
     public function testParseErrorModmanFile()
     {
         $this->copyModmanFileToBuildDir('error');
-        new Modman($this->getBuildDir());
+        new Modman(
+            $this->getBuildDir(),
+            new Package('test/package', '1.0.0', '1.0.0')
+        );
     }
 
     /**
