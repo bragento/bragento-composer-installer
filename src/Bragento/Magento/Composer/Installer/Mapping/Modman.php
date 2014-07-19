@@ -6,8 +6,8 @@
  *
  * @category  Bragento_MagentoComposerInstaller
  * @package   Bragento\Magento\Composer\Installer\Mapping
- * @author    David Verholen <david@verholen.com>
- * @copyright 2014 David Verholen
+ * @author    David Verholen <david.verholen@brandung.de>
+ * @copyright 2014 Brandung GmbH & Co. KG
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
  */
@@ -21,8 +21,8 @@ use Bragento\Magento\Composer\Installer\Mapping\Exception\MappingParseException;
  *
  * @category  Bragento_MagentoComposerInstaller
  * @package   Bragento\Magento\Composer\Installer\Mapping
- * @author    David Verholen <david@verholen.com>
- * @copyright 2014 David Verholen
+ * @author    David Verholen <david.verholen@brandung.de>
+ * @copyright 2014 Brandung GmbH & Co. KG
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
  */
