@@ -1,11 +1,5 @@
 {
     "minimum-stability": "dev",
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/bragento/bragento-composer-installer.git"
-        }
-    ],
     "require": {
         "bragento/magento-composer-installer": "dev-develop",
         "magento/core": "1.9.0.1"
