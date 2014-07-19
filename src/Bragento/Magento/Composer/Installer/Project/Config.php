@@ -14,6 +14,7 @@
 
 namespace Bragento\Magento\Composer\Installer\Project;
 
+use Bragento\Magento\Composer\Installer\Project\Exception\ConfigKeyNotDefinedException;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Composer;
 use Symfony\Component\Finder\SplFileInfo;
@@ -34,6 +35,9 @@ use Symfony\Component\Finder\SplFileInfo;
  */
 class Config
 {
+    const MAGENTO_ROOT_DIR_KEY = 'magento-root-dir';
+    const DEFAULT_MAGENTO_ROOT_DIR = 'magento';
+
     /**
      * _instance
      *
@@ -63,11 +67,19 @@ class Config
     protected $_fs;
 
     /**
+     * extra
+     *
+     * @var array
+     */
+    protected $_extra;
+
+    /**
      * private constructor for singleton
      */
     private function __construct()
     {
         $this->_fs = new Filesystem();
+        $this->_extra = self::$_composer->getPackage()->getExtra();
     }
 
     /**
@@ -79,12 +91,13 @@ class Config
     {
         /** @todo load magento root dir from config */
         if (null === $this->_magentoRootDir) {
-            $this->_fs->ensureDirectoryExists('magento');
-            $this->_magentoRootDir = new SplFileInfo(
-                'magento',
-                'magento',
-                'magento'
-            );
+            $dir
+                = $this->getExtraValue(self::MAGENTO_ROOT_DIR_KEY) === null
+                ? self::DEFAULT_MAGENTO_ROOT_DIR
+                : $this->getExtraValue(self::MAGENTO_ROOT_DIR_KEY);
+
+            $this->_fs->ensureDirectoryExists($dir);
+            $this->_magentoRootDir = new SplFileInfo($dir, $dir, $dir);
         }
         return $this->_magentoRootDir;
     }
@@ -106,5 +119,41 @@ class Config
         }
 
         return self::$_instance;
+    }
+
+    /**
+     * getValueFromArray
+     *
+     * @param       $key
+     * @param array $array
+     * @param bool  $required
+     *
+     * @return null
+     * @throws Exception\ConfigKeyNotDefinedException
+     */
+    protected function getValueFromArray($key, array $array, $required = false)
+    {
+        if (!isset($array[$key])) {
+            if ($required) {
+                throw new ConfigKeyNotDefinedException($key);
+            } else {
+                return null;
+            }
+        }
+
+        return $array[$key];
+    }
+
+    /**
+     * getExtraConfig
+     *
+     * @param      $key
+     * @param bool $required
+     *
+     * @return null
+     */
+    protected function getExtraValue($key, $required = false)
+    {
+        return $this->getValueFromArray($key, $this->_extra, $required);
     }
 } 
