@@ -258,7 +258,8 @@ class Filesystem extends \Composer\Util\Filesystem
         $finder = new Finder();
         $finder
             ->in($dirPath)
-            ->name($fileName);
+            ->name($fileName)
+            ->depth('== 0');
 
         foreach ($finder as $file) {
             return $file;
