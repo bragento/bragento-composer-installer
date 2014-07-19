@@ -35,16 +35,23 @@ use Composer\IO\IOInterface;
 class FullStackTest extends AbstractTest
 {
     const COMPOSER_CONFIG_DIR = 'files/composer/configs/';
+    const CHECKS_DIR = 'checks/';
+
     const MODE_UPDATE = 'update';
     const MODE_INSTALL = 'install';
 
-    protected $_testForMagento
-        = array(
-            'app/Mage.php',
-            'LICENSE.txt',
-            'index.php',
-            'app/design/frontend/base/default/template/catalog/product/view.phtml'
-        );
+    const CHECK_TYPE_FILES_EXIST = 'files_exist';
+
+    const MAGENTO_BASE_DIR = 'build/magento/';
+
+    /**
+     * _testForMagento
+     *
+     * files to test for magento core installation
+     *
+     * @var array
+     */
+    protected $_testForMagento;
 
     /**
      * _persistentTestFiles
@@ -56,11 +63,11 @@ class FullStackTest extends AbstractTest
      */
     protected $_persistentTestFiles
         = array(
-            'build/magento/var/test',
-            'build/magento/media/test',
-            'build/magento/app/etc/local.xml',
-            'build/magento/.gitignore',
-            'build/magento/randomtestfile'
+            'var/test',
+            'media/test',
+            'app/etc/local.xml',
+            '.gitignore',
+            'randomtestfile'
         );
 
     /**
@@ -91,6 +98,11 @@ class FullStackTest extends AbstractTest
         $this->_origWorkingDir = getcwd();
         $workingDir = $this->getTestDir('build');
         chdir($workingDir);
+        $this->_testForMagento = $this->getChecks(
+            self::MODE_INSTALL,
+            self::CHECK_TYPE_FILES_EXIST,
+            'magentocore.json'
+        );
     }
 
     protected function tearDown()
@@ -99,6 +111,20 @@ class FullStackTest extends AbstractTest
         chdir($this->_origWorkingDir);
     }
 
+    /**
+     * provideComposerConfigFileNames
+     *
+     * @return array
+     *
+     * @todo add more files to test against
+     */
+    public function provideConfigFileNames()
+    {
+        return array(
+            array('magentocore.json'),
+            array('somemodules.json')
+        );
+    }
 
     /**
      * testComposerInstall
@@ -107,48 +133,107 @@ class FullStackTest extends AbstractTest
      *
      * @return void
      *
-     * @dataProvider provideInstallConfigFileNames
+     * @dataProvider provideConfigFileNames
      */
     public function testAll($configFileName)
     {
         // run install
         $this->install($configFileName);
 
+        //check installation
+        $this->checkFiles($this->_testForMagento);
+
+        //check additional files from config file
+        $this->checkFiles(
+            $this->getChecks(
+                self::MODE_INSTALL,
+                self::CHECK_TYPE_FILES_EXIST,
+                $configFileName
+            )
+        );
+
         // create files for backup test
-        foreach ($this->_persistentTestFiles as $file) {
-            touch($this->getTestDir($file));
-        }
+        $this->createFiles($this->_persistentTestFiles);
 
         // run update
         $this->update($configFileName);
 
-        // test for magento core installation
-        foreach ($this->_testForMagento as $file) {
-            $this->assertFileExists(
-                $this->getTestDir(sprintf('build/magento/%s', $file))
-            );
-        }
+        //check installation
+        $this->checkFiles($this->_testForMagento);
 
-        //test if persistent files backup worked
-        foreach ($this->_persistentTestFiles as $file) {
+        //check additional files from config file
+        $this->checkFiles(
+            $this->getChecks(
+                self::MODE_INSTALL,
+                self::CHECK_TYPE_FILES_EXIST,
+                $configFileName
+            )
+        );
+
+        // check if files were backed up
+        $this->checkFiles($this->_persistentTestFiles);
+    }
+
+    /**
+     * checkFiles
+     *
+     * @param array $files
+     *
+     * @return void
+     */
+    protected function checkFiles(array $files)
+    {
+        foreach ($files as $file) {
             $this->assertFileExists(
-                $this->getTestDir($file)
+                $this->getTestDir(self::MAGENTO_BASE_DIR . $file)
             );
         }
     }
 
     /**
-     * provideComposerConfigFileNames
+     * createFiles
+     *
+     * @param array $files
+     *
+     * @return void
+     */
+    protected function createFiles(array $files)
+    {
+        foreach ($files as $file) {
+            touch($this->getTestDir(self::MAGENTO_BASE_DIR . $file));
+        }
+    }
+
+    /**
+     * getChecks
+     *
+     * @param $mode
+     * @param $type
+     * @param $configFileName
      *
      * @return array
      */
-    public function provideInstallConfigFileNames()
+    protected function getChecks($mode, $type, $configFileName)
     {
-        return array(
-            array('magentocore.json'),
-            array('somemodules.json')
+        $checkFile = $this->getTestDir(
+            self::COMPOSER_CONFIG_DIR .
+            $mode . DIRECTORY_SEPARATOR .
+            self::CHECKS_DIR .
+            $type . DIRECTORY_SEPARATOR .
+            $configFileName
         );
+
+        if (!file_exists($checkFile)) {
+            return array();
+        }
+
+        if (null === ($jsonObj = file_get_contents($checkFile))) {
+            return array();
+        }
+
+        return (array)json_decode($jsonObj);
     }
+
 
     /**
      * initComposer
