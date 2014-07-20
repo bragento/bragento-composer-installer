@@ -1,6 +1,6 @@
 phpunit.xml.dist export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore
-.travis.yml
-README.md
+.travis.yml export-ignore
+README.md export-ignore
 /tests export-ignore
