@@ -25,7 +25,7 @@ namespace Bragento\Magento\Composer\Installer\Mapping;
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
  *
- * @todo      implement parsing for composer mappings
+ * @todo      add fullstacktest for composer mapping
  */
 class Composer extends AbstractMapping
 {

@@ -109,8 +109,6 @@ class FullStackTest extends AbstractTest
      * provideComposerConfigFileNames
      *
      * @return array
-     *
-     * @todo add more files to test against
      */
     public function provideConfigFileNames()
     {
