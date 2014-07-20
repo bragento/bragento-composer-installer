@@ -104,7 +104,7 @@ class Factory
      *
      * @return bool
      */
-    protected function hasComposerMap(PackageInterface $package)
+    protected static function hasComposerMap(PackageInterface $package)
     {
         $extra = $package->getExtra();
         return isset($extra[Composer::COMPOSER_MAP_KEY]);
