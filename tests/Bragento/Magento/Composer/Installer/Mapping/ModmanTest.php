@@ -81,10 +81,11 @@ class ModmanTest extends AbstractMappingTest
     public function testParseErrorModmanFile()
     {
         $this->copyModmanFileToBuildDir('error');
-        new Modman(
+        $modmanMapping = new Modman(
             $this->getBuildDir(),
             new Package('test/package', '1.0.0', '1.0.0')
         );
+        $modmanMapping->getTranslatedMappingsArray();
     }
 
     /**

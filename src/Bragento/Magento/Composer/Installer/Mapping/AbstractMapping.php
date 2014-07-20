@@ -73,7 +73,6 @@ abstract class AbstractMapping
         $this->_fs = new Filesystem();
         $this->_moduleDir = $moduleDir;
         $this->_package = $package;
-        $this->_mappingsArray = $this->parseMappings();
     }
 
 
@@ -84,6 +83,10 @@ abstract class AbstractMapping
      */
     public function getMappingsArray()
     {
+        if (null === $this->_mappingsArray) {
+            $this->_mappingsArray = $this->parseMappings();
+        }
+
         return $this->_mappingsArray;
     }
 
@@ -96,7 +99,7 @@ abstract class AbstractMapping
      */
     public function getTranslatedMappingsArray()
     {
-        return $this->translateMappings($this->_mappingsArray);
+        return $this->translateMappings($this->getMappingsArray());
     }
 
     /**
