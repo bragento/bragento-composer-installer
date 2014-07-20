@@ -29,9 +29,6 @@ use Symfony\Component\Finder\SplFileInfo;
  * @copyright 2014 Brandung GmbH & Co. KG
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
- *
- * @todo      load values from composer.json
- * @todo      add all config values
  */
 class Config
 {
@@ -89,7 +86,6 @@ class Config
      */
     public function getMagentoRootDir()
     {
-        /** @todo load magento root dir from config */
         if (null === $this->_magentoRootDir) {
             $dir
                 = $this->getExtraValue(self::MAGENTO_ROOT_DIR_KEY) === null
@@ -102,16 +98,33 @@ class Config
         return $this->_magentoRootDir;
     }
 
+    /**
+     * getVendorDir
+     *
+     * @return mixed
+     */
     public function getVendorDir()
     {
         return self::$_composer->getConfig()->get('vendor-dir');
     }
 
+    /**
+     * init
+     *
+     * @param Composer $composer
+     *
+     * @return void
+     */
     public static function init(Composer $composer)
     {
         self::$_composer = $composer;
     }
 
+    /**
+     * getInstance
+     *
+     * @return Config
+     */
     public static function getInstance()
     {
         if (null === self::$_instance) {
