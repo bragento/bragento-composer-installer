@@ -53,6 +53,11 @@ class Factory
      */
     protected static $_composer;
 
+    /**
+     * Composer IO Interface
+     *
+     * @var IOInterface
+     */
     protected static $_io;
 
     /**
@@ -116,6 +121,13 @@ class Factory
         return self::$_deployStrategies[$package->getName()];
     }
 
+    /**
+     * get strategy classname by strategy name
+     *
+     * @param $strategy
+     *
+     * @return string
+     */
     protected static function getClassName($strategy)
     {
         return self::NS . $strategy;
