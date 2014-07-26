@@ -202,7 +202,7 @@ abstract class AbstractStrategy
     {
         $this->createDelegates();
         $this->getState()->setMapping($this->getMappingsArray());
-
+        $this->getState()->save();
     }
 
     /**

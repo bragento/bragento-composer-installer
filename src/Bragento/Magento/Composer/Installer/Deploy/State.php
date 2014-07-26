@@ -83,7 +83,7 @@ class State
      */
     function __destruct()
     {
-        $this->save($this->_state);
+        $this->_save($this->_state);
     }
 
     /**
@@ -142,7 +142,7 @@ class State
      *
      * @return void
      */
-    protected function save(array $state)
+    protected function _save(array $state)
     {
         $this->getFs()->ensureDirectoryExists(
             dirname($this->getStateFilePath())
@@ -151,6 +151,22 @@ class State
             $this->getStateFilePath(),
             json_encode($state)
         );
+    }
+
+    /**
+     * save
+     *
+     * public function for manual save, since hhvm does not
+     * support automated invocation of __destruct at on
+     * shutdown
+     *
+     * @return void
+     *
+     * @todo check if hhvm now supports automated __destruct
+     */
+    public function save()
+    {
+        $this->_save($this->_state);
     }
 
     /**
