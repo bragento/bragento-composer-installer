@@ -14,6 +14,7 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
+use Bragento\Magento\Composer\Installer\Deploy\Manager\PackageTypes;
 use Bragento\Magento\Composer\Installer\Installer\Types;
 use Composer\Composer;
 use Composer\IO\IOInterface;
@@ -93,12 +94,12 @@ class Factory
     ) {
         if (!isset(self::$_deployStrategies[$package->getName()])) {
             switch ($package->getType()) {
-                case Types::MAGENTO_CORE:
+                case PackageTypes::MAGENTO_CORE:
                     $strategy = self::STRATEGY_COPY;
                     break;
 
-                case Types::MAGENTO_MODULE:
-                case Types::MAGENTO_THEME:
+                case PackageTypes::MAGENTO_MODULE:
+                case PackageTypes::MAGENTO_THEME:
                     $strategy = self::STRATEGY_SYMLINK;
                     break;
 
