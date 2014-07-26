@@ -17,6 +17,7 @@ namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 use Bragento\Magento\Composer\Installer\Deploy\Exception\UnknownActionException;
 use Bragento\Magento\Composer\Installer\Deploy\Manager\Actions;
 use Bragento\Magento\Composer\Installer\Deploy\Operation\Deploy;
+use Bragento\Magento\Composer\Installer\Deploy\State;
 use Bragento\Magento\Composer\Installer\Mapping;
 use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
@@ -43,7 +44,7 @@ abstract class AbstractStrategy
     const EVENT_TIMING_PRE = 'pre';
     const EVENT_TIMING_POST = 'post';
 
-    const MAPPINGS_DIR = 'mage-deploy-mappings';
+    const STATE_DIR = '.mage-deploy';
 
     /**
      * _package
@@ -116,6 +117,13 @@ abstract class AbstractStrategy
     private $_fs;
 
     /**
+     * _state
+     *
+     * @var State
+     */
+    private $_state;
+
+    /**
      * construct Deploy Strategy
      *
      * @param PackageInterface         $package   Package to deploy
@@ -141,6 +149,7 @@ abstract class AbstractStrategy
         $this->_composer = $composer;
         $this->_io = $io;
         $this->_fs = new Filesystem();
+        $this->_state = new State($this);
     }
 
     /**
@@ -192,7 +201,7 @@ abstract class AbstractStrategy
     protected function makeInstall()
     {
         $this->createDelegates();
-        $this->saveMappings();
+        $this->getState()->setMapping($this->getMappingsArray());
 
     }
 
@@ -338,6 +347,16 @@ abstract class AbstractStrategy
     }
 
     /**
+     * getState
+     *
+     * @return State
+     */
+    protected function getState()
+    {
+        return $this->_state;
+    }
+
+    /**
      * getMappingsArray
      *
      * @return array
@@ -419,7 +438,7 @@ abstract class AbstractStrategy
     private function getDeployedDelegatesMapping()
     {
         if (null === $this->_deployedDelegatesMapping) {
-            $this->_deployedDelegatesMapping = $this->loadMappings();
+            $this->_deployedDelegatesMapping = $this->getState()->getMapping();
         }
 
         return $this->_deployedDelegatesMapping;
@@ -437,57 +456,5 @@ abstract class AbstractStrategy
     {
         return $this->getFs()
             ->joinFileUris($base, $path);
-    }
-
-    /**
-     * saveMappings
-     *
-     * @return void
-     */
-    protected function saveMappings()
-    {
-        $this->getFs()->ensureDirectoryExists(
-            dirname($this->getMappingsFilePath())
-        );
-        file_put_contents(
-            $this->getMappingsFilePath(),
-            json_encode($this->getMappingsArray())
-        );
-    }
-
-    /**
-     * loadMappings
-     *
-     * @return array
-     */
-    protected function loadMappings()
-    {
-        if (file_exists($this->getMappingsFilePath())) {
-            return (array)json_decode(
-                file_get_contents(
-                    $this->getMappingsFilePath()
-                )
-            );
-        }
-
-        return array();
-    }
-
-    /**
-     * getMappingsFilePath
-     *
-     * @return string
-     */
-    protected function getMappingsFilePath()
-    {
-        $mappingsDir = $this->getFs()->joinFileUris(
-            Config::getInstance()->getVendorDir(),
-            self::MAPPINGS_DIR
-        );
-
-        return $this->getFs()->joinFileUris(
-            $mappingsDir,
-            str_replace('/', '_', $this->getPackage()->getName())
-        );
     }
 } 
