@@ -78,7 +78,37 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     public function activate(Composer $composer, IOInterface $io)
     {
         Deploy\Strategy\Factory::init($composer, $io);
+        Config::init($composer);
 
+        $this->initEventSubscribers($composer, $io);
+        $this->initInstallers($composer, $io);
+    }
+
+    /**
+     * initEventSubscribers
+     *
+     * @param Composer    $composer
+     * @param IOInterface $io
+     *
+     * @return void
+     */
+    protected function initEventSubscribers(Composer $composer, IOInterface $io)
+    {
+        $ed = $composer->getEventDispatcher();
+        $ed->addSubscriber(new Deploy\OutputSubscriber($io));
+        $ed->addSubscriber(new Updater\Core());
+    }
+
+    /**
+     * initInstallers
+     *
+     * @param Composer    $composer
+     * @param IOInterface $io
+     *
+     * @return void
+     */
+    protected function initInstallers(Composer $composer, IOInterface $io)
+    {
         Installer\Factory::init(
             $composer,
             $io,
@@ -86,9 +116,9 @@ class Plugin implements PluginInterface, EventSubscriberInterface
             new Filesystem()
         );
 
-        Config::init($composer);
+        $im = $composer->getInstallationManager();
 
-        $composer->getInstallationManager()->addInstaller(
+        $im->addInstaller(
             Installer\Factory::get(Installer\Types::MAGENTO_CORE)
         );
 
@@ -99,12 +129,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $composer->getInstallationManager()->addInstaller(
             Installer\Factory::get(Installer\Types::MAGENTO_THEME)
         );
-
-        $composer->getEventDispatcher()
-            ->addSubscriber(new Deploy\OutputSubscriber($io));
-
-        $composer->getEventDispatcher()
-            ->addSubscriber(new Updater\Core());
     }
 
     /**
