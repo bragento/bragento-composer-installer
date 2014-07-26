@@ -16,10 +16,10 @@ namespace Bragento\Magento\Composer\Installer\Deploy;
 
 use Bragento\Magento\Composer\Installer\Deploy\Manager\Actions;
 use Bragento\Magento\Composer\Installer\Deploy\Manager\Entry;
+use Bragento\Magento\Composer\Installer\Deploy\Manager\PackageTypes;
 use Bragento\Magento\Composer\Installer\Deploy\Strategy\AbstractStrategy;
 use Bragento\Magento\Composer\Installer\Deploy\Strategy\Factory;
 use Bragento\Magento\Composer\Installer\Exception\NotInitializedException;
-use Bragento\Magento\Composer\Installer\Installer\Types;
 use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Composer;
@@ -130,15 +130,15 @@ class Manager
     public function addEntry(Entry $entry)
     {
         switch ($entry->getDeployStrategy()->getPackage()->getType()) {
-            case Types::MAGENTO_CORE:
+            case PackageTypes::MAGENTO_CORE:
                 $this->_coreEntry = $entry;
                 break;
 
-            case Types::MAGENTO_MODULE:
+            case PackageTypes::MAGENTO_MODULE:
                 $this->_moduleEntries[] = $entry;
                 break;
 
-            case Types::MAGENTO_THEME:
+            case PackageTypes::MAGENTO_THEME:
                 $this->_themeEntries = $entry;
                 break;
         }
