@@ -15,9 +15,7 @@
 namespace Bragento\Magento\Composer\Installer;
 
 use Bragento\Magento\Composer\Installer\Deploy\Manager;
-use Bragento\Magento\Composer\Installer\Installer;
 use Bragento\Magento\Composer\Installer\Project\Config;
-use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Composer;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
@@ -82,7 +80,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         Config::init($composer);
 
         $this->initEventSubscribers($composer, $io);
-        //$this->initInstallers($composer, $io);
     }
 
     /**
@@ -98,38 +95,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $ed = $composer->getEventDispatcher();
         $ed->addSubscriber(new Deploy\OutputSubscriber($io));
         $ed->addSubscriber(new Updater\Core());
-    }
-
-    /**
-     * initInstallers
-     *
-     * @param Composer    $composer
-     * @param IOInterface $io
-     *
-     * @return void
-     */
-    protected function initInstallers(Composer $composer, IOInterface $io)
-    {
-        Installer\Factory::init(
-            $composer,
-            $io,
-            Deploy\Manager::getInstance(),
-            new Filesystem()
-        );
-
-        $im = $composer->getInstallationManager();
-
-        $im->addInstaller(
-            Installer\Factory::get(Installer\Types::MAGENTO_CORE)
-        );
-
-        $composer->getInstallationManager()->addInstaller(
-            Installer\Factory::get(Installer\Types::MAGENTO_MODULE)
-        );
-
-        $composer->getInstallationManager()->addInstaller(
-            Installer\Factory::get(Installer\Types::MAGENTO_THEME)
-        );
     }
 
     /**
