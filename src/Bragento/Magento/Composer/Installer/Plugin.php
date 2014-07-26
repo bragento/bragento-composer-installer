@@ -78,10 +78,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     public function activate(Composer $composer, IOInterface $io)
     {
         Deploy\Strategy\Factory::init($composer, $io);
+        Deploy\Manager::init($composer);
         Config::init($composer);
 
         $this->initEventSubscribers($composer, $io);
-        $this->initInstallers($composer, $io);
+        //$this->initInstallers($composer, $io);
     }
 
     /**

@@ -251,9 +251,11 @@ abstract class AbstractStrategy
      */
     protected function removeDelegates()
     {
-        foreach ($this->getDeployedDelegatesMapping() as $delegate) {
-            $filePath = $this->getFullPath($this->getDestDir(), $delegate);
-            $this->removeDelegate($filePath);
+        if (is_array($this->getDeployedDelegatesMapping())) {
+            foreach ($this->getDeployedDelegatesMapping() as $delegate) {
+                $filePath = $this->getFullPath($this->getDestDir(), $delegate);
+                $this->removeDelegate($filePath);
+            }
         }
     }
 

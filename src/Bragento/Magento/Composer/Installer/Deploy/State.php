@@ -157,7 +157,7 @@ class State
      * save
      *
      * public function for manual save, since hhvm does not
-     * support automated invocation of __destruct at on
+     * support automated invocation of __destruct on
      * shutdown
      *
      * @return void

@@ -14,8 +14,17 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy;
 
+use Bragento\Magento\Composer\Installer\Deploy\Manager\Actions;
 use Bragento\Magento\Composer\Installer\Deploy\Manager\Entry;
+use Bragento\Magento\Composer\Installer\Deploy\Strategy\AbstractStrategy;
+use Bragento\Magento\Composer\Installer\Deploy\Strategy\Factory;
+use Bragento\Magento\Composer\Installer\Exception\NotInitializedException;
 use Bragento\Magento\Composer\Installer\Installer\Types;
+use Bragento\Magento\Composer\Installer\Project\Config;
+use Bragento\Magento\Composer\Installer\Util\Filesystem;
+use Composer\Composer;
+use Composer\Package\PackageInterface;
+use Symfony\Component\Finder\SplFileInfo;
 
 
 /**
@@ -36,6 +45,13 @@ class Manager
      * @var Manager
      */
     protected static $_instance;
+
+    /**
+     * _composer
+     *
+     * @var Composer
+     */
+    protected static $_composer;
 
     /**
      * entries
@@ -59,12 +75,32 @@ class Manager
     protected $_coreEntry;
 
     /**
+     * _fs
+     *
+     * @var Filesystem
+     */
+    protected $_fs;
+
+    /**
      * private construct for singleton
      */
     private function __construct()
     {
         $this->_moduleEntries = array();
         $this->_themeEntries = array();
+        $this->addAllPackages();
+    }
+
+    /**
+     * init
+     *
+     * @param Composer $composer
+     *
+     * @return void
+     */
+    public static function init(Composer $composer)
+    {
+        self::$_composer = $composer;
     }
 
     /**
@@ -133,5 +169,148 @@ class Manager
             $themeEntry = array_pop($this->_moduleEntries);
             $themeEntry->getDeployStrategy()->doDeploy();
         }
+    }
+
+    /**
+     * addAllPackages
+     *
+     * @return void
+     */
+    protected function addAllPackages()
+    {
+        foreach ($this->getPackages() as $package) {
+            $this->addEntry(
+                $this->getDeployManagerEntry(
+                    $package,
+                    Actions::UPDATE
+                )
+            );
+        }
+    }
+
+    /**
+     * getDeployStrategy
+     *
+     * @param PackageInterface $package
+     * @param string           $action
+     *
+     * @return AbstractStrategy
+     */
+    protected function getDeployStrategy(PackageInterface $package, $action)
+    {
+        return Factory::get(
+            $package,
+            $action,
+            $this->getSourceDir($package),
+            $this->getTargetDir()
+        );
+    }
+
+    /**
+     * getDeployManagerEntry
+     *
+     * @param PackageInterface $package package to deploy
+     * @param string           $action
+     *
+     * @return Entry
+     */
+    protected function getDeployManagerEntry(PackageInterface $package, $action)
+    {
+        return new Entry(
+            $this->getDeployStrategy($package, $action)
+        );
+    }
+
+    /**
+     * getSourceDir
+     *
+     * @param PackageInterface $package
+     *
+     * @return SplFileInfo
+     */
+    protected function getSourceDir(PackageInterface $package)
+    {
+        return $this->getFs()->getDir($this->getInstallPath($package));
+    }
+
+    /**
+     * getTargetDir
+     *
+     * @return SplFileInfo
+     */
+    protected function getTargetDir()
+    {
+        return Config::getInstance()->getMagentoRootDir();
+    }
+
+    /**
+     * getInstallPath
+     *
+     * @param PackageInterface $package
+     *
+     * @return string
+     */
+    public function getInstallPath(PackageInterface $package)
+    {
+        $targetDir = $package->getTargetDir();
+        return $this->getPackageBasePath($package)
+        . ($targetDir ? '/' . $targetDir : '');
+    }
+
+    /**
+     * getPackageBasePath
+     *
+     * @param PackageInterface $package
+     *
+     * @return string
+     */
+    protected function getPackageBasePath(PackageInterface $package)
+    {
+        return $this->getFs()->joinFileUris(
+            Config::getInstance()->getVendorDir(),
+            $package->getPrettyName()
+        );
+    }
+
+    /**
+     * getPackages
+     *
+     * @return PackageInterface[]
+     */
+    protected function getPackages()
+    {
+        return $this->getComposer()
+            ->getRepositoryManager()
+            ->getLocalRepository()
+            ->getCanonicalPackages();
+    }
+
+    /**
+     * getComposer
+     *
+     * @return Composer
+     * @throws NotInitializedException
+     */
+    protected function getComposer()
+    {
+        if (null === self::$_composer) {
+            throw new NotInitializedException($this);
+        }
+
+        return self::$_composer;
+    }
+
+    /**
+     * getFs
+     *
+     * @return Filesystem
+     */
+    protected function getFs()
+    {
+        if (null == $this->_fs) {
+            $this->_fs = new Filesystem();
+        }
+
+        return $this->_fs;
     }
 } 
