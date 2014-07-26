@@ -88,7 +88,6 @@ class Manager
     {
         $this->_moduleEntries = array();
         $this->_themeEntries = array();
-        $this->addAllPackages();
     }
 
     /**
@@ -153,6 +152,8 @@ class Manager
      */
     public function doDeploy()
     {
+        $this->addAllPackages();
+
         if (null !== $this->_coreEntry) {
             $this->_coreEntry->getDeployStrategy()->doDeploy();
             $this->_coreEntry = null;
