@@ -172,7 +172,7 @@ abstract class AbstractStrategy
                 break;
 
             case Actions::UNINSTALL;
-                $this->makeUninstall();
+                $this->makeUninstall(true);
                 break;
 
             default:
@@ -208,11 +208,16 @@ abstract class AbstractStrategy
     /**
      * makeUninstall
      *
+     * @param bool $deleteState
+     *
      * @return void
      */
-    protected function makeUninstall()
+    protected function makeUninstall($deleteState = false)
     {
         $this->removeDelegates();
+        if ($deleteState) {
+            $this->getState()->delete();
+        }
     }
 
     /**

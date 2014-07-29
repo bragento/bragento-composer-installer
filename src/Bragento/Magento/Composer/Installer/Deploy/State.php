@@ -170,6 +170,18 @@ class State
     }
 
     /**
+     * delete
+     *
+     * @return void
+     */
+    public function delete()
+    {
+        if (file_exists($this->getStateFilePath())) {
+            unlink($this->getStateFilePath());
+        }
+    }
+
+    /**
      * load
      *
      * @return array
