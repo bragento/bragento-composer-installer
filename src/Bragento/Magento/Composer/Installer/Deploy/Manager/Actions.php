@@ -25,7 +25,7 @@ namespace Bragento\Magento\Composer\Installer\Deploy\Manager;
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
  */
-class Actions
+final class Actions
 {
     const INSTALL   = 'install';
     const UPDATE    = 'update';

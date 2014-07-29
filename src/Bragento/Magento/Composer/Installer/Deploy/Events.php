@@ -25,7 +25,7 @@ namespace Bragento\Magento\Composer\Installer\Deploy;
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
  */
-class Events
+final class Events
 {
     const PRE_DEPLOY_CORE_INSTALL = 'pre-deploy-magento-core-install';
     const POST_DEPLOY_CORE_INSTALL = 'post-deploy-magento-core-install';
