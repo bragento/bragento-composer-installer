@@ -43,28 +43,60 @@ class Filesystem extends \Composer\Util\Filesystem
      */
     public function rremove($dirPath)
     {
-        if (file_exists($dirPath)) {
-            if (is_file($dirPath) || is_link($dirPath)) {
-                return unlink($dirPath);
-            }
-            foreach (
-                new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator(
-                        $dirPath,
-                        \FilesystemIterator::SKIP_DOTS
-                    ),
-                    \RecursiveIteratorIterator::CHILD_FIRST
-                ) as $path
-            ) {
-                /* @var \SplFileInfo $path */
-                if ($path->isLink() || $path->isFile()) {
-                    unlink($path->getPathname());
-                } elseif ($path->isDir()) {
-                    rmdir($path->getPathname());
-                }
-            }
-            return rmdir($dirPath);
+        if (false === file_exists($dirPath)) {
+            return false;
         }
+
+        if (is_file($dirPath) || is_link($dirPath)) {
+            return unlink($dirPath);
+        }
+
+        $dirIt = new \RecursiveDirectoryIterator(
+            $dirPath,
+            \FilesystemIterator::SKIP_DOTS
+        );
+
+        $rIt = new \RecursiveIteratorIterator(
+            $dirIt,
+            \RecursiveIteratorIterator::CHILD_FIRST
+        );
+
+        foreach ($rIt as $path) {
+            $this->rm($path);
+        }
+
+        return rmdir($dirPath);
+    }
+
+    /**
+     * rm
+     *
+     * @param \SplFileInfo $path
+     *
+     * @return boolean
+     */
+    public function rm(\SplFileInfo $path)
+    {
+        if ($path->isLink() || $path->isFile()) {
+            return unlink($path->getPathname());
+        } elseif ($path->isDir()) {
+            return rmdir($path->getPathname());
+        }
+    }
+
+    /**
+     * rmIfLinkOrFile
+     *
+     * @param string $path
+     *
+     * @return bool
+     */
+    public function rmIfLinkOrFile($path)
+    {
+        if (is_file($path) || is_link($path)) {
+            return unlink($path);
+        }
+
         return false;
     }
 
