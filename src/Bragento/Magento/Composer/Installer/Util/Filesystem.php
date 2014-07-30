@@ -77,11 +77,11 @@ class Filesystem extends \Composer\Util\Filesystem
      */
     public function rm(\SplFileInfo $path)
     {
-        if ($path->isDir()) {
+        if (false === $this->rmIfLinkOrFile($path->getPathname())) {
             return rmdir($path->getPathname());
         }
 
-        return $this->rmIfLinkOrFile($path->getPathname());
+        return true;
     }
 
     /**
