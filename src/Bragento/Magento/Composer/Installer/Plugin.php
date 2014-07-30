@@ -107,6 +107,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      */
     public function onPostInstallCmd(CommandEvent $event)
     {
+        $event->getIO()->write('<info>post install:</info>');
         Deploy\Manager::getInstance()->doDeploy();
     }
 
@@ -119,6 +120,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      */
     public function onPostUpdateCmd(CommandEvent $event)
     {
+        $event->getIO()->write('<info>post update:</info>');
         Deploy\Manager::getInstance()->doDeploy();
     }
 } 

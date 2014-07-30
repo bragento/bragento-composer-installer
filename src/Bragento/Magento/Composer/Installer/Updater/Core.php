@@ -104,6 +104,7 @@ class Core implements EventSubscriberInterface
      */
     public function onPreDeployCoreUpdate(PackageEvent $event)
     {
+        $event->getIO()->write('<info>backup persistent core files</info>');
         $this->getFs()->ensureDirectoryExists($this->_backupDir);
         foreach ($this->_persistent as $dir) {
             if (file_exists($this->getMagentoSubDir($dir))) {
@@ -127,6 +128,7 @@ class Core implements EventSubscriberInterface
      */
     public function onPostDeployCoreUpdate(PackageEvent $event)
     {
+        $event->getIO()->write('<info>restore persistent core files</info>');
         foreach ($this->_persistent as $dir) {
             if (file_exists($this->getBackupSubDir($dir))) {
                 if (file_exists($this->getMagentoSubDir($dir))) {
