@@ -30,7 +30,7 @@ class String
     /**
      * startsWith
      *
-     * @param array  $haystack
+     * @param string $haystack
      * @param string $needle
      *
      * @return bool
@@ -43,7 +43,7 @@ class String
     /**
      * endsWith
      *
-     * @param array  $haystack
+     * @param string $haystack
      * @param string $needle
      *
      * @return bool
