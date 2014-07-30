@@ -370,7 +370,7 @@ abstract class AbstractStrategy
      */
     protected function getMappingsArray()
     {
-        return $this->getMapping()->getTranslatedMappingsArray();
+        return $this->getMapping()->getResolvedMappingsArray();
     }
 
     /**

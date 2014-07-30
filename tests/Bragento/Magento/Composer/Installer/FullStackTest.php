@@ -127,6 +127,7 @@ class FullStackTest extends AbstractTest
      * @return void
      *
      * @dataProvider provideConfigFileNames
+     * @group slow
      */
     public function testAll($configFileName)
     {

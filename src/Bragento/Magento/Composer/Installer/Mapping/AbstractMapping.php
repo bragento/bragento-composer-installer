@@ -97,9 +97,9 @@ abstract class AbstractMapping
      *
      * @return array
      */
-    public function getTranslatedMappingsArray()
+    public function getResolvedMappingsArray()
     {
-        return $this->translateMappings($this->getMappingsArray());
+        return $this->resolveMappings($this->getMappingsArray());
     }
 
     /**
@@ -154,7 +154,7 @@ abstract class AbstractMapping
      *
      * @return array
      */
-    protected function translateMappings(array $mappings)
+    protected function resolveMappings(array $mappings)
     {
         $translatedMap = array();
         foreach ($this->_mappingsArray as $src => $dest) {

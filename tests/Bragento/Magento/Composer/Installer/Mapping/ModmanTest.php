@@ -85,7 +85,7 @@ class ModmanTest extends AbstractMappingTest
             $this->getBuildDir(),
             new Package('test/package', '1.0.0', '1.0.0')
         );
-        $modmanMapping->getTranslatedMappingsArray();
+        $modmanMapping->getResolvedMappingsArray();
     }
 
     /**
