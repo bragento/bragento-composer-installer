@@ -29,6 +29,11 @@ use Exception;
  */
 class ConfigKeyNotDefinedException extends \Exception
 {
+    /**
+     * @param string    $key
+     * @param int       $code
+     * @param Exception $previous
+     */
     public function __construct($key, $code = 0, Exception $previous = null)
     {
         $message = sprintf('required config key %s not defined', $key);
