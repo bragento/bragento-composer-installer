@@ -77,7 +77,7 @@ class Filesystem extends \Composer\Util\Filesystem
      */
     public function rm(\SplFileInfo $path)
     {
-        if (is_dir($path->getPathname())) {
+        if ($path->isDir()) {
             return rmdir($path->getPathname());
         }
 
