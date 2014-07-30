@@ -282,6 +282,8 @@ class Filesystem extends \Composer\Util\Filesystem
         foreach ($finder as $dirPath) {
             return $dirPath;
         }
+
+        return null;
     }
 
     /**
@@ -303,5 +305,7 @@ class Filesystem extends \Composer\Util\Filesystem
         foreach ($finder as $file) {
             return $file;
         }
+
+        return null;
     }
 } 
