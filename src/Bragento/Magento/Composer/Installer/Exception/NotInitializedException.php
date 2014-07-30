@@ -28,9 +28,14 @@ use Exception;
  */
 class NotInitializedException extends \Exception
 {
+    /**
+     * @param mixed     $object
+     * @param int       $code
+     * @param Exception $previous
+     */
     public function __construct($object, $code = 0, Exception $previous = null)
     {
-        $message = sprintf('%s not initialized', (string)$object);
+        $message = sprintf('%s not initialized', get_class($object));
         parent::__construct($message, $code, $previous);
     }
 

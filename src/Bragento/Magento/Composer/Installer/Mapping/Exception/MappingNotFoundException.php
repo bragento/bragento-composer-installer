@@ -30,6 +30,11 @@ use Exception;
  */
 class MappingNotFoundException extends MappingException
 {
+    /**
+     * @param PackageInterface $package
+     * @param int              $code
+     * @param Exception        $previous
+     */
     public function __construct(
         PackageInterface $package,
         $code = 0,

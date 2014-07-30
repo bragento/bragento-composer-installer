@@ -137,9 +137,9 @@ class Config
     /**
      * getValueFromArray
      *
-     * @param       $key
-     * @param array $array
-     * @param bool  $required
+     * @param string $key
+     * @param array  $array
+     * @param bool   $required
      *
      * @return null
      * @throws Exception\ConfigKeyNotDefinedException

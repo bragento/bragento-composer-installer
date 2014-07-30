@@ -29,6 +29,11 @@ use Exception;
  */
 class InvalidTargetException extends \Exception
 {
+    /**
+     * @param string    $targetType
+     * @param int       $code
+     * @param Exception $previous
+     */
     public function __construct(
         $targetType,
         $code = 0,

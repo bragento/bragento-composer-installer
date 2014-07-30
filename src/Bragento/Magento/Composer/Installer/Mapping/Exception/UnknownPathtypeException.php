@@ -29,6 +29,11 @@ use Exception;
  */
 class UnknownPathtypeException extends \Exception
 {
+    /**
+     * @param string    $pathtype
+     * @param int       $code
+     * @param Exception $previous
+     */
     public function __construct(
         $pathtype,
         $code = 0,
