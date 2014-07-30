@@ -111,7 +111,7 @@ class State
     /**
      * getMapping
      *
-     * @return mixed
+     * @return array
      */
     public function getMapping()
     {
@@ -134,7 +134,7 @@ class State
     /**
      * get
      *
-     * @param $key
+     * @param string $key
      *
      * @return mixed
      */

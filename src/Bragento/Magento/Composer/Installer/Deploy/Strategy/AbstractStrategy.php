@@ -19,7 +19,6 @@ use Bragento\Magento\Composer\Installer\Deploy\Manager\Actions;
 use Bragento\Magento\Composer\Installer\Deploy\Operation\Deploy;
 use Bragento\Magento\Composer\Installer\Deploy\State;
 use Bragento\Magento\Composer\Installer\Mapping;
-use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Composer;
 use Composer\EventDispatcher\EventDispatcher;
@@ -454,14 +453,14 @@ abstract class AbstractStrategy
     /**
      * getFullSrc
      *
-     * @param $base
-     * @param $path
+     * @param SplFileInfo $base
+     * @param string $path
      *
      * @return string
      */
     protected function getFullPath($base, $path)
     {
         return $this->getFs()
-            ->joinFileUris($base, $path);
+            ->joinFileUris($base->getPathname(), $path);
     }
 } 

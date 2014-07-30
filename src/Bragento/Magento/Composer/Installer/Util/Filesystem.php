@@ -84,10 +84,10 @@ class Filesystem extends \Composer\Util\Filesystem
     /**
      * rcopy
      *
-     * @param $srcPath
-     * @param $destPath
+     * @param string $srcPath
+     * @param string $destPath
      *
-     * @return bool
+     * @return boolean
      */
     public function rcopy($srcPath, $destPath)
     {
@@ -114,6 +114,7 @@ class Filesystem extends \Composer\Util\Filesystem
             }
         }
         closedir($dir);
+        return true;
     }
 
     /**
@@ -138,8 +139,8 @@ class Filesystem extends \Composer\Util\Filesystem
     /**
      * symlink
      *
-     * @param $src
-     * @param $dest
+     * @param string $src
+     * @param string $dest
      *
      * @return bool
      */
@@ -211,7 +212,7 @@ class Filesystem extends \Composer\Util\Filesystem
     /**
      * removeSymlink
      *
-     * @param $link
+     * @param string $link
      *
      * @return bool
      */
@@ -249,8 +250,8 @@ class Filesystem extends \Composer\Util\Filesystem
     /**
      * getFile
      *
-     * @param $dirPath
-     * @param $fileName
+     * @param string $dirPath
+     * @param string $fileName
      *
      * @return SplFileInfo
      */

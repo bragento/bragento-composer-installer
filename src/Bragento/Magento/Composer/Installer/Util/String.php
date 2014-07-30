@@ -1,5 +1,5 @@
 <?php
- /**
+/**
  * String.php
  *
  * PHP Version 5
@@ -27,11 +27,27 @@ namespace Bragento\Magento\Composer\Installer\Util;
  */
 class String
 {
+    /**
+     * startsWith
+     *
+     * @param array  $haystack
+     * @param string $needle
+     *
+     * @return bool
+     */
     public static function startsWith($haystack, $needle)
     {
         return $needle === "" || strpos($haystack, $needle) === 0;
     }
 
+    /**
+     * endsWith
+     *
+     * @param array  $haystack
+     * @param string $needle
+     *
+     * @return bool
+     */
     public static function endsWith($haystack, $needle)
     {
         return $needle === ""

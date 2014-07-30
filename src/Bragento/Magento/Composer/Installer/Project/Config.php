@@ -160,8 +160,8 @@ class Config
     /**
      * getExtraConfig
      *
-     * @param      $key
-     * @param bool $required
+     * @param string $key
+     * @param bool   $required
      *
      * @return null
      */

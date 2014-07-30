@@ -80,8 +80,8 @@ class Factory
     /**
      * isPackage
      *
-     * @param            $moduleDir
-     * @param Filesystem $fs
+     * @param SplFileInfo $moduleDir
+     * @param Filesystem  $fs
      *
      * @return bool
      */
@@ -91,7 +91,7 @@ class Factory
     ) {
         return file_exists(
             $fs->joinFileUris(
-                $moduleDir,
+                $moduleDir->getPathname(),
                 Package::PACKAGE_XML_FILE_NAME
             )
         );

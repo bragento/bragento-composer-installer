@@ -16,7 +16,6 @@ namespace Bragento\Magento\Composer\Installer\Updater;
 
 use Bragento\Magento\Composer\Installer\Deploy\Events;
 use Bragento\Magento\Composer\Installer\Project\Config;
-use Bragento\Magento\Composer\Installer\Deploy;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Script\PackageEvent;

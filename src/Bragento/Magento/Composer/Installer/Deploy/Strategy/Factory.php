@@ -15,7 +15,6 @@
 namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
 use Bragento\Magento\Composer\Installer\Deploy\Manager\PackageTypes;
-use Bragento\Magento\Composer\Installer\Installer\Types;
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
@@ -125,7 +124,7 @@ class Factory
     /**
      * get strategy classname by strategy name
      *
-     * @param $strategy
+     * @param string $strategy
      *
      * @return string
      */

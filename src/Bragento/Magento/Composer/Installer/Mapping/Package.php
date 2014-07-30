@@ -85,24 +85,17 @@ class Package extends AbstractMapping
 
         if (isset($package)) {
             foreach ($package->xpath(self::TARGET_XPATH) as $target) {
-                try {
-                    $basePath = $this->getTargetPath($target);
+                $basePath = $this->getTargetPath($target);
+                foreach ($target->children() as $child) {
+                    $elPaths = $this->getElementPaths($child);
+                    foreach ($elPaths as $elementPath) {
+                        $relativePath
+                            = $basePath
+                            . DIRECTORY_SEPARATOR
+                            . $elementPath;
 
-                    foreach ($target->children() as $child) {
-                        $elPaths = $this->getElementPaths($child);
-                        foreach ($elPaths as $elementPath) {
-                            $relativePath
-                                = $basePath
-                                . DIRECTORY_SEPARATOR
-                                . $elementPath;
-
-                            $map[$relativePath] = $relativePath;
-                        }
+                        $map[$relativePath] = $relativePath;
                     }
-                } catch (InvalidTargetException $e) {
-                    // Skip invalid targets
-                    throw $e;
-                    continue;
                 }
             }
         }

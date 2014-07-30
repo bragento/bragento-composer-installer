@@ -142,7 +142,7 @@ class Manager implements EventSubscriberInterface
                 break;
 
             case PackageTypes::MAGENTO_THEME:
-                $this->_themeEntries = $entry;
+                $this->_themeEntries[] = $entry;
                 break;
         }
     }

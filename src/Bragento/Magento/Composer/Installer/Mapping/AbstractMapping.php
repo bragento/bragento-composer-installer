@@ -157,7 +157,7 @@ abstract class AbstractMapping
     protected function resolveMappings(array $mappings)
     {
         $translatedMap = array();
-        foreach ($this->_mappingsArray as $src => $dest) {
+        foreach ($mappings as $src => $dest) {
             if (String::endsWith($src, '*')) {
                 $glob = $this->getModuleDir() . DIRECTORY_SEPARATOR . $src;
                 foreach (glob($glob) as $file) {
