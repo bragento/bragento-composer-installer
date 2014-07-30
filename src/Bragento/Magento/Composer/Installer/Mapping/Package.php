@@ -34,6 +34,7 @@ class Package extends AbstractMapping
     const PACKAGE_XML_FILE_NAME = 'package.xml';
 
     const TARGET_XPATH = '//contents/target';
+    const NAME_ATTRIBUTE = 'name';
 
     const PATH_TYPE_DIR = 'dir';
 
@@ -112,7 +113,8 @@ class Package extends AbstractMapping
      */
     protected function getTargetPath(\SimpleXMLElement $target)
     {
-        $name = (string)$target->attributes()->name;
+        $attributes = $target->attributes();
+        $name = (string)$attributes[self::NAME_ATTRIBUTE];
         $targets = $this->getTargetsDefinitions();
         if (!isset($targets[$name])) {
             throw new InvalidTargetException($name);
