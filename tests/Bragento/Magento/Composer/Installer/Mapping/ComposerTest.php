@@ -30,6 +30,11 @@ use Composer\Package\Package;
  */
 class ComposerTest extends AbstractMappingTest
 {
+    protected function getMappingName()
+    {
+        return 'composer';
+    }
+
     /**
      * provideTestData
      *
@@ -127,13 +132,5 @@ class ComposerTest extends AbstractMappingTest
         );
 
         $this->assertEquals(array(), $mapping->getMappingsArray());
-    }
-
-    protected function getTestPackage($extra)
-    {
-        $package = new Package('test/package', '1.0.0', '1.0.0');
-        $package->setExtra($extra);
-
-        return $package;
     }
 } 

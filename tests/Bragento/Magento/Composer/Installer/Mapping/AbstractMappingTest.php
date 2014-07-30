@@ -14,6 +14,7 @@
 
 namespace Bragento\Test\Magento\Composer\Installer\Mapping;
 use Bragento\Test\Magento\Composer\Installer\AbstractTest;
+use Composer\Package\Package;
 
 /**
  * Class AbstractMappingTest
@@ -27,5 +28,28 @@ use Bragento\Test\Magento\Composer\Installer\AbstractTest;
  */
 abstract class AbstractMappingTest extends AbstractTest
 {
+    abstract protected function getMappingName();
 
+    protected function getMappingsFile($name)
+    {
+        $file = sprintf('files/mappings/%s', $this->getMappingName());
+        return $this->getFs()->getFile(
+            $this->getTestDir($file),
+            $name
+        );
+    }
+
+    protected function copyMappingsFileToBuildDir($name)
+    {
+        $target = sprintf('build/%s', $this->getMappingName());
+        copy($this->getMappingsFile($name), $this->getTestDir($target));
+    }
+
+    protected function getTestPackage($extra = array())
+    {
+        $package = new Package('test/package', '1.0.0', '1.0.0');
+        $package->setExtra($extra);
+
+        return $package;
+    }
 } 

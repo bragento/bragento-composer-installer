@@ -29,7 +29,11 @@ use Composer\Package\Package;
  */
 class ModmanTest extends AbstractMappingTest
 {
-    const MODMAN_TEST_FILE_DIR = 'files/mappings/modman';
+    protected function getMappingName()
+    {
+        return 'modman';
+    }
+
 
     /**
      * testParseCorrectFile
@@ -43,10 +47,10 @@ class ModmanTest extends AbstractMappingTest
      */
     public function testParseCorrectModmanFiles($filename, $mappingsCount)
     {
-        $this->copyModmanFileToBuildDir($filename);
+        $this->copyMappingsFileToBuildDir($filename);
         $mapping = new Modman(
             $this->getBuildDir(),
-            new Package('test/package', '1.0.0', '1.0.0')
+            $this->getTestPackage()
         );
         $this->assertEquals(
             $mappingsCount,
@@ -80,31 +84,11 @@ class ModmanTest extends AbstractMappingTest
      */
     public function testParseErrorModmanFile()
     {
-        $this->copyModmanFileToBuildDir('error');
+        $this->copyMappingsFileToBuildDir('error');
         $modmanMapping = new Modman(
             $this->getBuildDir(),
-            new Package('test/package', '1.0.0', '1.0.0')
+            $this->getTestPackage()
         );
         $modmanMapping->getResolvedMappingsArray();
-    }
-
-    /**
-     * getModmanFile
-     *
-     * @param $name
-     *
-     * @return mixed
-     */
-    protected function getModmanFile($name)
-    {
-        return $this->getFs()->getFile(
-            $this->getTestDir(self::MODMAN_TEST_FILE_DIR),
-            $name
-        );
-    }
-
-    protected function copyModmanFileToBuildDir($name)
-    {
-        copy($this->getModmanFile($name), $this->getTestDir('build/modman'));
     }
 } 
