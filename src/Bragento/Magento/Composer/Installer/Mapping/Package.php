@@ -158,7 +158,8 @@ class Package extends AbstractMapping
     protected function getElementPaths(\SimpleXMLElement $element)
     {
         $type = $element->getName();
-        $name = $element->attributes()->name;
+        $typeAttributes = $element->attributes();
+        $name = $typeAttributes[self::NAME_ATTRIBUTE];
         $elementPaths = array();
 
         switch ($type) {
