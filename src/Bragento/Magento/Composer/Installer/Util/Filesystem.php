@@ -82,6 +82,7 @@ class Filesystem extends \Composer\Util\Filesystem
         } elseif ($path->isDir()) {
             return rmdir($path->getPathname());
         }
+        return false;
     }
 
     /**
@@ -208,6 +209,11 @@ class Filesystem extends \Composer\Util\Filesystem
      *
      * This is utility method for symlink creation.
      * Orig Source: http://stackoverflow.com/a/2638272/485589
+     *
+     * @param string $from
+     * @param string $to
+     *
+     * @return string
      */
     public function getRelativePath($from, $to)
     {
