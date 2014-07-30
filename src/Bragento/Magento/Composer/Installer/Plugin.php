@@ -93,6 +93,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     protected function initEventSubscribers(Composer $composer, IOInterface $io)
     {
         $ed = $composer->getEventDispatcher();
+        $ed->addSubscriber(Deploy\Manager::getInstance());
         $ed->addSubscriber(new Deploy\OutputSubscriber($io));
         $ed->addSubscriber(new Updater\Core());
     }

@@ -68,12 +68,20 @@ class State
     protected $_deployStrategy;
 
     /**
+     * _saveOnDestruct
+     *
+     * @var Boolean
+     */
+    protected $_saveOnDestruct;
+
+    /**
      * load on construct
      *
      * @param AbstractStrategy $strategy
      */
     function __construct(AbstractStrategy $strategy)
     {
+        $this->_saveOnDestruct = true;
         $this->_deployStrategy = $strategy;
         $this->_state = $this->load();
     }
@@ -83,7 +91,9 @@ class State
      */
     function __destruct()
     {
-        $this->_save($this->_state);
+        if ($this->_saveOnDestruct) {
+            $this->_save($this->_state);
+        }
     }
 
     /**
@@ -179,6 +189,7 @@ class State
         if (file_exists($this->getStateFilePath())) {
             unlink($this->getStateFilePath());
         }
+        $this->_saveOnDestruct = false;
     }
 
     /**

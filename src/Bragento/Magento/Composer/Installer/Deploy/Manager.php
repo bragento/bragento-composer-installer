@@ -23,7 +23,11 @@ use Bragento\Magento\Composer\Installer\Exception\NotInitializedException;
 use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Composer;
+use Composer\DependencyResolver\Operation\UninstallOperation;
+use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Package\PackageInterface;
+use Composer\Script\PackageEvent;
+use Composer\Script\ScriptEvents;
 use Symfony\Component\Finder\SplFileInfo;
 
 
@@ -37,7 +41,7 @@ use Symfony\Component\Finder\SplFileInfo;
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
  */
-class Manager
+class Manager implements EventSubscriberInterface
 {
     /**
      * instance
@@ -190,6 +194,28 @@ class Manager
     }
 
     /**
+     * onPostPackageUninstall
+     *
+     * add Entries of uninstalled packages, since they are not
+     * in local repository anymore
+     *
+     * @param PackageEvent $event
+     *
+     * @return void
+     */
+    public function onPostPackageUninstall(PackageEvent $event)
+    {
+        /** @var UninstallOperation $operation */
+        $operation = $event->getOperation();
+        $this->addEntry(
+            $this->getDeployManagerEntry(
+                $operation->getPackage(),
+                Actions::UNINSTALL
+            )
+        );
+    }
+
+    /**
      * getDeployStrategy
      *
      * @param PackageInterface $package
@@ -314,4 +340,28 @@ class Manager
 
         return $this->_fs;
     }
-} 
+
+    /**
+     * Returns an array of event names this subscriber wants to listen to.
+     *
+     * The array keys are event names and the value can be:
+     *
+     * * The method name to call (priority defaults to 0)
+     * * An array composed of the method name to call and the priority
+     * * An array of arrays composed of the method names to call and respective
+     *   priorities, or 0 if unset
+     *
+     * For instance:
+     *
+     * * array('eventName' => 'methodName')
+     * * array('eventName' => array('methodName', $priority))
+     *
+     * @return array The event names to listen to
+     */
+    public static function getSubscribedEvents()
+    {
+        return array(
+            ScriptEvents::POST_PACKAGE_UNINSTALL => 'onPostPackageUninstall'
+        );
+    }
+}
