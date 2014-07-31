@@ -30,6 +30,9 @@
         }
     },
     "extra": {
-        "class": "Bragento\\Magento\\Composer\\Installer\\Plugin"
+        "class": "Bragento\\Magento\\Composer\\Installer\\Plugin",
+        "branch-alias": {
+            "dev-develop": "1.0.x-dev"
+        }
     }
 }
