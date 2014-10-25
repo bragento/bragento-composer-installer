@@ -182,95 +182,23 @@ abstract class AbstractStrategy
     }
 
     /**
-     * makeUpdate
+     * _dispatchPreAction
+     *
+     * @param string $timing pre or post
      *
      * @return void
      */
-    protected function makeUpdate()
+    private function _dispatchActionEvent($timing)
     {
-        $this->makeUninstall();
-        $this->makeInstall();
+        $name = sprintf(
+            "%s-deploy-%s-%s",
+            $timing,
+            $this->getPackage()->getType(),
+            $this->getAction()
+        );
+
+        $this->_dispatchEvent($name);
     }
-
-    /**
-     * makeInstall
-     *
-     * @return void
-     */
-    protected function makeInstall()
-    {
-        $this->createDelegates();
-        $this->getState()->setMapping($this->getMappingsArray());
-        $this->getState()->save();
-    }
-
-    /**
-     * makeUninstall
-     *
-     * @param bool $deleteState
-     *
-     * @return void
-     */
-    protected function makeUninstall($deleteState = false)
-    {
-        $this->removeDelegates();
-        if ($deleteState) {
-            $this->getState()->delete();
-        }
-    }
-
-    /**
-     * createDelegates
-     *
-     * @return void
-     */
-    protected function createDelegates()
-    {
-        try {
-            foreach ($this->getMappingsArray() as $src => $dest) {
-                $this->createDelegate(
-                    $this->getFullPath($this->getSourceDir(), $src),
-                    $this->getFullPath($this->getDestDir(), $dest)
-                );
-            }
-        } catch (Mapping\Exception\MappingException $e) {
-            $this->_io->write(sprintf('<error>%s</error>', $e->getMessage()));
-        }
-    }
-
-    /**
-     * createDelegate
-     *
-     * @param string $src
-     * @param string $dest
-     *
-     * @return void
-     */
-    protected abstract function createDelegate($src, $dest);
-
-    /**
-     * removeDelegates
-     *
-     * @return void
-     */
-    protected function removeDelegates()
-    {
-        if (is_array($this->getDeployedDelegatesMapping())) {
-            foreach ($this->getDeployedDelegatesMapping() as $delegate) {
-                $filePath = $this->getFullPath($this->getDestDir(), $delegate);
-                $this->removeDelegate($filePath);
-            }
-        }
-    }
-
-    /**
-     * removeDelegate
-     *
-     * @param string $delegate
-     *
-     * @return void
-     */
-    protected abstract function removeDelegate($delegate);
 
     /**
      * getPackage
@@ -283,26 +211,6 @@ abstract class AbstractStrategy
     }
 
     /**
-     * getSourceDir
-     *
-     * @return SplFileInfo
-     */
-    protected function getSourceDir()
-    {
-        return $this->_sourceDir;
-    }
-
-    /**
-     * getDestDir
-     *
-     * @return SplFileInfo
-     */
-    protected function getDestDir()
-    {
-        return $this->_destDir;
-    }
-
-    /**
      * getAction
      *
      * @return string
@@ -310,66 +218,6 @@ abstract class AbstractStrategy
     protected function getAction()
     {
         return $this->_action;
-    }
-
-    /**
-     * getEventDispatcher
-     *
-     * @return EventDispatcher
-     */
-    protected function getEventDispatcher()
-    {
-        return $this->_eventDispatcher;
-    }
-
-    /**
-     * getIo
-     *
-     * @return IOInterface
-     */
-    protected function getIo()
-    {
-        return $this->_io;
-    }
-
-    /**
-     * getComposer
-     *
-     * @return Composer
-     */
-    protected function getComposer()
-    {
-        return $this->_composer;
-    }
-
-    /**
-     * getFs
-     *
-     * @return Filesystem
-     */
-    protected function getFs()
-    {
-        return $this->_fs;
-    }
-
-    /**
-     * getState
-     *
-     * @return State
-     */
-    protected function getState()
-    {
-        return $this->_state;
-    }
-
-    /**
-     * getMappingsArray
-     *
-     * @return array
-     */
-    protected function getMappingsArray()
-    {
-        return $this->getMapping()->getResolvedMappingsArray();
     }
 
     /**
@@ -401,22 +249,94 @@ abstract class AbstractStrategy
     }
 
     /**
-     * _dispatchPreAction
+     * getSourceDir
      *
-     * @param string $timing pre or post
+     * @return SplFileInfo
+     */
+    protected function getSourceDir()
+    {
+        return $this->_sourceDir;
+    }
+
+    /**
+     * getDestDir
+     *
+     * @return SplFileInfo
+     */
+    protected function getDestDir()
+    {
+        return $this->_destDir;
+    }
+
+    /**
+     * getComposer
+     *
+     * @return Composer
+     */
+    protected function getComposer()
+    {
+        return $this->_composer;
+    }
+
+    /**
+     * getIo
+     *
+     * @return IOInterface
+     */
+    protected function getIo()
+    {
+        return $this->_io;
+    }
+
+    /**
+     * getEventDispatcher
+     *
+     * @return EventDispatcher
+     */
+    protected function getEventDispatcher()
+    {
+        return $this->_eventDispatcher;
+    }
+
+    /**
+     * makeInstall
      *
      * @return void
      */
-    private function _dispatchActionEvent($timing)
+    protected function makeInstall()
     {
-        $name = sprintf(
-            "%s-deploy-%s-%s",
-            $timing,
-            $this->getPackage()->getType(),
-            $this->getAction()
-        );
+        $this->createDelegates();
+        $this->getState()->setMapping($this->getMappingsArray());
+        $this->getState()->save();
+    }
 
-        $this->_dispatchEvent($name);
+    /**
+     * createDelegates
+     *
+     * @return void
+     */
+    protected function createDelegates()
+    {
+        try {
+            foreach ($this->getMappingsArray() as $src => $dest) {
+                $this->createDelegate(
+                    $this->getFullPath($this->getSourceDir(), $src),
+                    $this->getFullPath($this->getDestDir(), $dest)
+                );
+            }
+        } catch (Mapping\Exception\MappingException $e) {
+            $this->_io->write(sprintf('<error>%s</error>', $e->getMessage()));
+        }
+    }
+
+    /**
+     * getMappingsArray
+     *
+     * @return array
+     */
+    protected function getMappingsArray()
+    {
+        return $this->getMapping()->getResolvedMappingsArray();
     }
 
     /**
@@ -437,6 +357,91 @@ abstract class AbstractStrategy
     }
 
     /**
+     * createDelegate
+     *
+     * @param string $src
+     * @param string $dest
+     *
+     * @return void
+     */
+    protected abstract function createDelegate($src, $dest);
+
+    /**
+     * getFullSrc
+     *
+     * @param SplFileInfo $base
+     * @param string      $path
+     *
+     * @return string
+     */
+    protected function getFullPath($base, $path)
+    {
+        return $this->getFs()
+            ->joinFileUris($base->getPathname(), $path);
+    }
+
+    /**
+     * getFs
+     *
+     * @return Filesystem
+     */
+    protected function getFs()
+    {
+        return $this->_fs;
+    }
+
+    /**
+     * getState
+     *
+     * @return State
+     */
+    protected function getState()
+    {
+        return $this->_state;
+    }
+
+    /**
+     * makeUpdate
+     *
+     * @return void
+     */
+    protected function makeUpdate()
+    {
+        $this->makeUninstall();
+        $this->makeInstall();
+    }
+
+    /**
+     * makeUninstall
+     *
+     * @param bool $deleteState
+     *
+     * @return void
+     */
+    protected function makeUninstall($deleteState = false)
+    {
+        $this->removeDelegates();
+        if ($deleteState) {
+            $this->getState()->delete();
+        }
+    }
+
+    /**
+     * removeDelegates
+     *
+     * @return void
+     */
+    protected function removeDelegates()
+    {
+        if (is_array($this->getDeployedDelegatesMapping())) {
+            foreach ($this->getDeployedDelegatesMapping() as $delegate) {
+                $filePath = $this->getFullPath($this->getDestDir(), $delegate);
+                $this->removeDelegate($filePath);
+            }
+        }
+    }
+
+    /**
      * getCurrentDeployedMapping
      *
      * @return array
@@ -451,16 +456,11 @@ abstract class AbstractStrategy
     }
 
     /**
-     * getFullSrc
+     * removeDelegate
      *
-     * @param SplFileInfo $base
-     * @param string $path
+     * @param string $delegate
      *
-     * @return string
+     * @return void
      */
-    protected function getFullPath($base, $path)
-    {
-        return $this->getFs()
-            ->joinFileUris($base->getPathname(), $path);
-    }
+    protected abstract function removeDelegate($delegate);
 } 

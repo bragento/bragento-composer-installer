@@ -1,5 +1,5 @@
 <?php
- /**
+/**
  * Actions.php
  *
  * PHP Version 5
@@ -27,7 +27,7 @@ namespace Bragento\Magento\Composer\Installer\Deploy\Manager;
  */
 final class Actions
 {
-    const INSTALL   = 'install';
-    const UPDATE    = 'update';
+    const INSTALL = 'install';
+    const UPDATE = 'update';
     const UNINSTALL = 'uninstall';
 } 

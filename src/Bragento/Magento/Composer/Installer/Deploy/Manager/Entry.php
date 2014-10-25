@@ -44,8 +44,7 @@ class Entry
      */
     function __construct(
         AbstractStrategy $deployStrategy
-    )
-    {
+    ) {
         $this->_deployStrategy = $deployStrategy;
     }
 

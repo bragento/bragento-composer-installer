@@ -17,8 +17,8 @@
         "composer-plugin-api": "1.0.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~3.7",
-        "composer/composer": "~1.0",
+        "phpunit/phpunit": "@stable",
+        "composer/composer": "~1",
         "codeclimate/php-test-reporter": "~0.1"
     },
     "replace": {

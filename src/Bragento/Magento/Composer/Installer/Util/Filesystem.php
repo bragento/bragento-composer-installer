@@ -180,7 +180,6 @@ class Filesystem extends \Composer\Util\Filesystem
     {
         $this->ensureDirectoryExists(dirname($dest));
 
-        // Windows doesn't allow relative symlinks
         if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
             // get relative path to cwd
             $src = str_replace(getcwd() . DIRECTORY_SEPARATOR, '', $src);
@@ -216,25 +215,16 @@ class Filesystem extends \Composer\Util\Filesystem
      */
     public function getRelativePath($from, $to)
     {
-        // Can't use realpath() here since the destination doesn't exist yet
-        $from = str_replace(array('/./', '//'), '/', $from);
-        $from = explode('/', $from);
-
-        $to = str_replace(array('/./', '//'), '/', $to);
-        $to = explode('/', $to);
+        $from = $this->getPathParts($from);
+        $to = $this->getPathParts($to);
 
         $relPath = $to;
-
         foreach ($from as $depth => $dir) {
-            // find first non-matching dir
             if ($dir === $to[$depth]) {
-                // ignore this directory
                 array_shift($relPath);
             } else {
-                // get number of remaining dirs to $from
                 $remaining = count($from) - $depth;
                 if ($remaining > 1) {
-                    // add traversals up to first matching dir
                     $padLength = (count($relPath) + $remaining - 1) * -1;
                     $relPath = array_pad($relPath, $padLength, '..');
                     break;
@@ -244,6 +234,16 @@ class Filesystem extends \Composer\Util\Filesystem
             }
         }
         return implode('/', $relPath);
+    }
+
+    /**
+     * @param $path
+     *
+     * @return array
+     */
+    public function getPathParts($path)
+    {
+        return explode('/', str_replace(array('/./', '//'), '/', $path));
     }
 
     /**
