@@ -178,6 +178,7 @@ class Filesystem extends \Composer\Util\Filesystem
      */
     public function symlink($src, $dest)
     {
+        $dest = rtrim($dest, '/\\');
         $this->ensureDirectoryExists(dirname($dest));
 
         if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
