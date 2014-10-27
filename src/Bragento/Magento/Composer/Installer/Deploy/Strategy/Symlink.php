@@ -1,5 +1,5 @@
 <?php
- /**
+/**
  * Symlink.php
  *
  * PHP Version 5
@@ -37,6 +37,16 @@ class Symlink extends AbstractStrategy
      */
     protected function createDelegate($src, $dest)
     {
+        if ($this->getIo()->isDebug()) {
+            $this->getIo()->write(
+                sprintf(
+                    "create symlink\nsrc:  %s\ndest: %s",
+                    $src,
+                    $dest
+                )
+            );
+        }
+
         $this->getFs()->ensureDirectoryExists(dirname($dest));
         $this->getFs()->symlink($src, $dest);
     }
