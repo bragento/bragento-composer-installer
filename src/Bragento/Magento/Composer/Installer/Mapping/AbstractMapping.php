@@ -98,14 +98,18 @@ abstract class AbstractMapping
     {
         $translatedMap = array();
         foreach ($mappings as $src => $dest) {
-            if (String::endsWith($src, '*')) {
+            if (String::contains($src, '*')) {
                 $glob = $this->getModuleDir() . DIRECTORY_SEPARATOR . $src;
                 foreach (glob($glob) as $file) {
-                    $newSrc = rtrim($src, '*') . basename($file);
+                    $newSrcParts = explode('/', $file);
+                    foreach (explode('/', $this->getModuleDir()) as $part) {
+                        array_shift($newSrcParts);
+                    }
+                    $newSrc = implode('/', $newSrcParts);
                     $newDest = ltrim($dest . basename($file), '/\\');
                     $translatedMap[$newSrc] = $newDest;
                 }
-            } elseif (String::endsWith($dest, '/')) {
+            } elseif (String::endsWith($dest, '/') && is_file($src)) {
                 $translatedMap[$src] = sprintf(
                     '%s/%s',
                     $dest,

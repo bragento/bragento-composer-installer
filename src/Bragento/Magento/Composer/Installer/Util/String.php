@@ -54,4 +54,15 @@ class String
         || substr($haystack, -strlen($needle)) === $needle;
     }
 
+    /**
+     * @param $haystack
+     * @param $needle
+     *
+     * @return bool
+     */
+    public static function contains($haystack, $needle)
+    {
+        return strpos($haystack, $needle) !== false;
+    }
+
 } 

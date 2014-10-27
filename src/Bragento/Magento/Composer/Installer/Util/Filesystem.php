@@ -35,6 +35,19 @@ class Filesystem extends \Composer\Util\Filesystem
     const DS = DIRECTORY_SEPARATOR;
 
     /**
+     * emptyDir
+     *
+     * @param string $dir dir path to empty
+     *
+     * @return void
+     */
+    public function emptyDir($dir)
+    {
+        $this->rremove($dir);
+        $this->ensureDirectoryExists($dir);
+    }
+
+    /**
      * rrmdir
      *
      * @param string $dirPath path of the dir to recursively remove
@@ -98,19 +111,6 @@ class Filesystem extends \Composer\Util\Filesystem
         }
 
         return false;
-    }
-
-    /**
-     * emptyDir
-     *
-     * @param string $dir dir path to empty
-     *
-     * @return void
-     */
-    public function emptyDir($dir)
-    {
-        $this->rremove($dir);
-        $this->ensureDirectoryExists($dir);
     }
 
     /**
@@ -243,6 +243,7 @@ class Filesystem extends \Composer\Util\Filesystem
      */
     public function getPathParts($path)
     {
+        $path = trim(trim($path, '/\\'));
         return explode('/', str_replace(array('/./', '//'), '/', $path));
     }
 
