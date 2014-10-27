@@ -75,21 +75,6 @@ abstract class AbstractMapping
         $this->_package = $package;
     }
 
-
-    /**
-     * getMappingsArray
-     *
-     * @return array
-     */
-    public function getMappingsArray()
-    {
-        if (null === $this->_mappingsArray) {
-            $this->_mappingsArray = $this->parseMappings();
-        }
-
-        return $this->_mappingsArray;
-    }
-
     /**
      * getTranslatedMappingsArray
      *
@@ -101,51 +86,6 @@ abstract class AbstractMapping
     {
         return $this->resolveMappings($this->getMappingsArray());
     }
-
-    /**
-     * getFs
-     *
-     * @return Filesystem
-     */
-    protected function getFs()
-    {
-        return $this->_fs;
-    }
-
-    /**
-     * getModuleDir
-     *
-     * @return SplFileInfo
-     */
-    protected function getModuleDir()
-    {
-        return $this->_moduleDir;
-    }
-
-    /**
-     * getPackage
-     *
-     * @return PackageInterface
-     */
-    protected function getPackage()
-    {
-        return $this->_package;
-    }
-
-
-    /**
-     * _pathMappingTranslations
-     *
-     * get the mappings from the source and return them
-     *
-     * * $example = array(
-     * *    $source1 => $target1,
-     * *    $source2 => target2
-     * * )
-     *
-     * @return array
-     */
-    abstract protected function parseMappings();
 
     /**
      * translateMappings
@@ -165,11 +105,75 @@ abstract class AbstractMapping
                     $newDest = ltrim($dest . basename($file), '/\\');
                     $translatedMap[$newSrc] = $newDest;
                 }
+            } elseif (String::endsWith($dest, '/')) {
+                $translatedMap[$src] = sprintf(
+                    '%s/%s',
+                    $dest,
+                    basename($src)
+                );
             } else {
                 $translatedMap[$src] = $dest;
             }
         }
 
         return $translatedMap;
+    }
+
+    /**
+     * getModuleDir
+     *
+     * @return SplFileInfo
+     */
+    protected function getModuleDir()
+    {
+        return $this->_moduleDir;
+    }
+
+    /**
+     * getMappingsArray
+     *
+     * @return array
+     */
+    public function getMappingsArray()
+    {
+        if (null === $this->_mappingsArray) {
+            $this->_mappingsArray = $this->parseMappings();
+        }
+
+        return $this->_mappingsArray;
+    }
+
+    /**
+     * _pathMappingTranslations
+     *
+     * get the mappings from the source and return them
+     *
+     * * $example = array(
+     * *    $source1 => $target1,
+     * *    $source2 => target2
+     * * )
+     *
+     * @return array
+     */
+    abstract protected function parseMappings();
+
+    /**
+     * getFs
+     *
+     * @return Filesystem
+     */
+    protected function getFs()
+    {
+        return $this->_fs;
+    }
+
+    /**
+     * getPackage
+     *
+     * @return PackageInterface
+     */
+    protected function getPackage()
+    {
+        return $this->_package;
     }
 } 
