@@ -5,7 +5,7 @@
     "minimum-stability": "dev",
     "type": "composer-plugin",
     "license": "OSL-3.0",
-    "homepage": "https://github.com/bragento/magento-composer-installer",
+    "homepage": "https://github.com/bragento/bragento-composer-installer",
     "authors": [
         {
             "name": "David Verholen",
