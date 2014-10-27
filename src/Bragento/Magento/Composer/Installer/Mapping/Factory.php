@@ -46,12 +46,12 @@ class Factory
         SplFileInfo $moduleDir
     ) {
         $fs = new Filesystem();
-        if (self::isModman($moduleDir, $fs)) {
+        if (self::hasComposerMap($package)) {
+            return new Composer($moduleDir, $package);
+        } elseif (self::isModman($moduleDir, $fs)) {
             return new Modman($moduleDir, $package);
         } elseif (self::isPackage($moduleDir, $fs)) {
             return new Package($moduleDir, $package);
-        } elseif (self::hasComposerMap($package)) {
-            return new Composer($moduleDir, $package);
         } else {
             throw new MappingNotFoundException($package);
         }
