@@ -1,0 +1,22 @@
+{
+    "minimum-stability": "stable",
+    "require": {
+        "bragento/magento-composer-installer": "*@dev",
+        "connect20/mage_all_latest": "*"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://packages.firegento.com"
+        }, {
+            "type": "vcs",
+            "url": "https://github.com/bragento/bragento-composer-installer"
+        }
+    ],
+    "extra": {
+        "magento-deploysttrategy": "copy",
+        "magento-force": "override",
+        "magento-root-dir": "web/",
+        "auto-append-gitignore": true
+    }
+}
