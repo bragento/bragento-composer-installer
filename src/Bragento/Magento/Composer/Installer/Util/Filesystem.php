@@ -187,19 +187,18 @@ class Filesystem extends \Composer\Util\Filesystem
             $src = $this->getRelativePath($dest, $src);
         }
 
-        $target = rtrim($dest, '\\/');
-        if (file_exists($target)) {
-            if (is_link($target)) {
+        if (file_exists($dest)) {
+            if (is_link($dest)) {
                 if (realpath(readlink($dest)) == realpath($src)) {
                     return true;
                 } else {
-                    unlink($target);
-                    return symlink($src, $target);
+                    unlink($dest);
+                    return symlink($src, $dest);
                 }
             }
             return false;
         } else {
-            return symlink($src, $target);
+            return symlink($src, $dest);
         }
     }
 
