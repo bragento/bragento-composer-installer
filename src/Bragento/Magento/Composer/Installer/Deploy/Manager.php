@@ -258,7 +258,7 @@ class Manager implements EventSubscriberInterface
      */
     public function isUndeployedPackage(PackageInterface $package)
     {
-        return $this->getFs()->exists($this->getStateFilePath($package));
+        return false === $this->getFs()->exists($this->getStateFilePath($package));
     }
 
     /**
