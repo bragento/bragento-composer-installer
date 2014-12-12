@@ -90,19 +90,7 @@ class Validate implements EventSubscriberInterface
                 $deployedFile = $this->getFs()
                     ->joinFileUris($root, $destination);
 
-                if (file_exists($deployedFile)) {
-                    if (is_link($deployedFile)) {
-                        if (!readlink($deployedFile)) {
-                            $this->getIo()->write(
-                                sprintf(
-                                    '<error>symlink broken: %s</error>',
-                                    $deployedFile
-                                )
-                            );
-                            $errors++;
-                        }
-                    }
-                } else {
+                if (!file_exists($deployedFile)) {
                     $this->getIo()->write(
                         sprintf(
                             '<error>file not found: %s</error>',
