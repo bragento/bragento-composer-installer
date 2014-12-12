@@ -102,7 +102,7 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      *
      * @return void
      */
-    public function copy($srcPath, $destPath)
+    public function copy($srcPath, $destPath, $override = false)
     {
         $srcPath = $this->normalizePath($srcPath);
         $destPath = $this->normalizePath($destPath);
@@ -122,12 +122,13 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
 
             foreach ($it as $src => $object) {
                 if (is_file($src)) {
-                    $this->copy(
+                    parent::copy(
                         $src,
                         $this->joinFileUris(
                             $destPath,
                             $this->rmAbsPathPart($src, $srcPath)
-                        )
+                        ),
+                        $override
                     );
                 } elseif (is_dir($src)) {
                     $this->mkdir(
@@ -139,7 +140,7 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
                 }
             }
         } else {
-            parent::copy($srcPath, $destPath, true);
+            parent::copy($srcPath, $destPath, $override);
         }
     }
 
