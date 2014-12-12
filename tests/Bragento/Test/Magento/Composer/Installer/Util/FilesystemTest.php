@@ -10,8 +10,6 @@ namespace Bragento\Test\Magento\Composer\Installer\Util;
 
 class FilesystemTest extends FilesystemDataProvider
 {
-    protected $_originalCwd;
-
     /**
      * testJoinFilePath
      *
@@ -38,25 +36,21 @@ class FilesystemTest extends FilesystemDataProvider
      */
     protected function getTestObject()
     {
-        return $this->getFs();
+        return $this->getFilesystem();
     }
 
     /**
      * @dataProvider provideSymlinkTestFiles
      */
-    public function testCreateSymlinks($src, $dest)
+    public function testCreateSymlinks($source, $destination)
     {
-        $this->_originalCwd = getcwd();
-        chdir($this->getBuildDir());
-
-        $this->createTestFile($src);
-        $this->getTestObject()->symlink($src, $dest);
+        $this->toBuildDir();
+        $this->createTestFile($source);
+        $this->getTestObject()->symlink($source, $destination);
 
         $this->assertEquals(
-            $this->getAbsPath($src),
-            $this->getAbsPath($dest)
+            $this->getAbsPath($source),
+            $this->getAbsPath($destination)
         );
-
-        chdir($this->_originalCwd);
     }
-} 
+}

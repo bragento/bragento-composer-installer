@@ -38,14 +38,14 @@ class OutputSubscriber implements EventSubscriberInterface
      *
      * @var IOInterface
      */
-    protected $_io;
+    protected $io;
 
     /**
      * @param IOInterface $io
      */
     public function __construct(IOInterface $io)
     {
-        $this->_io = $io;
+        $this->io = $io;
     }
 
     /**
@@ -92,7 +92,6 @@ class OutputSubscriber implements EventSubscriberInterface
     public function onPreDeploy(PackageEvent $event)
     {
         $operation = $event->getOperation();
-        $this->_io->write(sprintf("<info>%s</info>", $operation));
+        $this->io->write(sprintf("<info>%s</info>", $operation));
     }
-
-} 
+}

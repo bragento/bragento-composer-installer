@@ -133,7 +133,7 @@ class Core implements EventSubscriberInterface
             if (file_exists($this->getBackupSubDir($dir))) {
                 if (file_exists($this->getMagentoSubDir($dir))) {
                     if (is_dir($this->getMagentoSubDir($dir))) {
-                        $this->getFs()->rremove(
+                        $this->getFs()->remove(
                             $this->getMagentoSubDir($dir)
                         );
                     } else {
@@ -146,7 +146,7 @@ class Core implements EventSubscriberInterface
                 );
             }
         }
-        $this->getFs()->rremove($this->_backupDir);
+        $this->getFs()->remove($this->_backupDir);
     }
 
     /**

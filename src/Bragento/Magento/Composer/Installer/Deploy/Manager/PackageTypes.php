@@ -30,4 +30,4 @@ final class PackageTypes
     const MAGENTO_MODULE = 'magento-module';
     const MAGENTO_CORE = 'magento-core';
     const MAGENTO_THEME = 'magento-theme';
-} 
+}

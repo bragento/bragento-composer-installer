@@ -33,7 +33,7 @@ abstract class AbstractMappingTest extends AbstractTest
     protected function getMappingsFile($name)
     {
         $file = sprintf('files/mappings/%s', $this->getMappingName());
-        return $this->getFs()->getFile(
+        return $this->getFilesystem()->getFile(
             $this->getTestDir($file),
             $name
         );

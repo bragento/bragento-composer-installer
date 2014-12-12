@@ -42,76 +42,42 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      *
      * @return void
      */
-    public function emptyDir($dir)
+    public function emptyDirectory($dir)
     {
-        $this->rremove($dir);
+        $this->remove($dir);
         $this->ensureDirectoryExists($dir);
     }
 
     /**
      * rrmdir
      *
-     * @param string $dirPath path of the dir to recursively remove
+     * @param string $path path of the file or dir to remove
      *
-     * @return bool
+     * @return void
      */
-    public function rremove($dirPath)
+    public function remove($path)
     {
-        if (false === file_exists($dirPath)) {
-            return false;
+        if (false === file_exists($path)) {
+            return;
         }
 
-        if (is_file($dirPath) || is_link($dirPath)) {
-            return unlink($dirPath);
-        }
-
-        $dirIt = new \RecursiveDirectoryIterator(
-            $dirPath,
-            \FilesystemIterator::SKIP_DOTS
-        );
-
-        $rIt = new \RecursiveIteratorIterator(
-            $dirIt,
-            \RecursiveIteratorIterator::CHILD_FIRST
-        );
-
-        foreach ($rIt as $path) {
-            $this->rm($path);
-        }
-
-        return rmdir($dirPath);
-    }
-
-    /**
-     * rm
-     *
-     * @param \SplFileInfo $path
-     *
-     * @return boolean
-     */
-    public function rm(\SplFileInfo $path)
-    {
-        if (false === $this->rmIfLinkOrFile($path->getPathname())) {
-            return rmdir($path->getPathname());
-        }
-
-        return true;
-    }
-
-    /**
-     * rmIfLinkOrFile
-     *
-     * @param string $path
-     *
-     * @return bool
-     */
-    public function rmIfLinkOrFile($path)
-    {
         if (is_file($path) || is_link($path)) {
-            return unlink($path);
-        }
+            parent::remove($path);
+        } else {
+            $it = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator(
+                    $path,
+                    RecursiveDirectoryIterator::SKIP_DOTS
+                ),
+                RecursiveIteratorIterator::CHILD_FIRST
+            );
 
-        return false;
+            foreach ($it as $subPath) {
+                parent::remove($subPath);
+            }
+
+            parent::remove($path);
+        }
     }
 
     /**
@@ -123,11 +89,9 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      */
     public function ensureDirectoryExists($dir)
     {
-        if ($this->exists($dir)) {
-            return;
+        if (!$this->exists($dir)) {
+            $this->mkdir($dir);
         }
-
-        $this->mkdir($dir);
     }
 
     /**
@@ -138,19 +102,44 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      *
      * @return void
      */
-    public function rcopy($srcPath, $destPath)
+    public function copy($srcPath, $destPath)
     {
         $srcPath = $this->normalizePath($srcPath);
         $destPath = $this->normalizePath($destPath);
 
-        if (String::endsWith($destPath, DIRECTORY_SEPARATOR)) {
+        if (String::endsWith($destPath, self::DS)) {
             $destPath .= basename($srcPath);
         }
 
         if (is_dir($srcPath)) {
-            $this->copyDir($srcPath, $destPath);
+            $it = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator(
+                    $srcPath,
+                    RecursiveDirectoryIterator::SKIP_DOTS
+                ),
+                RecursiveIteratorIterator::SELF_FIRST
+            );
+
+            foreach ($it as $src => $object) {
+                if (is_file($src)) {
+                    $this->copy(
+                        $src,
+                        $this->joinFileUris(
+                            $destPath,
+                            $this->rmAbsPathPart($src, $srcPath)
+                        )
+                    );
+                } elseif (is_dir($src)) {
+                    $this->mkdir(
+                        $this->joinFileUris(
+                            $destPath,
+                            $this->rmAbsPathPart($src, $srcPath)
+                        )
+                    );
+                }
+            }
         } else {
-            $this->copy($srcPath, $destPath, true);
+            parent::copy($srcPath, $destPath, true);
         }
     }
 
@@ -165,53 +154,16 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
     {
         $path = str_replace(
             array('/./', '\\.\\', '\\'),
-            DIRECTORY_SEPARATOR,
+            self::DS,
             $path
         );
 
+        $doubleDs = self::DS . self::DS;
         do {
-            $path = str_replace('//', '/', $path);
-        } while (strpos($path, '//'));
+            $path = str_replace($doubleDs, self::DS, $path);
+        } while (strpos($path, $doubleDs));
 
         return $path;
-    }
-
-    /**
-     * copyDir
-     *
-     * @param $srcPath
-     * @param $destPath
-     *
-     * @return void
-     */
-    public function copyDir($srcPath, $destPath)
-    {
-        $it = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator(
-                $srcPath,
-                RecursiveDirectoryIterator::SKIP_DOTS
-            ),
-            RecursiveIteratorIterator::SELF_FIRST
-        );
-
-        foreach ($it as $src => $object) {
-            if (is_file($src)) {
-                $this->copy(
-                    $src,
-                    $this->joinFileUris(
-                        $destPath,
-                        $this->rmAbsPathPart($src, $srcPath)
-                    )
-                );
-            } elseif (is_dir($src)) {
-                $this->mkdir(
-                    $this->joinFileUris(
-                        $destPath,
-                        $this->rmAbsPathPart($src, $srcPath)
-                    )
-                );
-            }
-        }
     }
 
     /**
@@ -224,16 +176,17 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      */
     public function joinFileUris($path, $name)
     {
-        $prefix = $this->startsWithDs($path) ? DIRECTORY_SEPARATOR : '';
-        $suffix = $this->endsWithDs($name) ? DIRECTORY_SEPARATOR : '';
-
-        return $prefix . implode(
-            DIRECTORY_SEPARATOR,
-            array_merge(
-                $this->getPathParts($path),
-                $this->getPathParts($name)
-            )
-        ) . $suffix;
+        $prefix = $this->startsWithDs($path) ? self::DS : '';
+        $suffix = $this->endsWithDs($name) ? self::DS : '';
+        return $this->normalizePath(
+            $prefix . implode(
+                self::DS,
+                array_merge(
+                    $this->getPathParts($path),
+                    $this->getPathParts($name)
+                )
+            ) . $suffix
+        );
     }
 
     /**
@@ -294,37 +247,37 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
             $this->normalizePath($path)
         );
 
-        foreach (
-            $this->getPathParts(
-                $this->normalizePath($root)
-            ) as $rootPart
-        ) {
+        foreach ($this->getPathParts($this->normalizePath($root)) as $rootPart) {
             if (count($pathParts) && $rootPart === $pathParts[0]) {
                 array_shift($pathParts);
             }
         }
 
-        return implode(DIRECTORY_SEPARATOR, $pathParts);
+        return implode(self::DS, $pathParts);
     }
 
     /**
      * symlink
      *
-     * @param string $src
-     * @param string $dest
+     * @param string $source
+     * @param string $destination
+     * @param bool   $copyOnWindows
      *
      * @return bool
      */
-    public function symlink($src, $dest, $copyOnWindows = true)
+    public function symlink($source, $destination, $copyOnWindows = true)
     {
-        $src = $this->normalizePath($src);
-        $dest = $this->normalizePath($dest);
+        $source = $this->normalizePath($source);
+        $destination = $this->normalizePath($destination);
 
-        if ($this->endsWithDs($dest)) {
-            $dest = rtrim($dest, DIRECTORY_SEPARATOR);
+        if ($this->endsWithDs($destination)) {
+            $destination = rtrim($destination, self::DS);
         }
+
         parent::symlink(
-            $this->getRelativePath($dest, $src), $dest, $copyOnWindows
+            $this->getRelativePath($destination, $source),
+            $destination,
+            $copyOnWindows
         );
     }
 
@@ -360,18 +313,6 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
             }
         }
         return implode('/', $relPath);
-    }
-
-    /**
-     * removeSymlink
-     *
-     * @param string $link
-     *
-     * @return void
-     */
-    public function removeSymlink($link)
-    {
-        parent::remove($link);
     }
 
     /**
@@ -419,4 +360,4 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
 
         return null;
     }
-} 
+}

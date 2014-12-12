@@ -14,7 +14,6 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
-
 /**
  * Class Symlink
  *
@@ -60,7 +59,7 @@ class Symlink extends AbstractStrategy
      */
     protected function removeDelegate($delegate)
     {
-        $this->getFs()->removeSymlink($delegate);
+        $this->getFs()->remove($delegate);
     }
 
-} 
+}

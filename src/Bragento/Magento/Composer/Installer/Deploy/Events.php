@@ -47,4 +47,7 @@ final class Events
     const POST_DEPLOY_THEME_UPDATE = 'post-deploy-magento-theme-update';
     const PRE_DEPLOY_THEME_UNINSTALL = 'pre-deploy-magento-theme-uninstall';
     const POST_DEPLOY_THEME_UNINSTALL = 'post-deploy-magento-theme-uninstall';
-} 
+
+    const PRE_DEPLOY = 'pre-deploy-magento';
+    const POST_DEPLOY = 'post-deploy-magento';
+}

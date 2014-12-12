@@ -44,55 +44,55 @@ class State
      *
      * @var Filesystem
      */
-    protected $_fs;
+    protected $fs;
 
     /**
      * _state
      *
      * @var array
      */
-    protected $_state;
+    protected $state;
 
     /**
      * package
      *
      * @var PackageInterface
      */
-    protected $_package;
+    protected $package;
 
     /**
      * _deployStrategy
      *
      * @var AbstractStrategy
      */
-    protected $_deployStrategy;
+    protected $deployStrategy;
 
     /**
      * _saveOnDestruct
      *
      * @var Boolean
      */
-    protected $_saveOnDestruct;
+    protected $saveOnDestruct;
 
     /**
      * load on construct
      *
      * @param AbstractStrategy $strategy
      */
-    function __construct(AbstractStrategy $strategy)
+    public function __construct(AbstractStrategy $strategy)
     {
-        $this->_saveOnDestruct = true;
-        $this->_deployStrategy = $strategy;
-        $this->_state = $this->load();
+        $this->saveOnDestruct = true;
+        $this->deployStrategy = $strategy;
+        $this->state = $this->load($this->getPackage());
     }
 
     /**
      * save on destruct
      */
-    function __destruct()
+    public function __destruct()
     {
-        if ($this->_saveOnDestruct) {
-            $this->_save($this->_state);
+        if ($this->saveOnDestruct) {
+            $this->persist($this->state);
         }
     }
 
@@ -128,7 +128,7 @@ class State
      */
     protected function set($key, $value)
     {
-        $this->_state[$key] = $value;
+        $this->state[$key] = $value;
     }
 
     /**
@@ -140,8 +140,8 @@ class State
      */
     protected function get($key)
     {
-        return isset($this->_state[$key])
-            ? $this->_state[$key]
+        return isset($this->state[$key])
+            ? $this->state[$key]
             : null;
     }
 
@@ -152,7 +152,7 @@ class State
      *
      * @return void
      */
-    protected function _save(array $state)
+    protected function persist(array $state)
     {
         $this->getFs()->ensureDirectoryExists(
             dirname($this->getStateFilePath())
@@ -176,7 +176,7 @@ class State
      */
     public function save()
     {
-        $this->_save($this->_state);
+        $this->persist($this->state);
     }
 
     /**
@@ -189,7 +189,7 @@ class State
         if (file_exists($this->getStateFilePath())) {
             unlink($this->getStateFilePath());
         }
-        $this->_saveOnDestruct = false;
+        $this->saveOnDestruct = false;
     }
 
     /**
@@ -197,12 +197,13 @@ class State
      *
      * @return array
      */
-    protected function load()
+    public static function load(PackageInterface $package)
     {
-        if (file_exists($this->getStateFilePath())) {
+        $stateFilePath = Manager::getInstance()->getStateFilePath($package);
+        if (file_exists($stateFilePath)) {
             return (array)json_decode(
                 file_get_contents(
-                    $this->getStateFilePath()
+                    $stateFilePath
                 )
             );
         }
@@ -217,11 +218,11 @@ class State
      */
     protected function getFs()
     {
-        if (null === $this->_fs) {
-            $this->_fs = new Filesystem();
+        if (null === $this->fs) {
+            $this->fs = new Filesystem();
         }
 
-        return $this->_fs;
+        return $this->fs;
     }
 
     /**
@@ -231,15 +232,7 @@ class State
      */
     protected function getStateFilePath()
     {
-        $mappingsDir = $this->getFs()->joinFileUris(
-            Config::getInstance()->getVendorDir(),
-            self::STATE_DIR
-        );
-
-        return $this->getFs()->joinFileUris(
-            $mappingsDir,
-            str_replace('/', '_', $this->getPackage()->getName())
-        );
+        return Manager::getInstance()->getStateFilePath($this->getPackage());
     }
 
     /**
@@ -249,10 +242,10 @@ class State
      */
     protected function getPackage()
     {
-        if (null === $this->_package) {
-            $this->_package = $this->getDeployStrategy()->getPackage();
+        if (null === $this->package) {
+            $this->package = $this->getDeployStrategy()->getPackage();
         }
-        return $this->_package;
+        return $this->package;
     }
 
     /**
@@ -262,6 +255,6 @@ class State
      */
     protected function getDeployStrategy()
     {
-        return $this->_deployStrategy;
+        return $this->deployStrategy;
     }
-} 
+}

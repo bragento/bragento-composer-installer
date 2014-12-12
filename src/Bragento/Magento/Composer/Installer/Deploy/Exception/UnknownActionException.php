@@ -28,4 +28,4 @@ namespace Bragento\Magento\Composer\Installer\Deploy\Exception;
 class UnknownActionException extends \Exception
 {
 
-} 
+}

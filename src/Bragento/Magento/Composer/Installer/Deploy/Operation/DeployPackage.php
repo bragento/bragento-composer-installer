@@ -29,35 +29,35 @@ use Symfony\Component\Finder\SplFileInfo;
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
  */
-class Deploy implements OperationInterface
+class DeployPackage implements OperationInterface
 {
     /**
      * package
      *
      * @var PackageInterface
      */
-    protected $_package;
+    protected $package;
 
     /**
      * deployAction
      *
      * @var string
      */
-    protected $_deployAction;
+    protected $deployAction;
 
     /**
      * sourceDir
      *
      * @var SplFileInfo
      */
-    protected $_sourceDir;
+    protected $sourceDir;
 
     /**
      * destDir
      *
      * @var SplFileInfo
      */
-    protected $_destDir;
+    protected $destDir;
 
     /**
      * construct deploy Operation
@@ -67,16 +67,16 @@ class Deploy implements OperationInterface
      * @param SplFileInfo      $sourceDir    Source Directory
      * @param SplFileInfo      $destDir      Destination Directory
      */
-    function __construct(
+    public function __construct(
         PackageInterface $package,
         $deployAction,
         SplFileInfo $sourceDir,
         SplFileInfo $destDir
     ) {
-        $this->_package = $package;
-        $this->_deployAction = $deployAction;
-        $this->_sourceDir = $sourceDir;
-        $this->_destDir = $destDir;
+        $this->package = $package;
+        $this->deployAction = $deployAction;
+        $this->sourceDir = $sourceDir;
+        $this->destDir = $destDir;
     }
 
     /**
@@ -88,8 +88,8 @@ class Deploy implements OperationInterface
     {
         return sprintf(
             "%s-%s",
-            $this->_package->getType(),
-            $this->_deployAction
+            $this->package->getType(),
+            $this->deployAction
         );
     }
 
@@ -102,8 +102,8 @@ class Deploy implements OperationInterface
     {
         return sprintf(
             "%s %s Deployment",
-            $this->_package->getType(),
-            $this->_deployAction
+            $this->package->getType(),
+            $this->deployAction
         );
     }
 
@@ -116,10 +116,10 @@ class Deploy implements OperationInterface
     {
         return sprintf(
             "Deployment of %s %s (%s) [%s]",
-            $this->_package->getType(),
-            $this->_package->getName(),
-            $this->_package->getPrettyVersion(),
-            $this->_deployAction
+            $this->package->getType(),
+            $this->package->getName(),
+            $this->package->getPrettyVersion(),
+            $this->deployAction
         );
     }
 
@@ -130,7 +130,7 @@ class Deploy implements OperationInterface
      */
     public function getPackage()
     {
-        return $this->_package;
+        return $this->package;
     }
 
     /**
@@ -140,7 +140,7 @@ class Deploy implements OperationInterface
      */
     public function getDestDir()
     {
-        return $this->_destDir;
+        return $this->destDir;
     }
 
     /**
@@ -150,7 +150,7 @@ class Deploy implements OperationInterface
      */
     public function getSourceDir()
     {
-        return $this->_sourceDir;
+        return $this->sourceDir;
     }
 
     /**
@@ -160,6 +160,6 @@ class Deploy implements OperationInterface
      */
     public function getDeployAction()
     {
-        return $this->_deployAction;
+        return $this->deployAction;
     }
 }

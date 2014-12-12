@@ -15,6 +15,7 @@
 namespace Bragento\Magento\Composer\Installer;
 
 use Bragento\Magento\Composer\Installer\Deploy\Manager;
+use Bragento\Magento\Composer\Installer\Deploy\Validate;
 use Bragento\Magento\Composer\Installer\Project\Config;
 use Composer\Composer;
 use Composer\EventDispatcher\EventSubscriberInterface;
@@ -76,7 +77,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     public function activate(Composer $composer, IOInterface $io)
     {
         Deploy\Strategy\Factory::init($composer, $io);
-        Deploy\Manager::init($composer);
+        Deploy\Manager::init($composer, $io);
         Config::init($composer);
 
         $this->initEventSubscribers($composer, $io);
@@ -96,6 +97,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $ed->addSubscriber(Deploy\Manager::getInstance());
         $ed->addSubscriber(new Deploy\OutputSubscriber($io));
         $ed->addSubscriber(new Updater\Core());
+        $ed->addSubscriber(new Validate($io));
     }
 
     /**

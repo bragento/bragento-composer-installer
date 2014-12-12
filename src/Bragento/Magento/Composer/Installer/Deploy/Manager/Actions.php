@@ -30,4 +30,4 @@ final class Actions
     const INSTALL = 'install';
     const UPDATE = 'update';
     const UNINSTALL = 'uninstall';
-} 
+}

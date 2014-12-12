@@ -37,7 +37,7 @@ class Copy extends AbstractStrategy
      */
     protected function createDelegate($src, $dest)
     {
-        $this->getFs()->rcopy($src, $dest);
+        $this->getFs()->copy($src, $dest);
     }
 
     /**
@@ -49,7 +49,7 @@ class Copy extends AbstractStrategy
      */
     protected function removeDelegate($delegate)
     {
-        $this->getFs()->rremove($delegate);
+        $this->getFs()->remove($delegate);
     }
 
-} 
+}

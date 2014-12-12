@@ -25,4 +25,4 @@ namespace Bragento\Test\Magento\Composer\Installer;
 abstract class AbstractUnitTest extends AbstractTest
 {
     abstract protected function getTestObject();
-} 
+}

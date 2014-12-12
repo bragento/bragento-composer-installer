@@ -35,17 +35,17 @@ class Entry
      *
      * @var AbstractStrategy
      */
-    protected $_deployStrategy;
+    protected $deployStrategy;
 
     /**
      * entry constructor
      *
      * @param Strategy\AbstractStrategy $deployStrategy deploy strategy
      */
-    function __construct(
+    public function __construct(
         AbstractStrategy $deployStrategy
     ) {
-        $this->_deployStrategy = $deployStrategy;
+        $this->deployStrategy = $deployStrategy;
     }
 
     /**
@@ -55,6 +55,6 @@ class Entry
      */
     public function getDeployStrategy()
     {
-        return $this->_deployStrategy;
+        return $this->deployStrategy;
     }
-} 
+}

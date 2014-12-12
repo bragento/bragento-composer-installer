@@ -39,12 +39,28 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      *
      * @var Filesystem
      */
-    private $_fs;
+    private $filesystem;
 
     protected function setUp()
     {
         parent::setUp();
-        $this->getFs()->emptyDir($this->getTestDir('build'));
+        $this->getFilesystem()->emptyDirectory($this->getBuildDir());
+    }
+
+    protected function toBuildDir()
+    {
+        chdir($this->getBuildDir());
+    }
+
+    /**
+     * getBuildDir
+     *
+     * @return \Symfony\Component\Finder\SplFileInfo
+     */
+    protected function getBuildDir()
+    {
+        return $this->getFilesystem()->getDir($this->getTestDir(self::BUILD_ROOT));
+
     }
 
     /**
@@ -52,15 +68,14 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      *
      * @return Filesystem
      */
-    protected function getFs()
+    protected function getFilesystem()
     {
-        if (null === $this->_fs) {
-            $this->_fs = new Filesystem();
+        if (null === $this->filesystem) {
+            $this->filesystem = new Filesystem();
         }
 
-        return $this->_fs;
+        return $this->filesystem;
     }
-
 
     /**
      * getVfsDir
@@ -83,13 +98,11 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function createTestFile($path)
     {
-        if (($dir = dirname($path)) && dirname($path) !== '.') {
-            mkdir($dir, 0777, true);
+        if (count($this->getFilesystem()->getPathParts($path)) > 1) {
+            $this->getFilesystem()->mkdir(dirname($path), 0755, true);
         }
-        $origCwd = getcwd();
-        chdir(dirname($path));
-        touch(basename($path));
-        chdir($origCwd);
+
+        touch($path);
     }
 
     /**
@@ -101,28 +114,19 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function getAbsPath($path)
     {
-        $cwd = getcwd();
-        chdir(realpath(dirname($path)));
-        $absPath = realpath(basename($path));
-        chdir($cwd);
-        return $absPath;
-    }
-
-    /**
-     * getBuildDir
-     *
-     * @return \Symfony\Component\Finder\SplFileInfo
-     */
-    protected function getBuildDir()
-    {
-        return $this->getFs()->getDir($this->getTestDir('build'));
-
+        return realpath($path);
     }
 
     protected function tearDown()
     {
+        chdir($this->getOriginalCwd());
+        $this->getFilesystem()->emptyDirectory($this->getBuildDir());
         parent::tearDown();
-        $this->getFs()->emptyDir($this->getTestDir('build'));
+    }
+
+    protected function getOriginalCwd()
+    {
+        return dirname(realpath(__FILE__));
     }
 
 

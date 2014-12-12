@@ -120,7 +120,7 @@ class MappingTest extends AbstractMappingTest
     protected function copyFiles($name)
     {
         $dir = sprintf('files/mappings/global/%s', $name);
-        $this->getFs()->rcopy(
+        $this->getFilesystem()->copy(
             $this->getTestDir($dir),
             $this->getBuildDir()
         );

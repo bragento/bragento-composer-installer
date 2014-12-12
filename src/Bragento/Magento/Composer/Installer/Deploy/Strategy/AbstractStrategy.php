@@ -16,7 +16,7 @@ namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
 use Bragento\Magento\Composer\Installer\Deploy\Exception\UnknownActionException;
 use Bragento\Magento\Composer\Installer\Deploy\Manager\Actions;
-use Bragento\Magento\Composer\Installer\Deploy\Operation\Deploy;
+use Bragento\Magento\Composer\Installer\Deploy\Operation\DeployPackage;
 use Bragento\Magento\Composer\Installer\Deploy\State;
 use Bragento\Magento\Composer\Installer\Mapping;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
@@ -50,77 +50,77 @@ abstract class AbstractStrategy
      *
      * @var PackageInterface
      */
-    private $_package;
+    private $package;
 
     /**
      * _sourceDir
      *
      * @var SplFileInfo
      */
-    private $_sourceDir;
+    private $sourceDir;
 
     /**
      * _destDir
      *
      * @var SplFileInfo
      */
-    private $_destDir;
+    private $destDir;
 
     /**
      * _action
      *
      * @var string
      */
-    private $_action;
+    private $action;
 
     /**
      * _eventDispatcher
      *
      * @var EventDispatcher
      */
-    private $_eventDispatcher;
+    private $eventDispatcher;
 
     /**
      * _composer
      *
      * @var Composer
      */
-    private $_composer;
+    private $composer;
 
     /**
      * _io
      *
      * @var IOInterface
      */
-    private $_io;
+    private $io;
 
     /**
      * _mapping
      *
      * @var Mapping\AbstractMapping
      */
-    private $_mapping;
+    private $mapping;
 
     /**
      * _deployedFilesMapping
      *
      * @var array
      */
-    private $_deployedDelegatesMapping;
+    private $deployedDelegatesMapping;
 
     /**
      * _fs
      *
      * @var Filesystem
      */
-    private $_fs;
+    private $fs;
 
     /**
      * _state
      *
      * @var State
      */
-    private $_state;
+    private $state;
 
     /**
      * construct Deploy Strategy
@@ -132,7 +132,7 @@ abstract class AbstractStrategy
      * @param \Composer\Composer       $composer  composer instance
      * @param \Composer\IO\IOInterface $io        IO Interface
      */
-    function __construct(
+    public function __construct(
         PackageInterface $package,
         SplFileInfo $sourceDir,
         SplFileInfo $destDir,
@@ -140,15 +140,15 @@ abstract class AbstractStrategy
         Composer $composer,
         IOInterface $io
     ) {
-        $this->_package = $package;
-        $this->_sourceDir = $sourceDir;
-        $this->_destDir = $destDir;
-        $this->_action = $action;
-        $this->_eventDispatcher = $composer->getEventDispatcher();
-        $this->_composer = $composer;
-        $this->_io = $io;
-        $this->_fs = new Filesystem();
-        $this->_state = new State($this);
+        $this->package = $package;
+        $this->sourceDir = $sourceDir;
+        $this->destDir = $destDir;
+        $this->action = $action;
+        $this->eventDispatcher = $composer->getEventDispatcher();
+        $this->composer = $composer;
+        $this->io = $io;
+        $this->fs = new Filesystem();
+        $this->state = new State($this);
     }
 
     /**
@@ -159,7 +159,7 @@ abstract class AbstractStrategy
      */
     public function doDeploy()
     {
-        $this->_dispatchActionEvent(self::EVENT_TIMING_PRE);
+        $this->dispatchActionEvent(self::EVENT_TIMING_PRE);
 
         switch ($this->getAction()) {
             case Actions::INSTALL:
@@ -170,7 +170,7 @@ abstract class AbstractStrategy
                 $this->makeUpdate();
                 break;
 
-            case Actions::UNINSTALL;
+            case Actions::UNINSTALL:
                 $this->makeUninstall(true);
                 break;
 
@@ -178,7 +178,7 @@ abstract class AbstractStrategy
                 throw new UnknownActionException($this->getAction());
         }
 
-        $this->_dispatchActionEvent(self::EVENT_TIMING_POST);
+        $this->dispatchActionEvent(self::EVENT_TIMING_POST);
     }
 
     /**
@@ -188,7 +188,7 @@ abstract class AbstractStrategy
      *
      * @return void
      */
-    private function _dispatchActionEvent($timing)
+    private function dispatchActionEvent($timing)
     {
         $name = sprintf(
             "%s-deploy-%s-%s",
@@ -197,7 +197,7 @@ abstract class AbstractStrategy
             $this->getAction()
         );
 
-        $this->_dispatchEvent($name);
+        $this->dispatchEvent($name);
     }
 
     /**
@@ -207,7 +207,7 @@ abstract class AbstractStrategy
      */
     public function getPackage()
     {
-        return $this->_package;
+        return $this->package;
     }
 
     /**
@@ -217,7 +217,7 @@ abstract class AbstractStrategy
      */
     protected function getAction()
     {
-        return $this->_action;
+        return $this->action;
     }
 
     /**
@@ -227,9 +227,9 @@ abstract class AbstractStrategy
      *
      * @return void
      */
-    private function _dispatchEvent($name)
+    private function dispatchEvent($name)
     {
-        $operation = new Deploy(
+        $operation = new DeployPackage(
             $this->getPackage(),
             $this->getAction(),
             $this->getSourceDir(),
@@ -255,7 +255,7 @@ abstract class AbstractStrategy
      */
     protected function getSourceDir()
     {
-        return $this->_sourceDir;
+        return $this->sourceDir;
     }
 
     /**
@@ -265,7 +265,7 @@ abstract class AbstractStrategy
      */
     protected function getDestDir()
     {
-        return $this->_destDir;
+        return $this->destDir;
     }
 
     /**
@@ -275,7 +275,7 @@ abstract class AbstractStrategy
      */
     protected function getComposer()
     {
-        return $this->_composer;
+        return $this->composer;
     }
 
     /**
@@ -285,7 +285,7 @@ abstract class AbstractStrategy
      */
     protected function getIo()
     {
-        return $this->_io;
+        return $this->io;
     }
 
     /**
@@ -295,7 +295,7 @@ abstract class AbstractStrategy
      */
     protected function getEventDispatcher()
     {
-        return $this->_eventDispatcher;
+        return $this->eventDispatcher;
     }
 
     /**
@@ -325,7 +325,7 @@ abstract class AbstractStrategy
                 );
             }
         } catch (Mapping\Exception\MappingException $e) {
-            $this->_io->write(sprintf('<error>%s</error>', $e->getMessage()));
+            $this->io->write(sprintf('<error>%s</error>', $e->getMessage()));
         }
     }
 
@@ -346,14 +346,14 @@ abstract class AbstractStrategy
      */
     private function getMapping()
     {
-        if (null === $this->_mapping) {
-            $this->_mapping = Mapping\Factory::get(
+        if (null === $this->mapping) {
+            $this->mapping = Mapping\Factory::get(
                 $this->getPackage(),
                 $this->getSourceDir()
             );
         }
 
-        return $this->_mapping;
+        return $this->mapping;
     }
 
     /**
@@ -387,7 +387,7 @@ abstract class AbstractStrategy
      */
     protected function getFs()
     {
-        return $this->_fs;
+        return $this->fs;
     }
 
     /**
@@ -397,7 +397,7 @@ abstract class AbstractStrategy
      */
     protected function getState()
     {
-        return $this->_state;
+        return $this->state;
     }
 
     /**
@@ -448,11 +448,11 @@ abstract class AbstractStrategy
      */
     private function getDeployedDelegatesMapping()
     {
-        if (null === $this->_deployedDelegatesMapping) {
-            $this->_deployedDelegatesMapping = $this->getState()->getMapping();
+        if (null === $this->deployedDelegatesMapping) {
+            $this->deployedDelegatesMapping = $this->getState()->getMapping();
         }
 
-        return $this->_deployedDelegatesMapping;
+        return $this->deployedDelegatesMapping;
     }
 
     /**

@@ -18,7 +18,6 @@ use Bragento\Magento\Composer\Installer\Project\Config;
 use Composer\Installer;
 use Composer\IO\IOInterface;
 
-
 /**
  * Class FullStackTest
  *
@@ -48,7 +47,7 @@ class FullStackTest extends AbstractTest
      *
      * @var array
      */
-    protected $_testForMagento;
+    protected $testForMagento;
 
     /**
      * _persistentTestFiles
@@ -58,7 +57,7 @@ class FullStackTest extends AbstractTest
      *
      * @var array
      */
-    protected $_persistentTestFiles
+    protected $persistentTestFiles
         = array(
             'var/test',
             'media/test',
@@ -72,34 +71,14 @@ class FullStackTest extends AbstractTest
      *
      * @var IOInterface
      */
-    protected $_io;
+    protected $io;
 
     /**
      * origWorkingDir
      *
      * @var string
      */
-    protected $_origWorkingDir;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->_io = new TestIO();
-        $this->_origWorkingDir = getcwd();
-        $workingDir = $this->getTestDir('build');
-        chdir($workingDir);
-        $this->_testForMagento = $this->getChecks(
-            self::MODE_INSTALL,
-            self::CHECK_TYPE_FILES_EXIST,
-            'magentocore.json'
-        );
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-        chdir($this->_origWorkingDir);
-    }
+    protected $origWorkingDir;
 
     /**
      * provideComposerConfigFileNames
@@ -112,7 +91,7 @@ class FullStackTest extends AbstractTest
             array('magentocore.json'),
             array('somemodules.json'),
             array('changedmageroot.json'),
-            array('magealllatest.json')
+            //array('magealllatest.json')
         );
     }
 
@@ -124,15 +103,17 @@ class FullStackTest extends AbstractTest
      * @return void
      *
      * @dataProvider provideConfigFileNames
-     * @group slow
+     * @group        slow
      */
     public function testAll($configFileName)
     {
+        $this->toBuildDir();
+
         // run install
         $this->install($configFileName);
 
         //check installation
-        $this->checkFiles($this->_testForMagento);
+        $this->checkFiles($this->testForMagento);
 
         //check additional files from config file
         $this->checkFiles(
@@ -144,13 +125,13 @@ class FullStackTest extends AbstractTest
         );
 
         // create files for backup test
-        $this->createFiles($this->_persistentTestFiles);
+        $this->createFiles($this->persistentTestFiles);
 
         // run update
         $this->update($configFileName);
 
         //check installation
-        $this->checkFiles($this->_testForMagento);
+        $this->checkFiles($this->testForMagento);
 
         //check additional files from config file
         $this->checkFiles(
@@ -162,7 +143,82 @@ class FullStackTest extends AbstractTest
         );
 
         // check if files were backed up
-        $this->checkFiles($this->_persistentTestFiles);
+        $this->checkFiles($this->persistentTestFiles);
+    }
+
+    /**
+     * install
+     *
+     * @param $configFileName
+     *
+     * @return void
+     */
+    protected function install($configFileName)
+    {
+        Installer::create(
+            $this->io,
+            $this->getComposer(
+                $configFileName,
+                self::MODE_INSTALL
+            )
+        )->run();
+    }
+
+    /**
+     * initComposer
+     *
+     * @param $configFileName
+     * @param $mode
+     *
+     * @return \Composer\Composer
+     */
+    protected function getComposer($configFileName, $mode)
+    {
+
+        $this->copyComposerConfigFileToBuildDir($configFileName, $mode);
+        $app = new TestApplication();
+        $app->setIo($this->io);
+        $composer = $app->getComposer();
+
+        Config::init($composer);
+
+        return $composer;
+    }
+
+    /**
+     * copyComposerConfigFileToBuildDir
+     *
+     * @param        $name
+     * @param string $mode
+     *
+     * @return void
+     */
+    protected function copyComposerConfigFileToBuildDir(
+        $name,
+        $mode = self::MODE_INSTALL
+    ) {
+        copy(
+            $this->getComposerConfigFile($name, $mode),
+            $this->getTestDir('build/composer.json')
+        );
+    }
+
+    /**
+     * getComposerConfig
+     *
+     * @param        $name
+     * @param string $mode
+     *
+     * @return mixed
+     */
+    protected function getComposerConfigFile(
+        $name,
+        $mode = self::MODE_INSTALL
+    ) {
+        return $this->getFilesystem()->getFile(
+            $this->getTestDir(self::COMPOSER_CONFIG_DIR . $mode),
+            $name
+        );
     }
 
     /**
@@ -212,6 +268,35 @@ class FullStackTest extends AbstractTest
     }
 
     /**
+     * update
+     *
+     * @param $configFileName
+     *
+     * @return void
+     */
+    protected function update($configFileName)
+    {
+        Installer::create(
+            $this->io,
+            $this->getComposer(
+                $configFileName,
+                self::MODE_UPDATE
+            )
+        )->setUpdate(true)->run();
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->io = new TestIO();
+        $this->testForMagento = $this->getChecks(
+            self::MODE_INSTALL,
+            self::CHECK_TYPE_FILES_EXIST,
+            'magentocore.json'
+        );
+    }
+
+    /**
      * getChecks
      *
      * @param $mode
@@ -240,99 +325,4 @@ class FullStackTest extends AbstractTest
 
         return (array)json_decode($jsonObj);
     }
-
-
-    /**
-     * initComposer
-     *
-     * @param $configFileName
-     * @param $mode
-     *
-     * @return \Composer\Composer
-     */
-    protected function getComposer($configFileName, $mode)
-    {
-
-        $this->copyComposerConfigFileToBuildDir($configFileName, $mode);
-        $app = new TestApplication();
-        $app->setIo($this->_io);
-        $composer = $app->getComposer();
-
-        Config::init($composer);
-
-        return $composer;
-    }
-
-    /**
-     * getComposerConfig
-     *
-     * @param        $name
-     * @param string $mode
-     *
-     * @return mixed
-     */
-    protected function getComposerConfigFile(
-        $name,
-        $mode = self::MODE_INSTALL
-    ) {
-        return $this->getFs()->getFile(
-            $this->getTestDir(self::COMPOSER_CONFIG_DIR . $mode),
-            $name
-        );
-    }
-
-    /**
-     * copyComposerConfigFileToBuildDir
-     *
-     * @param        $name
-     * @param string $mode
-     *
-     * @return void
-     */
-    protected function copyComposerConfigFileToBuildDir(
-        $name,
-        $mode = self::MODE_INSTALL
-    ) {
-        copy(
-            $this->getComposerConfigFile($name, $mode),
-            $this->getTestDir('build/composer.json')
-        );
-    }
-
-    /**
-     * install
-     *
-     * @param $configFileName
-     *
-     * @return void
-     */
-    protected function install($configFileName)
-    {
-        Installer::create(
-            $this->_io,
-            $this->getComposer(
-                $configFileName,
-                self::MODE_INSTALL
-            )
-        )->run();
-    }
-
-    /**
-     * update
-     *
-     * @param $configFileName
-     *
-     * @return void
-     */
-    protected function update($configFileName)
-    {
-        Installer::create(
-            $this->_io,
-            $this->getComposer(
-                $configFileName,
-                self::MODE_UPDATE
-            )
-        )->setUpdate(true)->run();
-    }
-
-} 
+}

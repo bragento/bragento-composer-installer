@@ -25,11 +25,12 @@ use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Composer;
 use Composer\DependencyResolver\Operation\UninstallOperation;
 use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
+use Composer\Script\Event;
 use Composer\Script\PackageEvent;
 use Composer\Script\ScriptEvents;
 use Symfony\Component\Finder\SplFileInfo;
-
 
 /**
  * Class Manager
@@ -48,62 +49,75 @@ class Manager implements EventSubscriberInterface
      *
      * @var Manager
      */
-    protected static $_instance;
+    protected static $instance;
 
     /**
      * _composer
      *
      * @var Composer
      */
-    protected static $_composer;
+    protected static $composer;
+
+    /**
+     * @var IOInterface
+     */
+    protected static $io;
 
     /**
      * entries
      *
      * @var Entry[]
      */
-    protected $_moduleEntries;
+    protected $moduleEntries;
 
     /**
      * entries
      *
      * @var Entry[]
      */
-    protected $_themeEntries;
+    protected $themeEntries;
 
     /**
      * _coreEntry
      *
      * @var Entry
      */
-    protected $_coreEntry;
+    protected $coreEntry;
+
+    /**
+     * @var PackageInterface[]
+     */
+    protected $deployedPackages;
 
     /**
      * _fs
      *
      * @var Filesystem
      */
-    protected $_fs;
+    protected $fs;
 
     /**
      * private construct for singleton
      */
     private function __construct()
     {
-        $this->_moduleEntries = array();
-        $this->_themeEntries = array();
+        $this->moduleEntries = array();
+        $this->themeEntries = array();
+        $this->deployedPackages = array();
     }
 
     /**
      * init
      *
-     * @param Composer $composer
+     * @param Composer    $composer
+     * @param IOInterface $io
      *
      * @return void
      */
-    public static function init(Composer $composer)
+    public static function init(Composer $composer, IOInterface $io)
     {
-        self::$_composer = $composer;
+        self::$composer = $composer;
+        self::$io = $io;
     }
 
     /**
@@ -113,11 +127,180 @@ class Manager implements EventSubscriberInterface
      */
     public static function getInstance()
     {
-        if (null === self::$_instance) {
-            self::$_instance = new Manager();
+        if (null === self::$instance) {
+            self::$instance = new Manager();
         }
 
-        return self::$_instance;
+        return self::$instance;
+    }
+
+    /**
+     * Returns an array of event names this subscriber wants to listen to.
+     *
+     * The array keys are event names and the value can be:
+     *
+     * * The method name to call (priority defaults to 0)
+     * * An array composed of the method name to call and the priority
+     * * An array of arrays composed of the method names to call and respective
+     *   priorities, or 0 if unset
+     *
+     * For instance:
+     *
+     * * array('eventName' => 'methodName')
+     * * array('eventName' => array('methodName', $priority))
+     *
+     * @return array The event names to listen to
+     */
+    public static function getSubscribedEvents()
+    {
+        return array(
+            ScriptEvents::POST_PACKAGE_UNINSTALL => 'onPostPackageUninstall'
+        );
+    }
+
+    /**
+     * doDeploy
+     *
+     * deploy core, then modules, then themes
+     *
+     * @return void
+     */
+    public function doDeploy()
+    {
+        $this->addAllPackages();
+
+        $this->dispatchEvent(Events::PRE_DEPLOY);
+
+        if (null !== $this->coreEntry) {
+            $this->coreEntry->getDeployStrategy()->doDeploy();
+            $this->addDeployedPackage(
+                $this->coreEntry->getDeployStrategy()->getPackage()
+            );
+            $this->coreEntry = null;
+        }
+
+        while (count($this->moduleEntries)) {
+            /** @var Entry $moduleEntry */
+            $moduleEntry = array_pop($this->moduleEntries);
+            $moduleEntry->getDeployStrategy()->doDeploy();
+            $this->addDeployedPackage(
+                $moduleEntry->getDeployStrategy()->getPackage()
+            );
+        }
+
+        while (count($this->themeEntries)) {
+            /** @var Entry $themeEntry */
+            $themeEntry = array_pop($this->moduleEntries);
+            $themeEntry->getDeployStrategy()->doDeploy();
+            $this->addDeployedPackage(
+                $themeEntry->getDeployStrategy()->getPackage()
+            );
+        }
+
+        $this->dispatchEvent(Events::POST_DEPLOY);
+    }
+
+    /**
+     * addAllPackages
+     *
+     * @return void
+     */
+    protected function addAllPackages()
+    {
+        foreach ($this->getPackages() as $package) {
+            $action = $this->isUndeployedPackage($package)
+                ? Actions::INSTALL
+                : Actions::UPDATE;
+
+            $this->addEntry(
+                $this->getDeployManagerEntry(
+                    $package,
+                    $action
+                )
+            );
+        }
+    }
+
+    /**
+     * getPackages
+     *
+     * @return PackageInterface[]
+     */
+    protected function getPackages()
+    {
+        return $this->getComposer()
+            ->getRepositoryManager()
+            ->getLocalRepository()
+            ->getCanonicalPackages();
+    }
+
+    /**
+     * getComposer
+     *
+     * @return Composer
+     * @throws NotInitializedException
+     */
+    protected function getComposer()
+    {
+        if (null === self::$composer) {
+            throw new NotInitializedException($this);
+        }
+
+        return self::$composer;
+    }
+
+    /**
+     * isUndeployedPackage
+     *
+     * @param PackageInterface $package
+     *
+     * @return bool
+     */
+    public function isUndeployedPackage(PackageInterface $package)
+    {
+        return $this->getFs()->exists($this->getStateFilePath($package));
+    }
+
+    /**
+     * getFs
+     *
+     * @return Filesystem
+     */
+    protected function getFs()
+    {
+        if (null == $this->fs) {
+            $this->fs = new Filesystem();
+        }
+
+        return $this->fs;
+    }
+
+    /**
+     * getStateFilePath
+     *
+     * @param PackageInterface $package
+     *
+     * @return string
+     */
+    public function getStateFilePath(PackageInterface $package)
+    {
+        return $this->getFs()->joinFileUris(
+            $this->getStateDir(),
+            str_replace('/', '_', $package->getName())
+        );
+    }
+
+    /**
+     * getStateDir
+     *
+     * @return string
+     */
+    public function getStateDir()
+    {
+        return $this->getFs()->joinFileUris(
+            Config::getInstance()->getVendorDir(),
+            State::STATE_DIR
+        );
     }
 
     /**
@@ -134,84 +317,33 @@ class Manager implements EventSubscriberInterface
     {
         switch ($entry->getDeployStrategy()->getPackage()->getType()) {
             case PackageTypes::MAGENTO_CORE:
-                $this->_coreEntry = $entry;
+                $this->coreEntry = $entry;
                 break;
 
             case PackageTypes::MAGENTO_MODULE:
-                $this->_moduleEntries[] = $entry;
+                $this->moduleEntries[] = $entry;
                 break;
 
             case PackageTypes::MAGENTO_THEME:
-                $this->_themeEntries[] = $entry;
+                $this->themeEntries[] = $entry;
                 break;
+
+            default:
         }
     }
 
     /**
-     * doDeploy
+     * getDeployManagerEntry
      *
-     * deploy core, then modules, then themes
+     * @param PackageInterface $package package to deploy
+     * @param string           $action
      *
-     * @return void
+     * @return Entry
      */
-    public function doDeploy()
+    protected function getDeployManagerEntry(PackageInterface $package, $action)
     {
-        $this->addAllPackages();
-
-        if (null !== $this->_coreEntry) {
-            $this->_coreEntry->getDeployStrategy()->doDeploy();
-            $this->_coreEntry = null;
-        }
-
-        while (count($this->_moduleEntries)) {
-            /** @var Entry $moduleEntry */
-            $moduleEntry = array_pop($this->_moduleEntries);
-            $moduleEntry->getDeployStrategy()->doDeploy();
-        }
-
-        while (count($this->_themeEntries)) {
-            /** @var Entry $themeEntry */
-            $themeEntry = array_pop($this->_moduleEntries);
-            $themeEntry->getDeployStrategy()->doDeploy();
-        }
-    }
-
-    /**
-     * addAllPackages
-     *
-     * @return void
-     */
-    protected function addAllPackages()
-    {
-        foreach ($this->getPackages() as $package) {
-            $this->addEntry(
-                $this->getDeployManagerEntry(
-                    $package,
-                    Actions::UPDATE
-                )
-            );
-        }
-    }
-
-    /**
-     * onPostPackageUninstall
-     *
-     * add Entries of uninstalled packages, since they are not
-     * in local repository anymore
-     *
-     * @param PackageEvent $event
-     *
-     * @return void
-     */
-    public function onPostPackageUninstall(PackageEvent $event)
-    {
-        /** @var UninstallOperation $operation */
-        $operation = $event->getOperation();
-        $this->addEntry(
-            $this->getDeployManagerEntry(
-                $operation->getPackage(),
-                Actions::UNINSTALL
-            )
+        return new Entry(
+            $this->getDeployStrategy($package, $action)
         );
     }
 
@@ -234,21 +366,6 @@ class Manager implements EventSubscriberInterface
     }
 
     /**
-     * getDeployManagerEntry
-     *
-     * @param PackageInterface $package package to deploy
-     * @param string           $action
-     *
-     * @return Entry
-     */
-    protected function getDeployManagerEntry(PackageInterface $package, $action)
-    {
-        return new Entry(
-            $this->getDeployStrategy($package, $action)
-        );
-    }
-
-    /**
      * getSourceDir
      *
      * @param PackageInterface $package
@@ -258,16 +375,6 @@ class Manager implements EventSubscriberInterface
     protected function getSourceDir(PackageInterface $package)
     {
         return $this->getFs()->getDir($this->getInstallPath($package));
-    }
-
-    /**
-     * getTargetDir
-     *
-     * @return SplFileInfo
-     */
-    protected function getTargetDir()
-    {
-        return Config::getInstance()->getMagentoRootDir();
     }
 
     /**
@@ -300,68 +407,63 @@ class Manager implements EventSubscriberInterface
     }
 
     /**
-     * getPackages
+     * getTargetDir
      *
-     * @return PackageInterface[]
+     * @return SplFileInfo
      */
-    protected function getPackages()
+    protected function getTargetDir()
     {
-        return $this->getComposer()
-            ->getRepositoryManager()
-            ->getLocalRepository()
-            ->getCanonicalPackages();
+        return Config::getInstance()->getMagentoRootDir();
     }
 
     /**
-     * getComposer
+     * addDeployedPackage
      *
-     * @return Composer
-     * @throws NotInitializedException
+     * @param PackageInterface $package
+     *
+     * @return void
      */
-    protected function getComposer()
+    protected function addDeployedPackage(PackageInterface $package)
     {
-        if (null === self::$_composer) {
-            throw new NotInitializedException($this);
-        }
-
-        return self::$_composer;
+        array_push($this->deployedPackages, $package);
     }
 
     /**
-     * getFs
+     * onPostPackageUninstall
      *
-     * @return Filesystem
+     * add Entries of uninstalled packages, since they are not
+     * in local repository anymore
+     *
+     * @param PackageEvent $event
+     *
+     * @return void
      */
-    protected function getFs()
+    public function onPostPackageUninstall(PackageEvent $event)
     {
-        if (null == $this->_fs) {
-            $this->_fs = new Filesystem();
-        }
-
-        return $this->_fs;
-    }
-
-    /**
-     * Returns an array of event names this subscriber wants to listen to.
-     *
-     * The array keys are event names and the value can be:
-     *
-     * * The method name to call (priority defaults to 0)
-     * * An array composed of the method name to call and the priority
-     * * An array of arrays composed of the method names to call and respective
-     *   priorities, or 0 if unset
-     *
-     * For instance:
-     *
-     * * array('eventName' => 'methodName')
-     * * array('eventName' => array('methodName', $priority))
-     *
-     * @return array The event names to listen to
-     */
-    public static function getSubscribedEvents()
-    {
-        return array(
-            ScriptEvents::POST_PACKAGE_UNINSTALL => 'onPostPackageUninstall'
+        /** @var UninstallOperation $operation */
+        $operation = $event->getOperation();
+        $this->addEntry(
+            $this->getDeployManagerEntry(
+                $operation->getPackage(),
+                Actions::UNINSTALL
+            )
         );
+    }
+
+    public function getDeployedPackages()
+    {
+        return $this->deployedPackages;
+    }
+
+    private function dispatchEvent($name)
+    {
+        $event = new Event(
+            $name,
+            $this->getComposer(),
+            self::$io
+        );
+
+        $this->getComposer()->getEventDispatcher()
+            ->dispatch($name, $event);
     }
 }
