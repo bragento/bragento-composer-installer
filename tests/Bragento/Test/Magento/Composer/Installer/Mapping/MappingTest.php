@@ -36,6 +36,11 @@ class MappingTest extends AbstractMappingTest
         return 'global';
     }
 
+    /**
+     * testResolveMappings
+     *
+     * @return void
+     */
     public function testResolveMappings()
     {
         $this->copyFiles('modman');

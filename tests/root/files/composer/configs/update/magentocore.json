@@ -2,6 +2,6 @@
     "minimum-stability": "dev",
     "require": {
         "bragento/magento-composer-installer": "dev-develop",
-        "magento/core": "*"
+        "magento/core": "1.9.1.0"
     }
 }

@@ -2,7 +2,6 @@
     "name": "bragento/magento-composer-installer",
     "description": "Composer installer for Magento modules",
     "keywords": [ "composer", "installer", "magento"],
-    "minimum-stability": "dev",
     "type": "composer-plugin",
     "license": "OSL-3.0",
     "homepage": "https://github.com/bragento/bragento-composer-installer",
@@ -18,7 +17,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "@stable",
-        "composer/composer": "~1",
+        "composer/composer": "~1@dev",
         "codeclimate/php-test-reporter": "~0.1"
     },
     "replace": {
@@ -27,6 +26,11 @@
     "autoload": {
         "psr-0": {
             "Bragento\\Magento\\Composer\\Installer": "src/"
+        }
+    },
+    "autoload-dev":{
+        "psr-0":{
+            "Bragento\\Test\\Magento\\Composer\\Installer":"tests/"
         }
     },
     "extra": {

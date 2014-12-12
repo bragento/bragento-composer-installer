@@ -14,11 +14,7 @@
 
 namespace Bragento\Test\Magento\Composer\Installer;
 
-require_once 'tests/Bragento/Magento/Composer/Installer/TestIO.php';
-require_once 'tests/Bragento/Magento/Composer/Installer/TestApplication.php';
-
 use Bragento\Magento\Composer\Installer\Project\Config;
-use Composer\Composer;
 use Composer\Installer;
 use Composer\IO\IOInterface;
 
@@ -113,10 +109,10 @@ class FullStackTest extends AbstractTest
     public function provideConfigFileNames()
     {
         return array(
-            array('magentocore.json'),
+            array('magentocore.json')/*,
             array('somemodules.json'),
             array('changedmageroot.json'),
-            array('magealllatest.json')
+            array('magealllatest.json')*/
         );
     }
 

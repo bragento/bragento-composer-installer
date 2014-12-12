@@ -37,7 +37,6 @@ class Copy extends AbstractStrategy
      */
     protected function createDelegate($src, $dest)
     {
-        $this->getFs()->ensureDirectoryExists(dirname($dest));
         $this->getFs()->rcopy($src, $dest);
     }
 

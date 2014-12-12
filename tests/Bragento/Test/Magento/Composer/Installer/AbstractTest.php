@@ -79,6 +79,36 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param $path
+     */
+    protected function createTestFile($path)
+    {
+        if (($dir = dirname($path)) && dirname($path) !== '.') {
+            mkdir($dir, 0777, true);
+        }
+        $origCwd = getcwd();
+        chdir(dirname($path));
+        touch(basename($path));
+        chdir($origCwd);
+    }
+
+    /**
+     * getAbsPath
+     *
+     * @param $path
+     *
+     * @return string
+     */
+    protected function getAbsPath($path)
+    {
+        $cwd = getcwd();
+        chdir(realpath(dirname($path)));
+        $absPath = realpath(basename($path));
+        chdir($cwd);
+        return $absPath;
+    }
+
+    /**
      * getBuildDir
      *
      * @return \Symfony\Component\Finder\SplFileInfo

@@ -30,7 +30,7 @@ use Symfony\Component\Finder\SplFileInfo;
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
  */
-class Filesystem extends \Composer\Util\Filesystem
+class Filesystem extends \Symfony\Component\Filesystem\Filesystem
 {
     const DS = DIRECTORY_SEPARATOR;
 
@@ -114,39 +114,103 @@ class Filesystem extends \Composer\Util\Filesystem
     }
 
     /**
+     * ensureDirectoryExists
+     *
+     * @param $dir
+     *
+     * @return void
+     */
+    public function ensureDirectoryExists($dir)
+    {
+        if ($this->exists($dir)) {
+            return;
+        }
+
+        $this->mkdir($dir);
+    }
+
+    /**
      * rcopy
      *
      * @param string $srcPath
      * @param string $destPath
      *
-     * @return boolean
+     * @return void
      */
     public function rcopy($srcPath, $destPath)
     {
-        if (!is_dir($srcPath)) {
-            $this->ensureDirectoryExists(dirname($destPath));
-            return copy($srcPath, $destPath);
+        $srcPath = $this->normalizePath($srcPath);
+        $destPath = $this->normalizePath($destPath);
+
+        if (String::endsWith($destPath, DIRECTORY_SEPARATOR)) {
+            $destPath .= basename($srcPath);
         }
 
-        $dir = opendir($srcPath);
-        $this->ensureDirectoryExists($destPath);
-        while (false !== ($file = readdir($dir))) {
-            if (($file != '.') && ($file != '..')) {
-                if (is_dir($srcPath . self::DS . $file)) {
-                    $this->rcopy(
-                        $srcPath . self::DS . $file,
-                        $destPath . self::DS . $file
-                    );
-                } else {
-                    copy(
-                        $srcPath . self::DS . $file,
-                        $destPath . self::DS . $file
-                    );
-                }
+        if (is_dir($srcPath)) {
+            $this->copyDir($srcPath, $destPath);
+        } else {
+            $this->copy($srcPath, $destPath, true);
+        }
+    }
+
+    /**
+     * normalizePath
+     *
+     * @param $path
+     *
+     * @return mixed
+     */
+    public function normalizePath($path)
+    {
+        $path = str_replace(
+            array('/./', '\\.\\', '\\'),
+            DIRECTORY_SEPARATOR,
+            $path
+        );
+
+        do {
+            $path = str_replace('//', '/', $path);
+        } while (strpos($path, '//'));
+
+        return $path;
+    }
+
+    /**
+     * copyDir
+     *
+     * @param $srcPath
+     * @param $destPath
+     *
+     * @return void
+     */
+    public function copyDir($srcPath, $destPath)
+    {
+        $it = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(
+                $srcPath,
+                RecursiveDirectoryIterator::SKIP_DOTS
+            ),
+            RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        foreach ($it as $src => $object) {
+            if (is_file($src)) {
+                $this->copy(
+                    $src,
+                    $this->joinFileUris(
+                        $destPath,
+                        $this->rmAbsPathPart($src, $srcPath)
+                    )
+                );
+            } elseif (is_dir($src)) {
+                $this->mkdir(
+                    $this->joinFileUris(
+                        $destPath,
+                        $this->rmAbsPathPart($src, $srcPath)
+                    )
+                );
             }
         }
-        closedir($dir);
-        return true;
     }
 
     /**
@@ -159,13 +223,87 @@ class Filesystem extends \Composer\Util\Filesystem
      */
     public function joinFileUris($path, $name)
     {
-        return implode(
+        $prefix = $this->startsWithDs($path) ? DIRECTORY_SEPARATOR : '';
+        $suffix = $this->endsWithDs($name) ? DIRECTORY_SEPARATOR : '';
+
+        return $prefix . implode(
             DIRECTORY_SEPARATOR,
             array_merge(
-                preg_split('/\\|\//', $path, null, PREG_SPLIT_NO_EMPTY),
-                preg_split('/\\|\//', $name, null, PREG_SPLIT_NO_EMPTY)
+                $this->getPathParts($path),
+                $this->getPathParts($name)
             )
+        ) . $suffix;
+    }
+
+    /**
+     * startsWithDs
+     *
+     * @param $path
+     *
+     * @return bool
+     */
+    protected function startsWithDs($path)
+    {
+        return String::startsWith($path, '/')
+        || String::startsWith($path, '\\');
+    }
+
+    /**
+     * endsWithDs
+     *
+     * @param $path
+     *
+     * @return bool
+     */
+    protected function endsWithDs($path)
+    {
+        return String::endsWith($path, '/')
+        || String::endsWith($path, '\\');
+    }
+
+    /**
+     * getPathParts
+     *
+     * @param $path
+     *
+     * @return array
+     */
+    public function getPathParts($path)
+    {
+        return preg_split(
+            '/\\\|\//',
+            $this->normalizePath($path),
+            null,
+            PREG_SPLIT_NO_EMPTY
         );
+    }
+
+    /**
+     * rmAbsPathPart
+     *
+     * @param $path
+     * @param $root
+     *
+     * @return string
+     * @throws \ErrorException
+     */
+    public function rmAbsPathPart($path, $root)
+    {
+        $pathParts = $this->getPathParts(
+            $this->normalizePath($path)
+        );
+
+        foreach (
+            $this->getPathParts(
+                $this->normalizePath($root)
+            ) as $rootPart
+        ) {
+            if (count($pathParts) && $rootPart === $pathParts[0]) {
+                array_shift($pathParts);
+            }
+        }
+
+        return implode(DIRECTORY_SEPARATOR, $pathParts);
     }
 
     /**
@@ -176,30 +314,9 @@ class Filesystem extends \Composer\Util\Filesystem
      *
      * @return bool
      */
-    public function symlink($src, $dest)
+    public function symlink($src, $dest, $copyOnWindows = true)
     {
-        $dest = rtrim($dest, '/\\');
-        $this->ensureDirectoryExists(dirname($dest));
-
-        if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
-            // get relative path to cwd
-            $src = str_replace(getcwd() . DIRECTORY_SEPARATOR, '', $src);
-            $src = $this->getRelativePath($dest, $src);
-        }
-
-        if (file_exists($dest)) {
-            if (is_link($dest)) {
-                if (realpath(readlink($dest)) == realpath($src)) {
-                    return true;
-                } else {
-                    unlink($dest);
-                    return symlink($src, $dest);
-                }
-            }
-            return false;
-        } else {
-            return symlink($src, $dest);
-        }
+        parent::symlink($this->getRelativePath($dest, $src), $dest, $copyOnWindows);
     }
 
     /**
@@ -237,31 +354,15 @@ class Filesystem extends \Composer\Util\Filesystem
     }
 
     /**
-     * @param $path
-     *
-     * @return array
-     */
-    public function getPathParts($path)
-    {
-        $path = trim(trim($path, '/\\'));
-        return explode('/', str_replace(array('/./', '//'), '/', $path));
-    }
-
-    /**
      * removeSymlink
      *
      * @param string $link
      *
-     * @return bool
+     * @return void
      */
     public function removeSymlink($link)
     {
-        if (file_exists($link)) {
-            if (is_link($link)) {
-                return unlink($link);
-            }
-        }
-        return false;
+        parent::remove($link);
     }
 
     /**
@@ -273,7 +374,7 @@ class Filesystem extends \Composer\Util\Filesystem
      */
     public function getDir($dirPath)
     {
-        $this->ensureDirectoryExists($dirPath);
+        $this->mkdir($dirPath);
         $finder = new Finder();
         $finder->in(dirname($dirPath))
             ->name(basename($dirPath))
