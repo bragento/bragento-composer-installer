@@ -2,10 +2,6 @@
     "minimum-stability": "dev",
     "repositories": [
         {
-            "type": "git",
-            "url": "../../../"
-        },
-        {
             "type": "composer",
             "url": "http://packages.firegento.com"
         }
