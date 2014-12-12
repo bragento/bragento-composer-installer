@@ -16,6 +16,7 @@ namespace Bragento\Magento\Composer\Installer\Util;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -316,6 +317,9 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      */
     public function symlink($src, $dest, $copyOnWindows = true)
     {
+        $src = $this->normalizePath($src);
+        $dest = $this->normalizePath($dest);
+
         if ($this->endsWithDs($dest)) {
             $dest = rtrim($dest, DIRECTORY_SEPARATOR);
         }
