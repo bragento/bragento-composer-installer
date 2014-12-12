@@ -316,7 +316,12 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      */
     public function symlink($src, $dest, $copyOnWindows = true)
     {
-        parent::symlink($this->getRelativePath($dest, $src), $dest, $copyOnWindows);
+        if ($this->endsWithDs($dest)) {
+            $dest = rtrim($dest, DIRECTORY_SEPARATOR);
+        }
+        parent::symlink(
+            $this->getRelativePath($dest, $src), $dest, $copyOnWindows
+        );
     }
 
     /**
