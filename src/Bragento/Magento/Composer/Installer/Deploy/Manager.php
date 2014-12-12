@@ -208,6 +208,10 @@ class Manager implements EventSubscriberInterface
     protected function addAllPackages()
     {
         foreach ($this->getPackages() as $package) {
+            if (!in_array($package->getType(), $this->supports())) {
+                continue;
+            }
+
             $action = $this->isUndeployedPackage($package)
                 ? Actions::INSTALL
                 : Actions::UPDATE;
@@ -250,6 +254,20 @@ class Manager implements EventSubscriberInterface
     }
 
     /**
+     * supports
+     *
+     * @return array
+     */
+    public function supports()
+    {
+        return array(
+            PackageTypes::MAGENTO_CORE,
+            PackageTypes::MAGENTO_MODULE,
+            PackageTypes::MAGENTO_THEME
+        );
+    }
+
+    /**
      * isUndeployedPackage
      *
      * @param PackageInterface $package
@@ -258,7 +276,8 @@ class Manager implements EventSubscriberInterface
      */
     public function isUndeployedPackage(PackageInterface $package)
     {
-        return false === $this->getFs()->exists($this->getStateFilePath($package));
+        return false === $this->getFs()
+            ->exists($this->getStateFilePath($package));
     }
 
     /**
@@ -416,6 +435,18 @@ class Manager implements EventSubscriberInterface
         return Config::getInstance()->getMagentoRootDir();
     }
 
+    private function dispatchEvent($name)
+    {
+        $event = new Event(
+            $name,
+            $this->getComposer(),
+            self::$io
+        );
+
+        $this->getComposer()->getEventDispatcher()
+            ->dispatch($name, $event);
+    }
+
     /**
      * addDeployedPackage
      *
@@ -453,17 +484,5 @@ class Manager implements EventSubscriberInterface
     public function getDeployedPackages()
     {
         return $this->deployedPackages;
-    }
-
-    private function dispatchEvent($name)
-    {
-        $event = new Event(
-            $name,
-            $this->getComposer(),
-            self::$io
-        );
-
-        $this->getComposer()->getEventDispatcher()
-            ->dispatch($name, $event);
     }
 }
