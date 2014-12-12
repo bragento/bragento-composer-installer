@@ -78,13 +78,14 @@ class Validate implements EventSubscriberInterface
     {
         $root = Config::getInstance()->getMagentoRootDir();
         $deployedPackages = Manager::getInstance()->getDeployedPackages();
+        $errors = 0;
+        $this->getIo()->write('<info>checking deployed Files ...</info>');
         foreach ($deployedPackages as $package) {
             $state = State::load($package);
             if (!isset($state[State::MAPPINGS_KEY])) {
                 continue;
             }
             $map = $state[State::MAPPINGS_KEY];
-
             foreach ($map as $source => $destination) {
                 $deployedFile = $this->getFs()
                     ->joinFileUris($root, $destination);
@@ -92,17 +93,29 @@ class Validate implements EventSubscriberInterface
                 if (file_exists($deployedFile)) {
                     if (is_link($deployedFile)) {
                         if (!readlink($deployedFile)) {
-                            $this->getIo()
-                                ->write(sprintf('<error>symlink broken: %s</error>',
-                                        $deployedFile));
+                            $this->getIo()->write(
+                                sprintf(
+                                    '<error>symlink broken: %s</error>',
+                                    $deployedFile
+                                )
+                            );
+                            $errors++;
                         }
                     }
                 } else {
-                    $this->getIo()
-                        ->write(sprintf('<error>file not found: %s</error>',
-                                $deployedFile));
+                    $this->getIo()->write(
+                        sprintf(
+                            '<error>file not found: %s</error>',
+                            $deployedFile
+                        )
+                    );
+                    $errors++;
                 }
             }
+        }
+
+        if (!$errors) {
+            $this->getIo()->write('<info>OK</info>');
         }
     }
 
