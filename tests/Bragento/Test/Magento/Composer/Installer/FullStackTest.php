@@ -174,7 +174,6 @@ class FullStackTest extends AbstractTest
      */
     protected function getComposer($configFileName, $mode)
     {
-
         $this->copyComposerConfigFileToBuildDir($configFileName, $mode);
         $app = new TestApplication();
         $app->setIo($this->io);

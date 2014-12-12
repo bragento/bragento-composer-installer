@@ -1,5 +1,15 @@
 {
     "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "git",
+            "url": "../../../"
+        },
+        {
+            "type": "composer",
+            "url": "http://packages.firegento.com"
+        }
+    ],
     "require": {
         "bragento/magento-composer-installer": "dev-develop",
         "magento/core": "1.9.1.0"

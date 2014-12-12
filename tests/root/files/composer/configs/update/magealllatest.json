@@ -6,11 +6,12 @@
     },
     "repositories": [
         {
+            "type": "git",
+            "url": "../../../"
+        },
+        {
             "type": "composer",
             "url": "http://packages.firegento.com"
-        }, {
-            "type": "vcs",
-            "url": "https://github.com/bragento/bragento-composer-installer"
         }
     ],
     "extra": {
