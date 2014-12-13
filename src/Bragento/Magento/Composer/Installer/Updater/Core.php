@@ -105,13 +105,10 @@ class Core implements EventSubscriberInterface
     {
         $event->getIO()->write('<info>backup persistent files</info>');
         $this->getFs()->ensureDirectoryExists($this->getBackupDir());
-
-        foreach ($this->getFiles() as $dir) {
-            $this->moveFile(
-                $this->getMagentoSubDir($dir),
-                $this->getBackupSubDir($dir)
-            );
-        }
+        $this->moveFiles(
+            Config::getInstance()->getMagentoRootDir(),
+            $this->getBackupDir()
+        );
     }
 
     /**
@@ -124,35 +121,37 @@ class Core implements EventSubscriberInterface
     public function onPostDeployCoreUpdate(PackageEvent $event)
     {
         $event->getIO()->write('<info>restore persistent files</info>');
-        foreach ($this->getFiles() as $dir) {
-            $this->moveFile(
-                $this->getBackupSubDir($dir),
-                $this->getMagentoSubDir($dir)
-            );
-        }
+        $this->moveFiles(
+            $this->getBackupDir(),
+            Config::getInstance()->getMagentoRootDir()
+        );
         $this->getFs()->remove($this->getBackupDir());
     }
 
     /**
      * moveFiles
      *
-     * @param $source
-     * @param $target
+     * @param $sourceRoot
+     * @param $targetRoot
      *
      * @return void
      */
-    protected function moveFile($source, $target)
+    protected function moveFiles($sourceRoot, $targetRoot)
     {
-        if (file_exists($source)) {
-            if (file_exists($target)) {
-                $this->getFs()->remove(
+        foreach ($this->getFiles() as $dir) {
+            $source = $this->getFs()->joinFileUris($sourceRoot, $dir);
+            $target = $this->getFs()->joinFileUris($targetRoot, $dir);
+            if (file_exists($source)) {
+                if (file_exists($target)) {
+                    $this->getFs()->remove(
+                        $target
+                    );
+                }
+                $this->getFs()->rename(
+                    $source,
                     $target
                 );
             }
-            $this->getFs()->rename(
-                $source,
-                $target
-            );
         }
     }
 
