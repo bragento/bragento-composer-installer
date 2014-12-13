@@ -108,8 +108,10 @@ class Core implements EventSubscriberInterface
         $this->getFs()->ensureDirectoryExists($this->getBackupDir());
         $this->moveFiles(
             Config::getInstance()->getMagentoRootDir(),
-            $this->getBackupDir()
+            $this->getBackupDir(),
+            $event->getIO()
         );
+        $this->printInfo('starting core deployment', $event->getIO());
     }
 
     /**
@@ -148,16 +150,18 @@ class Core implements EventSubscriberInterface
     /**
      * moveFiles
      *
-     * @param $sourceRoot
-     * @param $targetRoot
+     * @param             $sourceRoot
+     * @param             $targetRoot
+     * @param IOInterface $io
      *
      * @return void
      */
-    protected function moveFiles($sourceRoot, $targetRoot)
+    protected function moveFiles($sourceRoot, $targetRoot, IOInterface $io)
     {
-        foreach ($this->getFiles() as $dir) {
-            $source = $this->getFs()->joinFileUris($sourceRoot, $dir);
-            $target = $this->getFs()->joinFileUris($targetRoot, $dir);
+        foreach ($this->getFiles() as $item) {
+            $this->printInfo($item, $io);
+            $source = $this->getFs()->joinFileUris($sourceRoot, $item);
+            $target = $this->getFs()->joinFileUris($targetRoot, $item);
             if (file_exists($source)) {
                 if (file_exists($target)) {
                     $this->getFs()->remove(
@@ -195,7 +199,8 @@ class Core implements EventSubscriberInterface
         $this->printInfo('restore persistent files', $event->getIO());
         $this->moveFiles(
             $this->getBackupDir(),
-            Config::getInstance()->getMagentoRootDir()
+            Config::getInstance()->getMagentoRootDir(),
+            $event->getIO()
         );
         $this->getFs()->remove($this->getBackupDir());
     }
