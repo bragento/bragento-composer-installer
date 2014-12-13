@@ -37,28 +37,28 @@ abstract class AbstractMapping
      *
      * @var array
      */
-    protected $_mappingsArray;
+    protected $mappingsArray;
 
     /**
      * _moduleDir
      *
      * @var SplFileInfo
      */
-    private $_moduleDir;
+    private $moduleDir;
 
     /**
      * _fs
      *
      * @var Filesystem
      */
-    private $_fs;
+    private $fs;
 
     /**
      * _package
      *
      * @var PackageInterface
      */
-    private $_package;
+    private $package;
 
     /**
      * construct mappings
@@ -66,13 +66,13 @@ abstract class AbstractMapping
      * @param SplFileInfo      $moduleDir
      * @param PackageInterface $package
      */
-    function __construct(
+    public function __construct(
         SplFileInfo $moduleDir,
         PackageInterface $package
     ) {
-        $this->_fs = new Filesystem();
-        $this->_moduleDir = $moduleDir;
-        $this->_package = $package;
+        $this->fs = new Filesystem();
+        $this->moduleDir = $moduleDir;
+        $this->package = $package;
     }
 
     /**
@@ -106,7 +106,7 @@ abstract class AbstractMapping
                         array_shift($newSrcParts);
                     }
                     $newSrc = implode('/', $newSrcParts);
-                    $newDest = ltrim($dest . basename($file), '/\\');
+                    $newDest = $this->getFs()->joinFileUris($dest, basename($file));
                     $translatedMap[$newSrc] = $newDest;
                 }
             } elseif (String::endsWith($dest, '/') && is_file($src)) {
@@ -130,7 +130,7 @@ abstract class AbstractMapping
      */
     protected function getModuleDir()
     {
-        return $this->_moduleDir;
+        return $this->moduleDir;
     }
 
     /**
@@ -140,11 +140,11 @@ abstract class AbstractMapping
      */
     public function getMappingsArray()
     {
-        if (null === $this->_mappingsArray) {
-            $this->_mappingsArray = $this->parseMappings();
+        if (null === $this->mappingsArray) {
+            $this->mappingsArray = $this->parseMappings();
         }
 
-        return $this->_mappingsArray;
+        return $this->mappingsArray;
     }
 
     /**
@@ -168,7 +168,7 @@ abstract class AbstractMapping
      */
     protected function getFs()
     {
-        return $this->_fs;
+        return $this->fs;
     }
 
     /**
@@ -178,6 +178,6 @@ abstract class AbstractMapping
      */
     protected function getPackage()
     {
-        return $this->_package;
+        return $this->package;
     }
-} 
+}
