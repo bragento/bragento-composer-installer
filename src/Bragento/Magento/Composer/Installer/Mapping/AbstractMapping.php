@@ -97,21 +97,6 @@ abstract class AbstractMapping
     {
         $translatedMap = array();
         foreach ($mappings as $src => $dest) {
-            if ($this->getFs()->endsWithDs($dest)) {
-                if ($this->getFs()->endsWithDs($src)) {
-                    $dest = $this->getFs()->removeTrailingDs($dest);
-                    $src = $this->getFs()->removeTrailingDs($src);
-                } else {
-                    if ($dest === '/') {
-                        $dest = '';
-                    } else {
-                        $dest = $this->getFs()->joinFileUris(
-                            $dest,
-                            basename($src)
-                        );
-                    }
-                }
-            }
             if (String::contains($src, '*')) {
                 $glob = $this->getModuleDir() . DIRECTORY_SEPARATOR . $src;
                 foreach (glob($glob) as $file) {
@@ -123,13 +108,22 @@ abstract class AbstractMapping
                     $newDest = $this->getFs()->joinFileUris($dest, basename($file));
                     $translatedMap[$newSrc] = $newDest;
                 }
-            } elseif (String::endsWith($dest, '/') && is_file($src)) {
-                $translatedMap[$src] = sprintf(
-                    '%s/%s',
-                    $dest,
-                    basename($src)
-                );
             } else {
+                if ($this->getFs()->endsWithDs($dest)) {
+                    if ($this->getFs()->endsWithDs($src)) {
+                        $dest = $this->getFs()->removeTrailingDs($dest);
+                        $src = $this->getFs()->removeTrailingDs($src);
+                    } else {
+                        if ($dest === '/') {
+                            $dest = '';
+                        } else {
+                            $dest = $this->getFs()->joinFileUris(
+                                $dest,
+                                basename($src)
+                            );
+                        }
+                    }
+                }
                 $translatedMap[$src] = $dest;
             }
         }
