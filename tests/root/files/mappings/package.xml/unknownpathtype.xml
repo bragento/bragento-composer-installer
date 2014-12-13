@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<package>
+    <name>A4on_Mybrand</name>
+    <version>0.1.1</version>
+    <stability>stable</stability>
+    <license uri="http://opensource.org/licenses/osl-3.0.php">OSL-3.0</license>
+    <channel>community</channel>
+    <extends/>
+    <summary>Used to Create Brands and assign products.</summary>
+    <description>Using this plugin, brands can be created with an image to display in the front end and products can be
+        assigned to their brands and can be viewed when the particular brand logo is clicked.
+    </description>
+    <notes>This is a stable release. But in future updates might be made.</notes>
+    <authors>
+        <author>
+            <name>MohanaKrishnan</name>
+            <user>mohi797</user>
+            <email>krishnan3151990@gmail.com</email>
+        </author>
+    </authors>
+    <date>2013-11-01</date>
+    <time>07:33:48</time>
+    <contents>
+        <target name="magelocal">
+            <dir name=".">
+                <dir name="A4on">
+                    <dir name="Mybrand">
+                        <dir name="etc">
+                            <file name="config.xml" hash="4a95b5b175fec4d574d38bc95556d2ce"/>
+                        </dir>
+                        <diro name="controllers">
+                            <file name="IndexController.php" hash="d6c86b79658d7e26f8c476da7f1f9f46"/>
+                            <dir name="Adminhtml">
+                                <file name="IndexController.php" hash="c200b8f184d0d5e5f26b6e034dec550e"/>
+                            </dir>
+                        </diro>
+                        <dir name="Block">
+                            <filo name="Monblock.php" hash="6fb7f7113ec0a8d02dcd4e1c2c70dd61"/>
+                        </dir>
+                        <dir name="Model">
+                            <file name="Mybrand.php" hash="533a44517bc82fea68a11e0bf8bfc204"/>
+                            <file name="Myproduct.php" hash="1552833394cac5f9497e3836573dce62"/>
+                            <dir name="Mysql4">
+                                <file name="Mybrand.php" hash="d6337ff8f1976c86735d682d39e379d4"/>
+                                <file name="Myproduct.php" hash="b351e8bf7fa5cc6e160a73c50e2cc738"/>
+                                <dir name="Mybrand">
+                                    <file name="Collection.php" hash="efce73de6c1fa9021e6037953515084b"/>
+                                </dir>
+                                <dir name="Myproduct">
+                                    <file name="Collection.php" hash="5f4d17d0022823335cad1bc0c561276e"/>
+                                </dir>
+                            </dir>
+                        </dir>
+                        <dir name="sql">
+                            <dir name="mybrand_myproduct_setup">
+                                <file name="mysql4-install-0.1.1.php" hash="43bebc7187c945e2992d51492f6d27d1"/>
+                            </dir>
+                        </dir>
+                    </dir>
+                </dir>
+            </dir>
+        </target>
+        <target name="magedesign">
+            <dir name=".">
+                <dir name="adminhtml">
+                    <dir name="default">
+                        <dir name="default">
+                            <dir name="layout">
+                                <file name="mybrand.xml" hash="e79cdad48a432fcc49504e47b3a0cd58"/>
+                                <file name="myproduct.xml" hash="24192d5a9338dd17c287838a2d06a412"/>
+                            </dir>
+                            <dir name="template">
+                                <dir name="mybrand">
+                                    <file name="mybrand.phtml" hash="d28e76779759d10463503ea8312a58f5"/>
+                                </dir>
+                                <dir name="myproduct">
+                                    <file name="myproduct.phtml" hash="8262a31469afe308aefad7d221b53864"/>
+                                </dir>
+                            </dir>
+                        </dir>
+                    </dir>
+                </dir>
+                <dir name="frontend">
+                    <dir name="base">
+                        <dir name="default">
+                            <dir name="layout">
+                                <file name="mybrand.xml" hash="f298a66b7490d81617e599fb30417e89"/>
+                            </dir>
+                            <dir name="template">
+                                <dir name="mybrand">
+                                    <file name="mybrand.phtml" hash="e076a2bbb6f5a971c90c03ab150679de"/>
+                                </dir>
+                            </dir>
+                        </dir>
+                    </dir>
+                </dir>
+            </dir>
+        </target>
+        <target name="mageetc">
+            <dir name=".">
+                <dir name="modules">
+                    <file name="A4on_Mybrand.xml" hash="7361fdbcc12551a81b82765a1e654c27"/>
+                </dir>
+            </dir>
+        </target>
+        <target name="mage">
+            <dir name=".">
+                <dir name="upload">
+                    <dir name="mybrand">
+                        <dir name="brands">
+                            <file name="Lighthouse.jpg" hash="8969288f4245120e7c3870287cce0ff3"/>
+                        </dir>
+                    </dir>
+                </dir>
+            </dir>
+        </target>
+        <target name="mageskin">
+            <dir name=".">
+                <dir name="frontend">
+                    <dir name="base">
+                        <dir name="default">
+                            <dir name="js">
+                                <file name="mybrand.js" hash="383771ef1692bfcc3f2b6917ca985778"/>
+                                <file name="vticker.js" hash="c578abb7e595389a2f3534b285138404"/>
+                            </dir>
+                            <dir name="css">
+                                <file name="mybrand.css" hash="6d6cd600ceda3eb578a61744ec9f6191"/>
+                            </dir>
+                        </dir>
+                    </dir>
+                </dir>
+            </dir>
+        </target>
+    </contents>
+    <compatible/>
+    <dependencies>
+        <required>
+            <php>
+                <min>5.1.0</min>
+                <max>6.0.0</max>
+            </php>
+        </required>
+    </dependencies>
+</package>
