@@ -103,18 +103,14 @@ class Core implements EventSubscriberInterface
      */
     public function onPreDeployCoreUpdate(PackageEvent $event)
     {
-        $event->getIO()->write('<info>backup persistent core files</info>');
+        $event->getIO()->write('<info>backup persistent files</info>');
         $this->getFs()->ensureDirectoryExists($this->backupDir);
+
         foreach ($this->persistent as $dir) {
-            if (file_exists($this->getMagentoSubDir($dir))) {
-                $this->getFs()->ensureDirectoryExists(
-                    dirname($this->getBackupSubDir($dir))
-                );
-                $this->getFs()->rename(
-                    $this->getMagentoSubDir($dir),
-                    $this->getBackupSubDir($dir)
-                );
-            }
+            $this->moveFile(
+                $this->getMagentoSubDir($dir),
+                $this->getBackupSubDir($dir)
+            );
         }
     }
 
@@ -127,21 +123,47 @@ class Core implements EventSubscriberInterface
      */
     public function onPostDeployCoreUpdate(PackageEvent $event)
     {
-        $event->getIO()->write('<info>restore persistent core files</info>');
+        $event->getIO()->write('<info>restore persistent files</info>');
         foreach ($this->persistent as $dir) {
-            if (file_exists($this->getBackupSubDir($dir))) {
-                if (file_exists($this->getMagentoSubDir($dir))) {
-                    $this->getFs()->remove(
-                        $this->getMagentoSubDir($dir)
-                    );
-                }
-                $this->getFs()->rename(
-                    $this->getBackupSubDir($dir),
-                    $this->getMagentoSubDir($dir)
-                );
-            }
+            $this->moveFile(
+                $this->getBackupSubDir($dir),
+                $this->getMagentoSubDir($dir)
+            );
         }
         $this->getFs()->remove($this->backupDir);
+    }
+
+    /**
+     * moveFiles
+     *
+     * @param $source
+     * @param $target
+     *
+     * @return void
+     */
+    protected function moveFile($source, $target)
+    {
+        if (file_exists($source)) {
+            if (file_exists($target)) {
+                $this->getFs()->remove(
+                    $target
+                );
+            }
+            $this->getFs()->rename(
+                $source,
+                $target
+            );
+        }
+    }
+
+    /**
+     * getFiles
+     *
+     * @return array
+     */
+    protected function getFiles()
+    {
+        return $this->persistent;
     }
 
     /**
