@@ -18,8 +18,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "@stable",
-        "composer/composer": "~1@dev",
-        "codeclimate/php-test-reporter": "~0.1"
+        "composer/composer": "~1@alpha",
+        "codeclimate/php-test-reporter": "~0.1@stable"
     },
     "replace": {
         "magento-hackathon/magento-composer-installer": "*"

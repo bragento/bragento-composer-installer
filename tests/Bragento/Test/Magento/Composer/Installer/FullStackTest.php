@@ -89,8 +89,8 @@ class FullStackTest extends AbstractTest
     public function provideConfigFileNames()
     {
         return array(
-            array('magentocore.json'),
-            array('somemodules.json'),
+            //array('magentocore.json'),
+            //array('somemodules.json'),
             array('changedmageroot.json'),
             //array('magealllatest.json')
         );
