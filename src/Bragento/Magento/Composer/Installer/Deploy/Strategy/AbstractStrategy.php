@@ -325,7 +325,7 @@ abstract class AbstractStrategy
                     $this->getFullPath($this->getDestDir(), $dest)
                 );
             }
-        } catch (Mapping\Exception\MappingException $e) {
+        } catch (\Exception $e) {
             $this->io->write(sprintf('<error>%s</error>', $e->getMessage()));
         }
     }
