@@ -102,13 +102,16 @@ abstract class AbstractMapping
                     $dest = $this->getFs()->removeTrailingDs($dest);
                     $src = $this->getFs()->removeTrailingDs($src);
                 } else {
-                    $dest = $this->getFs()->joinFileUris(
-                        $dest,
-                        basename($src)
-                    );
+                    if ($dest === '/') {
+                        $dest = '';
+                    } else {
+                        $dest = $this->getFs()->joinFileUris(
+                            $dest,
+                            basename($src)
+                        );
+                    }
                 }
             }
-
             if (String::contains($src, '*')) {
                 $glob = $this->getModuleDir() . DIRECTORY_SEPARATOR . $src;
                 foreach (glob($glob) as $file) {
