@@ -14,6 +14,8 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
+use Bragento\Magento\Composer\Installer\Project\Config;
+
 /**
  * Class Symlink
  *
@@ -32,18 +34,19 @@ class Symlink extends AbstractStrategy
      * @param string $src
      * @param string $dest
      *
-     * @return mixed
+     * @return void
      */
     protected function createDelegate($src, $dest)
     {
-        if ($this->getIo()->isDebug()) {
-            $this->getIo()->write(
-                sprintf(
-                    "create symlink\nsrc:  %s\ndest: %s",
-                    $src,
-                    $dest
-                )
-            );
+        if ($this->getFs()->exists($dest)) {
+            if (!$override = Config::getInstance()->isForcedOverride()) {
+                $override = $this->getIo()->ask(sprintf("Destination already exists. Replace %s ?", $dest));
+            }
+            if ($override) {
+                $this->getFs()->remove($dest);
+            } else {
+                return;
+            }
         }
 
         $this->getFs()->ensureDirectoryExists(dirname($dest));

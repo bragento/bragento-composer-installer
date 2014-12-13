@@ -272,14 +272,6 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
         $source = $this->normalizePath($source);
         $destination = $this->normalizePath($destination);
 
-        if ($this->exists($destination)) {
-            if (Config::getInstance()->isForcedOverride()) {
-                $this->remove($destination);
-            } else {
-                throw new IOException(sprintf('Cannot create Symlink. File already exists: %s', $destination));
-            }
-        }
-
         parent::symlink(
             $this->getRelativePath($destination, $source),
             $destination,
