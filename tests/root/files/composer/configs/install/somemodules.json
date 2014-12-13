@@ -11,6 +11,7 @@
         "bragento/magento-composer-installer": "dev-develop",
         "magento/core": "*",
         "theseer/autoload": "~1.14",
+        "firegento/magesetup": "@stable",
         "zetacomponents/console-tools": "dev-master",
         "firegento/psr0autoloader": "dev-master",
         "connect20/aw_blog": "*",

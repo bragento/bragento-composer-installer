@@ -131,13 +131,9 @@ class Core implements EventSubscriberInterface
         foreach ($this->persistent as $dir) {
             if (file_exists($this->getBackupSubDir($dir))) {
                 if (file_exists($this->getMagentoSubDir($dir))) {
-                    if (is_dir($this->getMagentoSubDir($dir))) {
-                        $this->getFs()->remove(
-                            $this->getMagentoSubDir($dir)
-                        );
-                    } else {
-                        unlink($this->getMagentoSubDir($dir));
-                    }
+                    $this->getFs()->remove(
+                        $this->getMagentoSubDir($dir)
+                    );
                 }
                 $this->getFs()->rename(
                     $this->getBackupSubDir($dir),
