@@ -108,7 +108,7 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
         $srcPath = $this->normalizePath($srcPath);
         $destPath = $this->normalizePath($destPath);
 
-        if (String::endsWith($destPath, self::DS)) {
+        if ($this->endsWithDs($destPath)) {
             $destPath .= basename($srcPath);
         }
 
@@ -274,7 +274,7 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
         $destination = $this->normalizePath($destination);
 
         if ($this->endsWithDs($destination)) {
-            $destination = rtrim($destination, self::DS);
+            $destination .= basename($source);
         }
 
         if ($this->exists($destination)
