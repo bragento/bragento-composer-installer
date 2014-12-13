@@ -114,14 +114,10 @@ abstract class AbstractMapping
                         $dest = $this->getFs()->removeTrailingDs($dest);
                         $src = $this->getFs()->removeTrailingDs($src);
                     } else {
-                        if ($dest === '/') {
-                            $dest = '';
-                        } else {
-                            $dest = $this->getFs()->joinFileUris(
-                                $dest,
-                                basename($src)
-                            );
-                        }
+                        $dest = $this->getFs()->joinFileUris(
+                            $dest,
+                            basename($src)
+                        );
                     }
                 }
                 $translatedMap[$src] = $dest;
