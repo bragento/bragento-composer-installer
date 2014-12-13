@@ -169,27 +169,31 @@ class Manager implements EventSubscriberInterface
     {
         $this->addAllPackages();
         $this->dispatchEvent(Events::PRE_DEPLOY);
-        $this->deployCoreEntry();
-        $this->deployEntriesArray($this->moduleEntries);
-        $this->deployEntriesArray($this->themeEntries);
+        $this->coreEntry = $this->deployEntry($this->coreEntry);
+        $this->moduleEntries = $this->deployEntriesArray($this->moduleEntries);
+        $this->themeEntries = $this->deployEntriesArray($this->themeEntries);
         $this->dispatchEvent(Events::POST_DEPLOY);
     }
 
     /**
      * deployCoreEntry
      *
-     * @return void
+     * @param Entry $entry
+     *
      * @throws Exception\UnknownActionException
+     * @return Entry
      */
-    protected function deployCoreEntry()
+    protected function deployEntry(Entry $entry)
     {
-        if (null !== $this->coreEntry) {
-            $this->coreEntry->getDeployStrategy()->doDeploy();
+        if (null !== $entry) {
+            $entry->getDeployStrategy()->doDeploy();
             $this->addDeployedPackage(
-                $this->coreEntry->getDeployStrategy()->getPackage()
+                $entry->getDeployStrategy()->getPackage()
             );
-            $this->coreEntry = null;
+            $entry = null;
         }
+
+        return $entry;
     }
 
     /**
@@ -197,19 +201,21 @@ class Manager implements EventSubscriberInterface
      *
      * @param Entry[] $entries
      *
-     * @return void
+     * @return Entry[]
      * @throws Exception\UnknownActionException
      */
     protected function deployEntriesArray(array $entries)
     {
         while (count($entries)) {
             /** @var Entry $entry */
-            $entry = array_pop($entries);
+            $entry = array_shift($entries);
             $entry->getDeployStrategy()->doDeploy();
             $this->addDeployedPackage(
                 $entry->getDeployStrategy()->getPackage()
             );
         }
+
+        return $entries;
     }
 
     /**
