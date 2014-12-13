@@ -168,9 +168,21 @@ class Manager implements EventSubscriberInterface
     public function doDeploy()
     {
         $this->addAllPackages();
-
         $this->dispatchEvent(Events::PRE_DEPLOY);
+        $this->deployCoreEntry();
+        $this->deployEntriesArray($this->moduleEntries);
+        $this->deployEntriesArray($this->themeEntries);
+        $this->dispatchEvent(Events::POST_DEPLOY);
+    }
 
+    /**
+     * deployCoreEntry
+     *
+     * @return void
+     * @throws Exception\UnknownActionException
+     */
+    protected function deployCoreEntry()
+    {
         if (null !== $this->coreEntry) {
             $this->coreEntry->getDeployStrategy()->doDeploy();
             $this->addDeployedPackage(
@@ -178,26 +190,26 @@ class Manager implements EventSubscriberInterface
             );
             $this->coreEntry = null;
         }
+    }
 
-        while (count($this->moduleEntries)) {
-            /** @var Entry $moduleEntry */
-            $moduleEntry = array_pop($this->moduleEntries);
-            $moduleEntry->getDeployStrategy()->doDeploy();
+    /**
+     * deployEntriesArray
+     *
+     * @param Entry[] $entries
+     *
+     * @return void
+     * @throws Exception\UnknownActionException
+     */
+    protected function deployEntriesArray(array $entries)
+    {
+        while (count($entries)) {
+            /** @var Entry $entry */
+            $entry = array_pop($entries);
+            $entry->getDeployStrategy()->doDeploy();
             $this->addDeployedPackage(
-                $moduleEntry->getDeployStrategy()->getPackage()
+                $entry->getDeployStrategy()->getPackage()
             );
         }
-
-        while (count($this->themeEntries)) {
-            /** @var Entry $themeEntry */
-            $themeEntry = array_pop($this->moduleEntries);
-            $themeEntry->getDeployStrategy()->doDeploy();
-            $this->addDeployedPackage(
-                $themeEntry->getDeployStrategy()->getPackage()
-            );
-        }
-
-        $this->dispatchEvent(Events::POST_DEPLOY);
     }
 
     /**
