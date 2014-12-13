@@ -18,6 +18,7 @@ use Bragento\Magento\Composer\Installer\Deploy\Events;
 use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\IO\IOInterface;
 use Composer\Script\PackageEvent;
 
 /**
@@ -89,8 +90,8 @@ class Core implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            Events::PRE_DEPLOY_CORE_UPDATE  => 'onPreDeployCoreUpdate',
-            Events::POST_DEPLOY_CORE_UPDATE => 'onPostDeployCoreUpdate'
+            Events::PRE_DEPLOY_CORE_UPDATE  => 'backupFiles',
+            Events::POST_DEPLOY_CORE_UPDATE => 'restoreBackup'
         );
     }
 
@@ -101,9 +102,9 @@ class Core implements EventSubscriberInterface
      *
      * @return void
      */
-    public function onPreDeployCoreUpdate(PackageEvent $event)
+    public function backupFiles(PackageEvent $event)
     {
-        $event->getIO()->write('<info>backup persistent files</info>');
+        $this->printInfo('backup persistent files', $event->getIO());
         $this->getFs()->ensureDirectoryExists($this->getBackupDir());
         $this->moveFiles(
             Config::getInstance()->getMagentoRootDir(),
@@ -112,20 +113,36 @@ class Core implements EventSubscriberInterface
     }
 
     /**
-     * onPostDeployCoreUpdate
+     * printInfo
      *
-     * @param PackageEvent $event
+     * @param string      $text
+     * @param IOInterface $io
      *
      * @return void
      */
-    public function onPostDeployCoreUpdate(PackageEvent $event)
+    protected function printInfo($text, IOInterface $io)
     {
-        $event->getIO()->write('<info>restore persistent files</info>');
-        $this->moveFiles(
-            $this->getBackupDir(),
-            Config::getInstance()->getMagentoRootDir()
-        );
-        $this->getFs()->remove($this->getBackupDir());
+        $io->write(sprintf("<info>%s</info>", $text));
+    }
+
+    /**
+     * getFs
+     *
+     * @return Filesystem
+     */
+    protected function getFs()
+    {
+        return $this->fs;
+    }
+
+    /**
+     * getBackupDir
+     *
+     * @return string
+     */
+    protected function getBackupDir()
+    {
+        return $this->backupDir;
     }
 
     /**
@@ -166,22 +183,19 @@ class Core implements EventSubscriberInterface
     }
 
     /**
-     * getBackupDir
+     * onPostDeployCoreUpdate
      *
-     * @return string
-     */
-    protected function getBackupDir()
-    {
-        return $this->backupDir;
-    }
-
-    /**
-     * getFs
+     * @param PackageEvent $event
      *
-     * @return Filesystem
+     * @return void
      */
-    protected function getFs()
+    public function restoreBackup(PackageEvent $event)
     {
-        return $this->fs;
+        $this->printInfo('restore persistent files', $event->getIO());
+        $this->moveFiles(
+            $this->getBackupDir(),
+            Config::getInstance()->getMagentoRootDir()
+        );
+        $this->getFs()->remove($this->getBackupDir());
     }
 }
