@@ -18,6 +18,7 @@ use Bragento\Magento\Composer\Installer\Deploy\Events;
 use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\IO\IOInterface;
 use Composer\Script\PackageEvent;
 
 /**
@@ -89,8 +90,8 @@ class Core implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            Events::PRE_DEPLOY_CORE_UPDATE  => 'onPreDeployCoreUpdate',
-            Events::POST_DEPLOY_CORE_UPDATE => 'onPostDeployCoreUpdate'
+            Events::PRE_DEPLOY_CORE_UPDATE  => 'backupFiles',
+            Events::POST_DEPLOY_CORE_UPDATE => 'restoreBackup'
         );
     }
 
@@ -101,75 +102,27 @@ class Core implements EventSubscriberInterface
      *
      * @return void
      */
-    public function onPreDeployCoreUpdate(PackageEvent $event)
+    public function backupFiles(PackageEvent $event)
     {
-        $event->getIO()->write('<info>backup persistent core files</info>');
-        $this->getFs()->ensureDirectoryExists($this->backupDir);
-        foreach ($this->persistent as $dir) {
-            if (file_exists($this->getMagentoSubDir($dir))) {
-                $this->getFs()->ensureDirectoryExists(
-                    dirname($this->getBackupSubDir($dir))
-                );
-                $this->getFs()->rename(
-                    $this->getMagentoSubDir($dir),
-                    $this->getBackupSubDir($dir)
-                );
-            }
-        }
+        $this->printInfo('backup persistent files', $event->getIO());
+        $this->getFs()->ensureDirectoryExists($this->getBackupDir());
+        $this->moveFiles(
+            Config::getInstance()->getMagentoRootDir(),
+            $this->getBackupDir()
+        );
     }
 
     /**
-     * onPostDeployCoreUpdate
+     * printInfo
      *
-     * @param PackageEvent $event
+     * @param string      $text
+     * @param IOInterface $io
      *
      * @return void
      */
-    public function onPostDeployCoreUpdate(PackageEvent $event)
+    protected function printInfo($text, IOInterface $io)
     {
-        $event->getIO()->write('<info>restore persistent core files</info>');
-        foreach ($this->persistent as $dir) {
-            if (file_exists($this->getBackupSubDir($dir))) {
-                if (file_exists($this->getMagentoSubDir($dir))) {
-                    $this->getFs()->remove(
-                        $this->getMagentoSubDir($dir)
-                    );
-                }
-                $this->getFs()->rename(
-                    $this->getBackupSubDir($dir),
-                    $this->getMagentoSubDir($dir)
-                );
-            }
-        }
-        $this->getFs()->remove($this->backupDir);
-    }
-
-    /**
-     * getMagentoSubDir
-     *
-     * @param $dir
-     *
-     * @return string
-     */
-    protected function getMagentoSubDir($dir)
-    {
-        return Config::getInstance()->getMagentoRootDir()
-        . DIRECTORY_SEPARATOR
-        . $dir;
-    }
-
-    /**
-     * getBackupSubDir
-     *
-     * @param $dir
-     *
-     * @return string
-     */
-    protected function getBackupSubDir($dir)
-    {
-        return $this->backupDir
-        . DIRECTORY_SEPARATOR
-        . $dir;
+        $io->write(sprintf("<info>%s</info>", $text));
     }
 
     /**
@@ -180,5 +133,70 @@ class Core implements EventSubscriberInterface
     protected function getFs()
     {
         return $this->fs;
+    }
+
+    /**
+     * getBackupDir
+     *
+     * @return string
+     */
+    protected function getBackupDir()
+    {
+        return $this->backupDir;
+    }
+
+    /**
+     * moveFiles
+     *
+     * @param $sourceRoot
+     * @param $targetRoot
+     *
+     * @return void
+     */
+    protected function moveFiles($sourceRoot, $targetRoot)
+    {
+        foreach ($this->getFiles() as $dir) {
+            $source = $this->getFs()->joinFileUris($sourceRoot, $dir);
+            $target = $this->getFs()->joinFileUris($targetRoot, $dir);
+            if (file_exists($source)) {
+                if (file_exists($target)) {
+                    $this->getFs()->remove(
+                        $target
+                    );
+                }
+                $this->getFs()->ensureDirectoryExists(dirname($target));
+                $this->getFs()->rename(
+                    $source,
+                    $target
+                );
+            }
+        }
+    }
+
+    /**
+     * getFiles
+     *
+     * @return array
+     */
+    protected function getFiles()
+    {
+        return $this->persistent;
+    }
+
+    /**
+     * onPostDeployCoreUpdate
+     *
+     * @param PackageEvent $event
+     *
+     * @return void
+     */
+    public function restoreBackup(PackageEvent $event)
+    {
+        $this->printInfo('restore persistent files', $event->getIO());
+        $this->moveFiles(
+            $this->getBackupDir(),
+            Config::getInstance()->getMagentoRootDir()
+        );
+        $this->getFs()->remove($this->getBackupDir());
     }
 }

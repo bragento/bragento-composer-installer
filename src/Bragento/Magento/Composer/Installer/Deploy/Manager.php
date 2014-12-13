@@ -168,36 +168,54 @@ class Manager implements EventSubscriberInterface
     public function doDeploy()
     {
         $this->addAllPackages();
-
         $this->dispatchEvent(Events::PRE_DEPLOY);
-
-        if (null !== $this->coreEntry) {
-            $this->coreEntry->getDeployStrategy()->doDeploy();
-            $this->addDeployedPackage(
-                $this->coreEntry->getDeployStrategy()->getPackage()
-            );
-            $this->coreEntry = null;
-        }
-
-        while (count($this->moduleEntries)) {
-            /** @var Entry $moduleEntry */
-            $moduleEntry = array_pop($this->moduleEntries);
-            $moduleEntry->getDeployStrategy()->doDeploy();
-            $this->addDeployedPackage(
-                $moduleEntry->getDeployStrategy()->getPackage()
-            );
-        }
-
-        while (count($this->themeEntries)) {
-            /** @var Entry $themeEntry */
-            $themeEntry = array_pop($this->moduleEntries);
-            $themeEntry->getDeployStrategy()->doDeploy();
-            $this->addDeployedPackage(
-                $themeEntry->getDeployStrategy()->getPackage()
-            );
-        }
-
+        $this->coreEntry = $this->deployEntry($this->coreEntry);
+        $this->moduleEntries = $this->deployEntriesArray($this->moduleEntries);
+        $this->themeEntries = $this->deployEntriesArray($this->themeEntries);
         $this->dispatchEvent(Events::POST_DEPLOY);
+    }
+
+    /**
+     * deployCoreEntry
+     *
+     * @param Entry $entry
+     *
+     * @throws Exception\UnknownActionException
+     * @return Entry
+     */
+    protected function deployEntry(Entry $entry)
+    {
+        if (null !== $entry) {
+            $entry->getDeployStrategy()->doDeploy();
+            $this->addDeployedPackage(
+                $entry->getDeployStrategy()->getPackage()
+            );
+            $entry = null;
+        }
+
+        return $entry;
+    }
+
+    /**
+     * deployEntriesArray
+     *
+     * @param Entry[] $entries
+     *
+     * @return Entry[]
+     * @throws Exception\UnknownActionException
+     */
+    protected function deployEntriesArray(array $entries)
+    {
+        while (count($entries)) {
+            /** @var Entry $entry */
+            $entry = array_shift($entries);
+            $entry->getDeployStrategy()->doDeploy();
+            $this->addDeployedPackage(
+                $entry->getDeployStrategy()->getPackage()
+            );
+        }
+
+        return $entries;
     }
 
     /**

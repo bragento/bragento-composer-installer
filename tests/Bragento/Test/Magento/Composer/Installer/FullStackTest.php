@@ -91,8 +91,7 @@ class FullStackTest extends AbstractTest
         return array(
             array('magentocore.json'),
             array('somemodules.json'),
-            array('changedmageroot.json'),
-            //array('magealllatest.json')
+            array('changedmageroot.json')
         );
     }
 
