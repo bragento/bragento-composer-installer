@@ -176,34 +176,6 @@ class Core implements EventSubscriberInterface
     }
 
     /**
-     * getMagentoSubDir
-     *
-     * @param $dir
-     *
-     * @return string
-     */
-    protected function getMagentoSubDir($dir)
-    {
-        return Config::getInstance()->getMagentoRootDir()
-        . DIRECTORY_SEPARATOR
-        . $dir;
-    }
-
-    /**
-     * getBackupSubDir
-     *
-     * @param $dir
-     *
-     * @return string
-     */
-    protected function getBackupSubDir($dir)
-    {
-        return $this->backupDir
-        . DIRECTORY_SEPARATOR
-        . $dir;
-    }
-
-    /**
      * getFs
      *
      * @return Filesystem
