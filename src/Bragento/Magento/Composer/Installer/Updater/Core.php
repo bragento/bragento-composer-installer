@@ -104,9 +104,9 @@ class Core implements EventSubscriberInterface
     public function onPreDeployCoreUpdate(PackageEvent $event)
     {
         $event->getIO()->write('<info>backup persistent files</info>');
-        $this->getFs()->ensureDirectoryExists($this->backupDir);
+        $this->getFs()->ensureDirectoryExists($this->getBackupDir());
 
-        foreach ($this->persistent as $dir) {
+        foreach ($this->getFiles() as $dir) {
             $this->moveFile(
                 $this->getMagentoSubDir($dir),
                 $this->getBackupSubDir($dir)
@@ -124,13 +124,13 @@ class Core implements EventSubscriberInterface
     public function onPostDeployCoreUpdate(PackageEvent $event)
     {
         $event->getIO()->write('<info>restore persistent files</info>');
-        foreach ($this->persistent as $dir) {
+        foreach ($this->getFiles() as $dir) {
             $this->moveFile(
                 $this->getBackupSubDir($dir),
                 $this->getMagentoSubDir($dir)
             );
         }
-        $this->getFs()->remove($this->backupDir);
+        $this->getFs()->remove($this->getBackupDir());
     }
 
     /**
@@ -164,6 +164,16 @@ class Core implements EventSubscriberInterface
     protected function getFiles()
     {
         return $this->persistent;
+    }
+
+    /**
+     * getBackupDir
+     *
+     * @return string
+     */
+    protected function getBackupDir()
+    {
+        return $this->backupDir;
     }
 
     /**
