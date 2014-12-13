@@ -14,6 +14,7 @@
 
 namespace Bragento\Magento\Composer\Installer\Util;
 
+use Bragento\Magento\Composer\Installer\Project\Config;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -248,7 +249,8 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
             $this->normalizePath($path)
         );
 
-        foreach ($this->getPathParts($this->normalizePath($root)) as $rootPart) {
+        foreach ($this->getPathParts($this->normalizePath($root)) as $rootPart)
+        {
             if (count($pathParts) && $rootPart === $pathParts[0]) {
                 array_shift($pathParts);
             }
@@ -273,6 +275,12 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
 
         if ($this->endsWithDs($destination)) {
             $destination = rtrim($destination, self::DS);
+        }
+
+        if ($this->exists($destination)
+            && Config::getInstance()->isForcedOverride()
+        ) {
+            $this->remove($destination);
         }
 
         parent::symlink(
