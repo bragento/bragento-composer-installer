@@ -108,13 +108,18 @@ abstract class AbstractMapping
                     $newDest = $this->getFs()->joinFileUris($dest, basename($file));
                     $translatedMap[$newSrc] = $newDest;
                 }
-            } elseif (String::endsWith($dest, '/') && is_file($src)) {
-                $translatedMap[$src] = sprintf(
-                    '%s/%s',
-                    $dest,
-                    basename($src)
-                );
             } else {
+                if ($this->getFs()->endsWithDs($dest)) {
+                    if ($this->getFs()->endsWithDs($src)) {
+                        $dest = $this->getFs()->removeTrailingDs($dest);
+                        $src = $this->getFs()->removeTrailingDs($src);
+                    } else {
+                        $dest = $this->getFs()->joinFileUris(
+                            $dest,
+                            basename($src)
+                        );
+                    }
+                }
                 $translatedMap[$src] = $dest;
             }
         }

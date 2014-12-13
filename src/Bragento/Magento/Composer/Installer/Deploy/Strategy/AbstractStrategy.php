@@ -19,6 +19,7 @@ use Bragento\Magento\Composer\Installer\Deploy\Manager\Actions;
 use Bragento\Magento\Composer\Installer\Deploy\Operation\DeployPackage;
 use Bragento\Magento\Composer\Installer\Deploy\State;
 use Bragento\Magento\Composer\Installer\Mapping;
+use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Composer;
 use Composer\EventDispatcher\EventDispatcher;
@@ -434,8 +435,8 @@ abstract class AbstractStrategy
     protected function removeDelegates()
     {
         if (is_array($this->getDeployedDelegatesMapping())) {
-            foreach ($this->getDeployedDelegatesMapping() as $delegate) {
-                $filePath = $this->getFullPath($this->getDestDir(), $delegate);
+            foreach ($this->getDeployedDelegatesMapping() as $source => $destination) {
+                $filePath = $this->getFullPath(Config::getInstance()->getMagentoRootDir(), $destination);
                 $this->removeDelegate($filePath);
             }
         }

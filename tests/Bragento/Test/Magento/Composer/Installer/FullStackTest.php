@@ -37,6 +37,7 @@ class FullStackTest extends AbstractTest
     const MODE_INSTALL = 'install';
 
     const CHECK_TYPE_FILES_EXIST = 'files_exist';
+    const CHECK_TYPE_FILES_NOT_EXIST = 'files_not_exist';
 
     const BUILD_DIR = 'build/';
 
@@ -113,13 +114,22 @@ class FullStackTest extends AbstractTest
         $this->install($configFileName);
 
         //check installation
-        $this->checkFiles($this->testForMagento);
+        $this->checkFilesExist($this->testForMagento);
 
         //check additional files from config file
-        $this->checkFiles(
+        $this->checkFilesExist(
             $this->getChecks(
                 self::MODE_INSTALL,
                 self::CHECK_TYPE_FILES_EXIST,
+                $configFileName
+            )
+        );
+
+        //check additional files from config file
+        $this->checkFilesNotExist(
+            $this->getChecks(
+                self::MODE_INSTALL,
+                self::CHECK_TYPE_FILES_NOT_EXIST,
                 $configFileName
             )
         );
@@ -131,10 +141,10 @@ class FullStackTest extends AbstractTest
         $this->update($configFileName);
 
         //check installation
-        $this->checkFiles($this->testForMagento);
+        $this->checkFilesExist($this->testForMagento);
 
         //check additional files from config file
-        $this->checkFiles(
+        $this->checkFilesExist(
             $this->getChecks(
                 self::MODE_UPDATE,
                 self::CHECK_TYPE_FILES_EXIST,
@@ -142,8 +152,17 @@ class FullStackTest extends AbstractTest
             )
         );
 
+        //check additional files from config file
+        $this->checkFilesNotExist(
+            $this->getChecks(
+                self::MODE_UPDATE,
+                self::CHECK_TYPE_FILES_NOT_EXIST,
+                $configFileName
+            )
+        );
+
         // check if files were backed up
-        $this->checkFiles($this->persistentTestFiles);
+        $this->checkFilesExist($this->persistentTestFiles);
     }
 
     /**
@@ -221,16 +240,34 @@ class FullStackTest extends AbstractTest
     }
 
     /**
-     * checkFiles
+     * checkFilesExist
      *
      * @param array $files
      *
      * @return void
      */
-    protected function checkFiles(array $files)
+    protected function checkFilesExist(array $files)
     {
         foreach ($files as $file) {
             $this->assertFileExists(
+                $this->getMagentoRootDir() .
+                DIRECTORY_SEPARATOR .
+                $file
+            );
+        }
+    }
+
+    /**
+     * checkFilesNotExist
+     *
+     * @param array $files
+     *
+     * @return void
+     */
+    protected function checkFilesNotExist(array $files)
+    {
+        foreach ($files as $file) {
+            $this->assertFileNotExists(
                 $this->getMagentoRootDir() .
                 DIRECTORY_SEPARATOR .
                 $file

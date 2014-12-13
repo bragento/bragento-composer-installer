@@ -175,7 +175,7 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      *
      * @return bool
      */
-    protected function endsWithDs($path)
+    public function endsWithDs($path)
     {
         return String::endsWith($path, '/')
         || String::endsWith($path, '\\');
@@ -211,7 +211,7 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      *
      * @return bool
      */
-    protected function startsWithDs($path)
+    public function startsWithDs($path)
     {
         return String::startsWith($path, '/')
         || String::startsWith($path, '\\');
@@ -271,18 +271,6 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
     {
         $source = $this->normalizePath($source);
         $destination = $this->normalizePath($destination);
-
-        if ($this->endsWithDs($destination)) {
-            if ($this->endsWithDs($source)) {
-                $destination = $this->removeTrailingDs($destination);
-                $source = $this->removeTrailingDs($source);
-            } else {
-                $destination = $this->joinFileUris(
-                    $destination,
-                    basename($source)
-                );
-            }
-        }
 
         if ($this->exists($destination)) {
             if (Config::getInstance()->isForcedOverride()) {
@@ -386,7 +374,7 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      *
      * @return string
      */
-    protected function removeTrailingDs($path)
+    public function removeTrailingDs($path)
     {
         return rtrim($path, '/\\');
     }

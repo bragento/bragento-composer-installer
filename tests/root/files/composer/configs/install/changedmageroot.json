@@ -12,6 +12,7 @@
         "connect20/aw_fps": "*"
     },
     "extra": {
-        "magento-root-dir": "htdocs"
+        "magento-root-dir": "htdocs",
+        "magento-force": "override"
     }
 }

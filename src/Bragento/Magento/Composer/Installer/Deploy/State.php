@@ -113,7 +113,7 @@ class State
      */
     public function getMapping()
     {
-        return $this->get(self::MAPPINGS_KEY);
+        return (array)$this->get(self::MAPPINGS_KEY);
     }
 
     /**

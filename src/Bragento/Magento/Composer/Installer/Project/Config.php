@@ -34,8 +34,8 @@ class Config
     const MAGENTO_ROOT_DIR_KEY = 'magento-root-dir';
     const DEFAULT_MAGENTO_ROOT_DIR = 'magento';
 
-    const MAGENTO_OVERRIDE_KEY = 'magento-override';
-    const OVERRIDE_FORCE = 'force';
+    const MAGENTO_FORCE_KEY = 'magento-force';
+    const OVERRIDE_FORCE = 'override';
 
     /**
      * _instance
@@ -107,7 +107,7 @@ class Config
      */
     public function getMagentoOverride()
     {
-        return $this->getExtraValue(self::MAGENTO_OVERRIDE_KEY);
+        return $this->getExtraValue(self::MAGENTO_FORCE_KEY);
     }
 
     /**
