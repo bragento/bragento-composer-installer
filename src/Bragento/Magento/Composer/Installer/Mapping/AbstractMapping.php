@@ -97,6 +97,18 @@ abstract class AbstractMapping
     {
         $translatedMap = array();
         foreach ($mappings as $src => $dest) {
+            if ($this->getFs()->endsWithDs($dest)) {
+                if ($this->getFs()->endsWithDs($src)) {
+                    $dest = $this->getFs()->removeTrailingDs($dest);
+                    $src = $this->getFs()->removeTrailingDs($src);
+                } else {
+                    $dest = $this->getFs()->joinFileUris(
+                        $dest,
+                        basename($src)
+                    );
+                }
+            }
+
             if (String::contains($src, '*')) {
                 $glob = $this->getModuleDir() . DIRECTORY_SEPARATOR . $src;
                 foreach (glob($glob) as $file) {
