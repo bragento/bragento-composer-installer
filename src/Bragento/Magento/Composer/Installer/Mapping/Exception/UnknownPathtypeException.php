@@ -16,7 +16,6 @@ namespace Bragento\Magento\Composer\Installer\Mapping\Exception;
 
 use Exception;
 
-
 /**
  * Class UnknownPathtypeException
  *
@@ -42,5 +41,4 @@ class UnknownPathtypeException extends \Exception
         $message = sprintf('unknown path type: %s', $pathtype);
         parent::__construct($message, $code, $previous);
     }
-
-} 
+}

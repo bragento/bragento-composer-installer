@@ -14,7 +14,6 @@
 
 namespace Bragento\Magento\Composer\Installer\Mapping\Exception;
 
-
 /**
  * Class MappinException
  *
@@ -28,4 +27,4 @@ namespace Bragento\Magento\Composer\Installer\Mapping\Exception;
 class MappingException extends \Exception
 {
 
-} 
+}

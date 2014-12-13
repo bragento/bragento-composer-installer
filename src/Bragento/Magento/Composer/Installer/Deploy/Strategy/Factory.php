@@ -20,7 +20,6 @@ use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
-
 /**
  * Class Factory
  *
@@ -44,21 +43,21 @@ class Factory
      *
      * @var array
      */
-    protected static $_deployStrategies;
+    protected static $deployStrategies;
 
     /**
      * _composer
      *
      * @var Composer
      */
-    protected static $_composer;
+    protected static $composer;
 
     /**
      * Composer IO Interface
      *
      * @var IOInterface
      */
-    protected static $_io;
+    protected static $io;
 
     /**
      * init
@@ -70,9 +69,9 @@ class Factory
      */
     public static function init(Composer $composer, IOInterface $io)
     {
-        self::$_composer = $composer;
-        self::$_io = $io;
-        self::$_deployStrategies = array();
+        self::$composer = $composer;
+        self::$io = $io;
+        self::$deployStrategies = array();
     }
 
     /**
@@ -91,7 +90,7 @@ class Factory
         SplFileInfo $sourceDir,
         SplFileInfo $destDir
     ) {
-        if (!isset(self::$_deployStrategies[$package->getName()])) {
+        if (!isset(self::$deployStrategies[$package->getName()])) {
             switch ($package->getType()) {
                 case PackageTypes::MAGENTO_CORE:
                     $strategy = self::STRATEGY_COPY;
@@ -108,17 +107,17 @@ class Factory
 
             $classname = self::getClassName($strategy);
 
-            self::$_deployStrategies[$package->getName()] = new $classname(
+            self::$deployStrategies[$package->getName()] = new $classname(
                 $package,
                 $sourceDir,
                 $destDir,
                 $action,
-                self::$_composer,
-                self::$_io
+                self::$composer,
+                self::$io
             );
         }
 
-        return self::$_deployStrategies[$package->getName()];
+        return self::$deployStrategies[$package->getName()];
     }
 
     /**
@@ -132,4 +131,4 @@ class Factory
     {
         return self::NS . $strategy;
     }
-} 
+}

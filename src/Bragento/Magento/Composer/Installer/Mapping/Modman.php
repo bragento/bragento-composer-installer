@@ -13,8 +13,8 @@
  */
 
 namespace Bragento\Magento\Composer\Installer\Mapping;
-use Bragento\Magento\Composer\Installer\Mapping\Exception\MappingParseException;
 
+use Bragento\Magento\Composer\Installer\Mapping\Exception\MappingParseException;
 
 /**
  * Class Modman
@@ -32,7 +32,7 @@ class Modman extends AbstractMapping
 
     const EXPECTED_PARTS_COUNT = '2';
 
-    protected $_ignoreStartsWith
+    protected $ignoreStartsWith
         = array(
             '#',
             '@'
@@ -59,7 +59,7 @@ class Modman extends AbstractMapping
         while (!$file->eof()) {
             $line = trim($file->getCurrentLine());
 
-            if ($line === '' || in_array($line[0], $this->_ignoreStartsWith)) {
+            if ($line === '' || in_array($line[0], $this->ignoreStartsWith)) {
                 continue;
             }
 
@@ -101,4 +101,4 @@ class Modman extends AbstractMapping
             )->getPathname()
         );
     }
-} 
+}

@@ -18,7 +18,6 @@ use Composer\DependencyResolver\Operation\OperationInterface;
 use Composer\Package\PackageInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
-
 /**
  * Class Deploy
  *

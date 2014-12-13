@@ -16,7 +16,6 @@ namespace Bragento\Magento\Composer\Installer\Mapping\Exception;
 
 use Exception;
 
-
 /**
  * Class InvalidTargetException
  *
@@ -42,6 +41,4 @@ class InvalidTargetException extends \Exception
         $message = sprintf('invalid target type: %s', $targetType);
         parent::__construct($message, $code, $previous);
     }
-
-
-} 
+}

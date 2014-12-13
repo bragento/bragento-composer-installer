@@ -18,7 +18,6 @@ use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Script\PackageEvent;
 
-
 /**
  * Class OutputSubscriber
  *

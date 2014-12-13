@@ -19,7 +19,6 @@ use Bragento\Magento\Composer\Installer\Util\String;
 use Composer\Package\PackageInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
-
 /**
  * Class AbstractMapping
  *

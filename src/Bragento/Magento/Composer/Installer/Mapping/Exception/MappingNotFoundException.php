@@ -17,7 +17,6 @@ namespace Bragento\Magento\Composer\Installer\Mapping\Exception;
 use Composer\Package\PackageInterface;
 use Exception;
 
-
 /**
  * Class MappingNotFoundException
  *
@@ -46,5 +45,4 @@ class MappingNotFoundException extends MappingException
         );
         parent::__construct($message, $code, $previous);
     }
-
-} 
+}

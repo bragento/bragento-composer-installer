@@ -16,7 +16,6 @@ namespace Bragento\Magento\Composer\Installer\Project\Exception;
 
 use Exception;
 
-
 /**
  * Class RequiredConfigKeyNotDefinedException
  *
@@ -39,5 +38,4 @@ class ConfigKeyNotDefinedException extends \Exception
         $message = sprintf('required config key %s not defined', $key);
         parent::__construct($message, $code, $previous);
     }
-
-} 
+}

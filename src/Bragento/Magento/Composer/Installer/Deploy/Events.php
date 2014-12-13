@@ -14,7 +14,6 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy;
 
-
 /**
  * Class Events
  *

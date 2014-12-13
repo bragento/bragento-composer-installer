@@ -17,7 +17,6 @@ namespace Bragento\Magento\Composer\Installer\Deploy\Manager;
 use Bragento\Magento\Composer\Installer\Deploy\Strategy\AbstractStrategy;
 use Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
-
 /**
  * Class Entry
  *

@@ -18,7 +18,6 @@ use Bragento\Magento\Composer\Installer\Mapping\Exception\InvalidTargetException
 use Bragento\Magento\Composer\Installer\Mapping\Exception\UnknownPathtypeException;
 use SimpleXMLElement;
 
-
 /**
  * Class Packages
  *
@@ -45,7 +44,7 @@ class Package extends AbstractMapping
      *
      * @var array
      */
-    protected $_targets
+    protected $targets
         = array(
             'magelocal'     => './app/code/local',
             'magecommunity' => './app/code/community',
@@ -129,7 +128,7 @@ class Package extends AbstractMapping
      */
     protected function getTargetsDefinitions()
     {
-        return $this->_targets;
+        return $this->targets;
     }
 
     /**
@@ -189,4 +188,4 @@ class Package extends AbstractMapping
 
         return $elementPaths;
     }
-} 
+}

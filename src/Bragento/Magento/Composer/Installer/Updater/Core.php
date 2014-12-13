@@ -20,7 +20,6 @@ use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Script\PackageEvent;
 
-
 /**
  * Class Core
  *
@@ -41,7 +40,7 @@ class Core implements EventSubscriberInterface
      *
      * @var array
      */
-    protected $_persistent
+    protected $persistent
         = array(
             'var',
             'media',
@@ -53,21 +52,21 @@ class Core implements EventSubscriberInterface
      *
      * @var string
      */
-    protected $_backupDir;
+    protected $backupDir;
 
     /**
      * _fs
      *
      * @var Filesystem
      */
-    protected $_fs;
+    protected $fs;
 
-    function __construct()
+    public function __construct()
     {
-        $this->_fs = new Filesystem();
+        $this->fs = new Filesystem();
         do {
-            $this->_backupDir = uniqid('bkp');
-        } while (file_exists($this->_backupDir));
+            $this->backupDir = uniqid('bkp');
+        } while (file_exists($this->backupDir));
     }
 
     /**
@@ -105,8 +104,8 @@ class Core implements EventSubscriberInterface
     public function onPreDeployCoreUpdate(PackageEvent $event)
     {
         $event->getIO()->write('<info>backup persistent core files</info>');
-        $this->getFs()->ensureDirectoryExists($this->_backupDir);
-        foreach ($this->_persistent as $dir) {
+        $this->getFs()->ensureDirectoryExists($this->backupDir);
+        foreach ($this->persistent as $dir) {
             if (file_exists($this->getMagentoSubDir($dir))) {
                 $this->getFs()->ensureDirectoryExists(
                     dirname($this->getBackupSubDir($dir))
@@ -129,7 +128,7 @@ class Core implements EventSubscriberInterface
     public function onPostDeployCoreUpdate(PackageEvent $event)
     {
         $event->getIO()->write('<info>restore persistent core files</info>');
-        foreach ($this->_persistent as $dir) {
+        foreach ($this->persistent as $dir) {
             if (file_exists($this->getBackupSubDir($dir))) {
                 if (file_exists($this->getMagentoSubDir($dir))) {
                     if (is_dir($this->getMagentoSubDir($dir))) {
@@ -146,7 +145,7 @@ class Core implements EventSubscriberInterface
                 );
             }
         }
-        $this->getFs()->remove($this->_backupDir);
+        $this->getFs()->remove($this->backupDir);
     }
 
     /**
@@ -172,7 +171,7 @@ class Core implements EventSubscriberInterface
      */
     protected function getBackupSubDir($dir)
     {
-        return $this->_backupDir
+        return $this->backupDir
         . DIRECTORY_SEPARATOR
         . $dir;
     }
@@ -184,6 +183,6 @@ class Core implements EventSubscriberInterface
      */
     protected function getFs()
     {
-        return $this->_fs;
+        return $this->fs;
     }
 }

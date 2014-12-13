@@ -24,7 +24,6 @@ use Composer\Script\CommandEvent;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\ScriptEvents;
 
-
 /**
  * Class Plugin
  *
@@ -125,4 +124,4 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $event->getIO()->write('<info>post update:</info>');
         Deploy\Manager::getInstance()->doDeploy();
     }
-} 
+}

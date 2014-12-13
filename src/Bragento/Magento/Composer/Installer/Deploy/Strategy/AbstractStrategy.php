@@ -364,7 +364,7 @@ abstract class AbstractStrategy
      *
      * @return void
      */
-    protected abstract function createDelegate($src, $dest);
+    abstract protected function createDelegate($src, $dest);
 
     /**
      * getFullSrc
@@ -462,5 +462,5 @@ abstract class AbstractStrategy
      *
      * @return void
      */
-    protected abstract function removeDelegate($delegate);
-} 
+    abstract protected function removeDelegate($delegate);
+}

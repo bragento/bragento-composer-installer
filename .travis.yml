@@ -10,7 +10,6 @@ matrix:
   - php: 5.3
   - php: hhvm
 before_script:
-- phpenv config-add .travis.php.ini
 - composer clearcache
 - composer install --dev
 script:

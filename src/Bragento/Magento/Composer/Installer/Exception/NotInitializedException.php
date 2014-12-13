@@ -13,8 +13,8 @@
  */
 
 namespace Bragento\Magento\Composer\Installer\Exception;
-use Exception;
 
+use Exception;
 
 /**
  * Class NotInitializedException
@@ -38,5 +38,4 @@ class NotInitializedException extends \Exception
         $message = sprintf('%s not initialized', get_class($object));
         parent::__construct($message, $code, $previous);
     }
-
-} 
+}

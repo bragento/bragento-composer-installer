@@ -19,7 +19,6 @@ use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Composer;
 use Symfony\Component\Finder\SplFileInfo;
 
-
 /**
  * Class Config
  *
@@ -43,43 +42,43 @@ class Config
      *
      * @var Config
      */
-    protected static $_instance;
+    protected static $instance;
 
     /**
      * _composer
      *
      * @var Composer
      */
-    protected static $_composer;
+    protected static $composer;
 
     /**
      * _magentoRootDir
      *
      * @var SplFileInfo
      */
-    protected $_magentoRootDir;
+    protected $magentoRootDir;
 
     /**
      * _fs
      *
      * @var Filesystem
      */
-    protected $_fs;
+    protected $fs;
 
     /**
      * extra
      *
      * @var array
      */
-    protected $_extra;
+    protected $extra;
 
     /**
      * private constructor for singleton
      */
     private function __construct()
     {
-        $this->_fs = new Filesystem();
-        $this->_extra = self::$_composer->getPackage()->getExtra();
+        $this->fs = new Filesystem();
+        $this->extra = self::$composer->getPackage()->getExtra();
     }
 
     /**
@@ -89,16 +88,16 @@ class Config
      */
     public function getMagentoRootDir()
     {
-        if (null === $this->_magentoRootDir) {
+        if (null === $this->magentoRootDir) {
             $dir
                 = $this->getExtraValue(self::MAGENTO_ROOT_DIR_KEY) === null
                 ? self::DEFAULT_MAGENTO_ROOT_DIR
                 : $this->getExtraValue(self::MAGENTO_ROOT_DIR_KEY);
 
-            $this->_fs->ensureDirectoryExists($dir);
-            $this->_magentoRootDir = new SplFileInfo($dir, $dir, $dir);
+            $this->fs->ensureDirectoryExists($dir);
+            $this->magentoRootDir = new SplFileInfo($dir, $dir, $dir);
         }
-        return $this->_magentoRootDir;
+        return $this->magentoRootDir;
     }
 
     /**
@@ -128,7 +127,7 @@ class Config
      */
     public function getVendorDir()
     {
-        return self::$_composer->getConfig()->get('vendor-dir');
+        return self::$composer->getConfig()->get('vendor-dir');
     }
 
     /**
@@ -140,7 +139,7 @@ class Config
      */
     public static function init(Composer $composer)
     {
-        self::$_composer = $composer;
+        self::$composer = $composer;
     }
 
     /**
@@ -150,11 +149,11 @@ class Config
      */
     public static function getInstance()
     {
-        if (null === self::$_instance) {
-            self::$_instance = new Config();
+        if (null === self::$instance) {
+            self::$instance = new Config();
         }
 
-        return self::$_instance;
+        return self::$instance;
     }
 
     /**
@@ -190,6 +189,6 @@ class Config
      */
     protected function getExtraValue($key, $required = false)
     {
-        return $this->getValueFromArray($key, $this->_extra, $required);
+        return $this->getValueFromArray($key, $this->extra, $required);
     }
 }

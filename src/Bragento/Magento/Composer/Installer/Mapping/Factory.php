@@ -19,7 +19,6 @@ use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Package\PackageInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
-
 /**
  * Class Factory
  *
@@ -109,4 +108,4 @@ class Factory
         $extra = $package->getExtra();
         return isset($extra[Composer::COMPOSER_MAP_KEY]);
     }
-} 
+}

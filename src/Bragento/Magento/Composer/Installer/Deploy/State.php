@@ -15,10 +15,8 @@
 namespace Bragento\Magento\Composer\Installer\Deploy;
 
 use Bragento\Magento\Composer\Installer\Deploy\Strategy\AbstractStrategy;
-use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Package\PackageInterface;
-
 
 /**
  * Class State
@@ -194,6 +192,8 @@ class State
 
     /**
      * load
+     *
+     * @param PackageInterface $package
      *
      * @return array
      */

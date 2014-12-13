@@ -14,7 +14,6 @@
 
 namespace Bragento\Magento\Composer\Installer\Util;
 
-
 /**
  * Class String
  *
@@ -64,5 +63,4 @@ class String
     {
         return strpos($haystack, $needle) !== false;
     }
-
-} 
+}

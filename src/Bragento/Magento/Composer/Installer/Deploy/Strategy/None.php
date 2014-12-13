@@ -14,8 +14,6 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
-
-
 /**
  * Class None
  *
@@ -52,5 +50,4 @@ class None extends AbstractStrategy
     {
 
     }
-
-} 
+}

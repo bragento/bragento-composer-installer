@@ -61,5 +61,4 @@ class Symlink extends AbstractStrategy
     {
         $this->getFs()->remove($delegate);
     }
-
 }

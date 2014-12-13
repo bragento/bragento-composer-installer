@@ -14,7 +14,6 @@
 
 namespace Bragento\Magento\Composer\Installer\Mapping;
 
-
 /**
  * Class Composer
  *
@@ -71,4 +70,4 @@ class Composer extends AbstractMapping
         }
         return $map;
     }
-} 
+}

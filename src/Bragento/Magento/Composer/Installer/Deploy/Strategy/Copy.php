@@ -14,7 +14,6 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
-
 /**
  * Class Copy
  *
@@ -51,5 +50,4 @@ class Copy extends AbstractStrategy
     {
         $this->getFs()->remove($delegate);
     }
-
 }
