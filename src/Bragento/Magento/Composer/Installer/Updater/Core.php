@@ -164,6 +164,7 @@ class Core implements EventSubscriberInterface
                         $target
                     );
                 }
+                $this->getFs()->ensureDirectoryExists(dirname($target));
                 $this->getFs()->rename(
                     $source,
                     $target
