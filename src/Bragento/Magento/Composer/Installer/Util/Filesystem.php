@@ -17,6 +17,7 @@ namespace Bragento\Magento\Composer\Installer\Util;
 use Bragento\Magento\Composer\Installer\Project\Config;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -168,6 +169,19 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
     }
 
     /**
+     * endsWithDs
+     *
+     * @param $path
+     *
+     * @return bool
+     */
+    protected function endsWithDs($path)
+    {
+        return String::endsWith($path, '/')
+        || String::endsWith($path, '\\');
+    }
+
+    /**
      * joinFileUris
      *
      * @param $path
@@ -201,19 +215,6 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
     {
         return String::startsWith($path, '/')
         || String::startsWith($path, '\\');
-    }
-
-    /**
-     * endsWithDs
-     *
-     * @param $path
-     *
-     * @return bool
-     */
-    protected function endsWithDs($path)
-    {
-        return String::endsWith($path, '/')
-        || String::endsWith($path, '\\');
     }
 
     /**
@@ -264,7 +265,7 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      * @param string $destination
      * @param bool   $copyOnWindows
      *
-     * @return bool
+     * @return void
      */
     public function symlink($source, $destination, $copyOnWindows = true)
     {
@@ -272,13 +273,23 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
         $destination = $this->normalizePath($destination);
 
         if ($this->endsWithDs($destination)) {
-            $destination = $this->joinFileUris($destination, basename($source));
+            if ($this->endsWithDs($source)) {
+                $destination = $this->removeTrailingDs($destination);
+                $source = $this->removeTrailingDs($source);
+            } else {
+                $destination = $this->joinFileUris(
+                    $destination,
+                    basename($source)
+                );
+            }
         }
 
-        if ($this->exists($destination)
-            && Config::getInstance()->isForcedOverride()
-        ) {
-            $this->remove($destination);
+        if ($this->exists($destination)) {
+            if (Config::getInstance()->isForcedOverride()) {
+                $this->remove($destination);
+            } else {
+                throw new IOException(sprintf('Cannot create Symlink. File already exists: %s', $destination));
+            }
         }
 
         parent::symlink(
@@ -366,5 +377,17 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
         }
 
         return null;
+    }
+
+    /**
+     * removeTrailingDs
+     *
+     * @param $path
+     *
+     * @return string
+     */
+    protected function removeTrailingDs($path)
+    {
+        return rtrim($path, '/\\');
     }
 }
