@@ -14,5 +14,8 @@
         "firegento/debug": "~1.3",
         "connect20/a4on_mybrand": "~0",
         "firegento/magesetup": "~2"
+    },
+    "extra": {
+        "magento-force": "override"
     }
 }

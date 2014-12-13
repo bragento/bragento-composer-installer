@@ -18,5 +18,8 @@
         "connect20/aw_onpulse": "*",
         "connect20/aw_aheadmetrics": "*",
         "connect20/aw_fps": "*"
+    },
+    "extra": {
+        "magento-force": "override"
     }
 }
