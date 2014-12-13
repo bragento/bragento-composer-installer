@@ -109,7 +109,7 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
         $destPath = $this->normalizePath($destPath);
 
         if ($this->endsWithDs($destPath)) {
-            $destPath .= basename($srcPath);
+            $destPath = $this->joinFileUris($destPath, basename($srcPath));
         }
 
         if (is_dir($srcPath)) {
@@ -274,7 +274,7 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
         $destination = $this->normalizePath($destination);
 
         if ($this->endsWithDs($destination)) {
-            $destination .= basename($source);
+            $destination = $this->joinFileUris($destination, basename($source));
         }
 
         if ($this->exists($destination)
