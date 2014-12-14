@@ -27,6 +27,26 @@ namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 class None extends AbstractStrategy
 {
     /**
+     * createDelegates
+     *
+     * @return void
+     */
+    protected function createDelegates()
+    {
+
+    }
+
+    /**
+     * removeDelegates
+     *
+     * @return void
+     */
+    protected function removeDelegates()
+    {
+
+    }
+
+    /**
      * createDelegate
      *
      * @param string $src
