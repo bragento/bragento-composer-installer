@@ -159,7 +159,7 @@ class Factory
      *
      * @return array
      */
-    protected function getOverwrites()
+    protected static function getOverwrites()
     {
         if (null === self::$overwrites) {
             $overwriteConfig = Config::getInstance()
@@ -190,13 +190,13 @@ class Factory
      *
      * @return string
      */
-    protected function getOverwrite($vendor, $name)
+    protected static function getOverwrite($vendor, $name)
     {
-        $overwrites = $this->getOverwrites();
+        $overwrites = self::getOverwrites();
         if (!isset($overwrites[$vendor])
             || !isset($overwrites[$vendor][$name])
         ) {
-            return $this->getDefaultStrategy();
+            return self::getDefaultStrategy();
         }
 
         return $overwrites[$vendor][$name];

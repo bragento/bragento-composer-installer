@@ -38,34 +38,6 @@ class Symlink extends AbstractStrategy
      */
     protected function createDelegate($src, $dest)
     {
-        if ($this->getFs()->exists($dest)) {
-            if (!$override = Config::getInstance()->isForcedOverride()) {
-                $override = $this->getIo()
-                    ->ask(sprintf("Destination already exists. Replace %s ? [y/n] ",
-                            $dest));
-            }
-            if ($override) {
-                $this->getFs()->remove($dest);
-            } else {
-                return;
-            }
-        }
-
-        $this->getFs()->ensureDirectoryExists(dirname($dest));
         $this->getFs()->symlink($src, $dest);
-    }
-
-    /**
-     * removeDelegate
-     *
-     * @param string $delegate
-     *
-     * @return mixed
-     */
-    protected function removeDelegate($delegate)
-    {
-        if ($this->getFs()->exists($delegate) && is_link($delegate)) {
-            $this->getFs()->remove($delegate);
-        }
     }
 }

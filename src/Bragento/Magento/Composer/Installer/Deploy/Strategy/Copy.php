@@ -14,6 +14,9 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
+use Bragento\Magento\Composer\Installer\Project\Config;
+
+
 /**
  * Class Copy
  *
@@ -37,17 +40,5 @@ class Copy extends AbstractStrategy
     protected function createDelegate($src, $dest)
     {
         $this->getFs()->copy($src, $dest);
-    }
-
-    /**
-     * removeDelegate
-     *
-     * @param string $delegate
-     *
-     * @return mixed
-     */
-    protected function removeDelegate($delegate)
-    {
-        $this->getFs()->remove($delegate);
     }
 }
