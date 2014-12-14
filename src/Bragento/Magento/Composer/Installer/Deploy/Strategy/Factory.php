@@ -233,7 +233,7 @@ class Factory
 
         return in_array($strategy, self::$allowedStrategies)
             ? $strategy
-            : self::getDefaultStrategy();
+            : self::STRATEGY_SYMLINK;
     }
 
     /**
