@@ -52,7 +52,9 @@ class Core implements EventSubscriberInterface
             '.git',
             'modman',
             'composer.json',
-            'composer.lock'
+            'composer.lock',
+            '.htaccess',
+            '.htpasswd'
         );
 
     /**
