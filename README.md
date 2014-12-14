@@ -131,16 +131,16 @@ You can also overwrite the Deploy Strategy for specific Modules under the config
 ```json
 { 
     "repositories": [
-            {
-                "type": "composer",
-                "url": "packages.firegento.com"
-            }
-        ],
-        "require": {  
-            "bragento/magento-composer-installer": "~1",  
-            "magento/core": "~1.9",
-            "firegento/magesetup": "~2"
-        },  
+        {
+            "type": "composer",
+            "url": "packages.firegento.com"
+        }
+    ],
+    "require": {  
+        "bragento/magento-composer-installer": "~1",  
+        "magento/core": "~1.9",
+        "firegento/magesetup": "~2"
+    },  
     "extra": {  
         "magento-deploystrategy": "symlink",
         "magento-deploystrategy-overwrite": {
