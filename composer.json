@@ -37,7 +37,7 @@
     "extra": {
         "class": "Bragento\\Magento\\Composer\\Installer\\Plugin",
         "branch-alias": {
-            "dev-develop": "1.0.x-dev"
+            "dev-develop": "1.1.x-dev"
         }
     }
 }
