@@ -135,7 +135,7 @@ class Config
     public function getDeployStrategyOverwrite()
     {
         $strategies = $this->getExtraValue(self::DEPLOY_STRATEGY_OVERWRITE_KEY);
-        return is_array($strategies) ? $strategies : [];
+        return is_array($strategies) ? $strategies : array();
     }
 
     /**
@@ -146,7 +146,7 @@ class Config
     public function getPersistentFiles()
     {
         $files = $this->getExtraValue(self::PERSISTENT_FILES_KEY);
-        return $files !== null ? $files : [];
+        return $files !== null ? $files : array();
     }
 
     /**
