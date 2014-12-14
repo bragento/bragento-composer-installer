@@ -98,7 +98,9 @@ class Core implements EventSubscriberInterface
     {
         return array(
             Events::PRE_DEPLOY_CORE_UPDATE  => 'backupFiles',
-            Events::POST_DEPLOY_CORE_UPDATE => 'restoreBackup'
+            Events::PRE_DEPLOY_CORE_UNINSTALL  => 'backupFiles',
+            Events::POST_DEPLOY_CORE_UPDATE => 'restoreBackup',
+            Events::POST_DEPLOY_CORE_UNINSTALL => 'restoreBackup'
         );
     }
 
