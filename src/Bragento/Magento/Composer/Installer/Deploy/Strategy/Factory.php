@@ -151,7 +151,9 @@ class Factory
             return self::getDefaultStrategy();
         }
 
-        return self::getOverwrite($nameParts[0], $nameParts[1]);
+        return self::normalizeStrategy(
+            self::getOverwrite($nameParts[0], $nameParts[1])
+        );
     }
 
     /**
