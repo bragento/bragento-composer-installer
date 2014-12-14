@@ -100,12 +100,12 @@ class Core implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            Events::PRE_DEPLOY_CORE_UPDATE  => 'backupFiles',
+            Events::PRE_DEPLOY_CORE_UPDATE     => 'backupFiles',
             Events::PRE_DEPLOY_CORE_UNINSTALL  => 'backupFiles',
-            Events::PRE_DEPLOY_CORE_INSTALL  => 'backupFiles',
-            Events::POST_DEPLOY_CORE_UPDATE => 'restoreBackup',
+            Events::PRE_DEPLOY_CORE_INSTALL    => 'backupFiles',
+            Events::POST_DEPLOY_CORE_UPDATE    => 'restoreBackup',
             Events::POST_DEPLOY_CORE_UNINSTALL => 'restoreBackup',
-            Events::POST_DEPLOY_CORE_INSTALL => 'restoreBackup'
+            Events::POST_DEPLOY_CORE_INSTALL   => 'restoreBackup'
         );
     }
 
@@ -125,8 +125,6 @@ class Core implements EventSubscriberInterface
             $this->getBackupDir(),
             $event->getIO()
         );
-        $this->getFs()->emptyDirectory(Config::getInstance()->getMagentoRootDir());
-        $this->printInfo('starting core deployment', $event->getIO());
     }
 
     /**
