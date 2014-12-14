@@ -75,6 +75,8 @@ You can also define additional Files to be persistent such as local Modules or o
 
 ## Module Installer
 
+### Install a Module
+
 Just require the Modules in your composer.json.
 
 Modules are currently all deployed with symlink strategy (Except under Windows they should be copied - not tested yet)  
@@ -103,6 +105,51 @@ There is also an example of how to add a package directly from a github (or any 
     },  
     "extra": {  
         "magento-root-dir": "magento"  
+    }  
+}
+```
+
+### Change Deploy Strategy
+
+By default, all Modules are deployed by symlink. You can change this behaviour with the config key 'magento-deploystrategy'  
+
+Possible values are:  
+symlink  
+copy  
+none  (will just install the Module but not deploy it to magento root)
+
+```json
+{ 
+    "extra": {  
+        "magento-deploystrategy": "copy"  
+    }  
+}
+```
+
+### Overwrite Deploy Strategy per Module
+
+You can also overwrite the Deploy Strategy for specific Modules under the config key magento-deploystrategy-overwrite  
+
+In the following example, we will Install the MagentoUnitTesting Module from Techdivision, which will not work properly when only symlinked to magento root.  
+
+```json
+{ 
+    "repositories": [
+            {
+                "type": "git",
+                "url": "https://github.com/techdivision/TechDivision_MagentoUnitTesting.git"
+            }
+        ],
+        "require": {  
+            "bragento/magento-composer-installer": "~1",  
+            "magento/core": "~1.9",
+            "techdivision/techdivision_magentounittesting": "dev-github@dev"
+        },  
+    "extra": {  
+        "magento-deploystrategy": "symlink",
+        "magento-deploystrategy-overwrite": {
+            "techdivision/techdivision_magentounittesting": "copy"
+        }
     }  
 }
 ```

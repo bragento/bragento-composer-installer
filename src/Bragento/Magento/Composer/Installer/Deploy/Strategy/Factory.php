@@ -15,6 +15,7 @@
 namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
 use Bragento\Magento\Composer\Installer\Deploy\Manager\PackageTypes;
+use Bragento\Magento\Composer\Installer\Project\Config;
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
@@ -37,6 +38,13 @@ class Factory
     const STRATEGY_NONE = 'None';
 
     const NS = '\\Bragento\\Magento\\Composer\\Installer\\Deploy\\Strategy\\';
+
+    protected static $allowedStrategies
+        = array(
+            self::STRATEGY_SYMLINK,
+            self::STRATEGY_COPY,
+            self::STRATEGY_NONE
+        );
 
     /**
      * deployStrategies
@@ -98,7 +106,7 @@ class Factory
 
                 case PackageTypes::MAGENTO_MODULE:
                 case PackageTypes::MAGENTO_THEME:
-                    $strategy = self::STRATEGY_SYMLINK;
+                    $strategy = self::getPackageDeployStrategy($package);
                     break;
 
                 default:
@@ -120,9 +128,50 @@ class Factory
         return self::$deployStrategies[$package->getName()];
     }
 
-    protected function getPackageDeployStrategy(PackageInterface $package)
-    {
+    /**
+     * getPackageDeployStrategy
+     *
+     * @param PackageInterface $package
+     *
+     * @return string
+     */
+    protected static function getPackageDeployStrategy(
+        PackageInterface $package
+    ) {
+        $overwrites = Config::getInstance()->getDeployStrategyOverwrite();
 
+        if (isset($overwrites[$package->getName()])) {
+            $strategy = self::normalizeStrategy(
+                $overwrites[$package->getName()]
+            );
+            if (in_array($strategy, self::$allowedStrategies)) {
+                return $strategy;
+            }
+        }
+
+        return self::getDefaultStrategy();
+    }
+
+    /**
+     * normalizeStrategy
+     *
+     * @param $strategy
+     *
+     * @return string
+     */
+    protected static function normalizeStrategy($strategy)
+    {
+        return ucfirst(strtolower($strategy));
+    }
+
+    /**
+     * getDefaultStrategy
+     *
+     * @return string
+     */
+    protected static function getDefaultStrategy()
+    {
+        return self::normalizeStrategy(self::STRATEGY_SYMLINK);
     }
 
     /**
