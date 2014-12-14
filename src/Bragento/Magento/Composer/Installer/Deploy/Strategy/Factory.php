@@ -16,6 +16,7 @@ namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
 use Bragento\Magento\Composer\Installer\Deploy\Manager\PackageTypes;
 use Bragento\Magento\Composer\Installer\Project\Config;
+use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
@@ -52,6 +53,11 @@ class Factory
      * @var array
      */
     protected static $deployStrategies;
+
+    /**
+     * @var array
+     */
+    protected static $overwrites;
 
     /**
      * _composer
@@ -138,18 +144,62 @@ class Factory
     protected static function getPackageDeployStrategy(
         PackageInterface $package
     ) {
-        $overwrites = Config::getInstance()->getDeployStrategyOverwrite();
+        $nameParts = Filesystem::getInstance()
+            ->getPathParts($package->getName());
 
-        if (isset($overwrites[$package->getName()])) {
-            $strategy = self::normalizeStrategy(
-                $overwrites[$package->getName()]
-            );
-            if (in_array($strategy, self::$allowedStrategies)) {
-                return $strategy;
+        if (count($nameParts) !== 2) {
+            return self::getDefaultStrategy();
+        }
+
+        return self::getOverwrite($nameParts[0], $nameParts[1]);
+    }
+
+    /**
+     * getOverwrites
+     *
+     * @return array
+     */
+    protected function getOverwrites()
+    {
+        if (null === self::$overwrites) {
+            $overwriteConfig = Config::getInstance()
+                ->getDeployStrategyOverwrite();
+
+            self::$overwrites = [];
+            foreach ($overwriteConfig as $key => $value) {
+                $nameParts = Filesystem::getInstance()->getPathParts($key);
+                if (count($nameParts) === 2) {
+                    $vendor = $nameParts[0];
+                    $name = $nameParts[1];
+                    if (self::$overwrites[$vendor] === null) {
+                        self::$overwrites[$vendor] = [];
+                    }
+                    self::$overwrites[$vendor][$name] = $value;
+                }
             }
         }
 
-        return self::getDefaultStrategy();
+        return self::$overwrites;
+    }
+
+    /**
+     * getOverwrite
+     *
+     * @param $vendor
+     * @param $name
+     *
+     * @return string
+     */
+    protected function getOverwrite($vendor, $name)
+    {
+        $overwrites = $this->getOverwrites();
+        if (!isset($overwrites[$vendor])
+            || !isset($overwrites[$vendor][$name])
+        ) {
+            return $this->getDefaultStrategy();
+        }
+
+        return $overwrites[$vendor][$name];
     }
 
     /**
@@ -171,7 +221,9 @@ class Factory
      */
     protected static function getDefaultStrategy()
     {
-        return self::normalizeStrategy(self::STRATEGY_SYMLINK);
+        return self::normalizeStrategy(
+            Config::getInstance()->getDeployStrategy()
+        );
     }
 
     /**

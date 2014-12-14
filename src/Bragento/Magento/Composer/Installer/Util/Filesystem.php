@@ -14,11 +14,9 @@
 
 namespace Bragento\Magento\Composer\Installer\Util;
 
-use Bragento\Magento\Composer\Installer\Project\Config;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -35,6 +33,11 @@ use Symfony\Component\Finder\SplFileInfo;
 class Filesystem extends \Symfony\Component\Filesystem\Filesystem
 {
     const DS = DIRECTORY_SEPARATOR;
+
+    /**
+     * @var Filesystem
+     */
+    protected static $instance;
 
     /**
      * emptyDir
@@ -252,7 +255,8 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
             $this->normalizePath($path)
         );
 
-        foreach ($this->getPathParts($this->normalizePath($root)) as $rootPart) {
+        foreach ($this->getPathParts($this->normalizePath($root)) as $rootPart)
+        {
             if (count($pathParts) && $rootPart === $pathParts[0]) {
                 array_shift($pathParts);
             }
@@ -388,5 +392,19 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
         }
         $iterator = new FilesystemIterator($dir);
         return !$iterator->valid();
+    }
+
+    /**
+     * getInstance
+     *
+     * @return Filesystem
+     */
+    public static function getInstance()
+    {
+        if (null === self::$instance) {
+            self::$instance = new Filesystem();
+        }
+
+        return self::$instance;
     }
 }
