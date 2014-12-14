@@ -171,7 +171,7 @@ class Factory
                 if (count($nameParts) === 2) {
                     $vendor = $nameParts[0];
                     $name = $nameParts[1];
-                    if (self::$overwrites[$vendor] === null) {
+                    if (!isset(self::$overwrites[$vendor])) {
                         self::$overwrites[$vendor] = [];
                     }
                     self::$overwrites[$vendor][$name] = $value;
