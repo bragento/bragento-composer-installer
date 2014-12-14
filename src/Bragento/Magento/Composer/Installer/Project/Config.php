@@ -14,6 +14,7 @@
 
 namespace Bragento\Magento\Composer\Installer\Project;
 
+use Bragento\Magento\Composer\Installer\Deploy\Strategy\Factory;
 use Bragento\Magento\Composer\Installer\Project\Exception\ConfigKeyNotDefinedException;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Composer;
@@ -38,6 +39,9 @@ class Config
     const OVERRIDE_FORCE = 'override';
 
     const PERSISTENT_FILES_KEY = 'persistent-files';
+
+    const DEPLOY_STRATEGY_KEY = 'magento-deploystrategy';
+    const DEPLOY_STRATEGY_OVERWRITE_KEY = 'magento-deploystrategy-overwrite';
 
     /**
      * _instance
@@ -110,6 +114,28 @@ class Config
     public function getMagentoOverride()
     {
         return $this->getExtraValue(self::MAGENTO_FORCE_KEY);
+    }
+
+    /**
+     * getDeployStrategy
+     *
+     * @return string
+     */
+    public function getDeployStrategy()
+    {
+        $strategy = $this->getExtraValue(self::DEPLOY_STRATEGY_KEY);
+        return null === $strategy ? Factory::STRATEGY_SYMLINK : $strategy;
+    }
+
+    /**
+     * getDeployStrategyOverwrite
+     *
+     * @return array
+     */
+    public function getDeployStrategyOverwrite()
+    {
+        $strategies = $this->getExtraValue(self::DEPLOY_STRATEGY_KEY);
+        return null === $strategies ? [] : $strategies;
     }
 
     /**

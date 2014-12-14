@@ -120,6 +120,11 @@ class Factory
         return self::$deployStrategies[$package->getName()];
     }
 
+    protected function getPackageDeployStrategy(PackageInterface $package)
+    {
+
+    }
+
     /**
      * get strategy classname by strategy name
      *
