@@ -15,6 +15,7 @@
 namespace Bragento\Magento\Composer\Installer\Util;
 
 use Bragento\Magento\Composer\Installer\Project\Config;
+use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -44,7 +45,9 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      */
     public function emptyDirectory($dir)
     {
-        $this->remove($dir);
+        if ($this->exists($dir)) {
+            $this->remove($dir);
+        }
         $this->ensureDirectoryExists($dir);
     }
 
@@ -369,5 +372,21 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
     public function removeTrailingDs($path)
     {
         return rtrim($path, '/\\');
+    }
+
+    /**
+     * isEmptyDir
+     *
+     * @param $dir
+     *
+     * @return bool
+     */
+    public function isEmptyDir($dir)
+    {
+        if (!is_dir($dir)) {
+            return false;
+        }
+        $iterator = new FilesystemIterator($dir);
+        return !$iterator->valid();
     }
 }

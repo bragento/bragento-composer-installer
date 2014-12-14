@@ -64,7 +64,8 @@ class FullStackTest extends AbstractTest
             'media/test',
             'app/etc/local.xml',
             '.gitignore',
-            'randomtestfile'
+            '.gitattributes',
+            '.gitmodules'
         );
 
     /**
@@ -89,9 +90,10 @@ class FullStackTest extends AbstractTest
     public function provideConfigFileNames()
     {
         return array(
-            array('magentocore.json'),
+            //array('magentocore.json'),
             array('somemodules.json'),
-            array('changedmageroot.json')
+            //array('changedmageroot.json'),
+            //array('removelinks.json')
         );
     }
 

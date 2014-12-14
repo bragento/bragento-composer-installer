@@ -53,4 +53,25 @@ class FilesystemTest extends FilesystemDataProvider
             $this->getAbsPath($destination)
         );
     }
+
+    /**
+     * testEmpytDirectory
+     *
+     * @param $testdir
+     * @param $testfiles
+     *
+     * @return void
+     *
+     * @dataProvider provideEmtpyDirTestData
+     */
+    public function testEmpytDirectory($testdir, $testfiles)
+    {
+        $this->toBuildDir();
+        $this->getFilesystem()->mkdir($testdir);
+        foreach ($testfiles as $testfile) {
+            $this->createTestFile($this->getFilesystem()->joinFileUris($testdir, $testfile));
+        }
+        $this->getFilesystem()->emptyDirectory($testdir);
+        $this->assertTrue($this->getFilesystem()->isEmptyDir($testdir));
+    }
 }

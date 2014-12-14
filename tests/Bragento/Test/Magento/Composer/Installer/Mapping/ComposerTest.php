@@ -15,8 +15,6 @@
 namespace Bragento\Test\Magento\Composer\Installer\Mapping;
 
 use Bragento\Magento\Composer\Installer\Mapping\Composer;
-use Composer\Package\Package;
-
 
 /**
  * Class ComposerTest

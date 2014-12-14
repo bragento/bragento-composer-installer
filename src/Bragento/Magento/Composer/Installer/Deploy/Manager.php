@@ -169,53 +169,12 @@ class Manager implements EventSubscriberInterface
     {
         $this->addAllPackages();
         $this->dispatchEvent(Events::PRE_DEPLOY);
-        $this->coreEntry = $this->deployEntry($this->coreEntry);
+        if (null !== $this->coreEntry) {
+            $this->coreEntry = $this->deployEntry($this->coreEntry);
+        }
         $this->moduleEntries = $this->deployEntriesArray($this->moduleEntries);
         $this->themeEntries = $this->deployEntriesArray($this->themeEntries);
         $this->dispatchEvent(Events::POST_DEPLOY);
-    }
-
-    /**
-     * deployCoreEntry
-     *
-     * @param Entry $entry
-     *
-     * @throws Exception\UnknownActionException
-     * @return Entry
-     */
-    protected function deployEntry(Entry $entry)
-    {
-        if (null !== $entry) {
-            $entry->getDeployStrategy()->doDeploy();
-            $this->addDeployedPackage(
-                $entry->getDeployStrategy()->getPackage()
-            );
-            $entry = null;
-        }
-
-        return $entry;
-    }
-
-    /**
-     * deployEntriesArray
-     *
-     * @param Entry[] $entries
-     *
-     * @return Entry[]
-     * @throws Exception\UnknownActionException
-     */
-    protected function deployEntriesArray(array $entries)
-    {
-        while (count($entries)) {
-            /** @var Entry $entry */
-            $entry = array_shift($entries);
-            $entry->getDeployStrategy()->doDeploy();
-            $this->addDeployedPackage(
-                $entry->getDeployStrategy()->getPackage()
-            );
-        }
-
-        return $entries;
     }
 
     /**
@@ -466,6 +425,27 @@ class Manager implements EventSubscriberInterface
     }
 
     /**
+     * deployCoreEntry
+     *
+     * @param Entry $entry
+     *
+     * @throws Exception\UnknownActionException
+     * @return Entry
+     */
+    protected function deployEntry(Entry $entry)
+    {
+        if (null !== $entry) {
+            $entry->getDeployStrategy()->doDeploy();
+            $this->addDeployedPackage(
+                $entry->getDeployStrategy()->getPackage()
+            );
+            $entry = null;
+        }
+
+        return $entry;
+    }
+
+    /**
      * addDeployedPackage
      *
      * @param PackageInterface $package
@@ -475,6 +455,28 @@ class Manager implements EventSubscriberInterface
     protected function addDeployedPackage(PackageInterface $package)
     {
         array_push($this->deployedPackages, $package);
+    }
+
+    /**
+     * deployEntriesArray
+     *
+     * @param Entry[] $entries
+     *
+     * @return Entry[]
+     * @throws Exception\UnknownActionException
+     */
+    protected function deployEntriesArray(array $entries)
+    {
+        while (count($entries)) {
+            /** @var Entry $entry */
+            $entry = array_shift($entries);
+            $entry->getDeployStrategy()->doDeploy();
+            $this->addDeployedPackage(
+                $entry->getDeployStrategy()->getPackage()
+            );
+        }
+
+        return $entries;
     }
 
     /**

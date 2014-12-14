@@ -45,7 +45,16 @@ class Core implements EventSubscriberInterface
         = array(
             'var',
             'media',
-            'app/etc/local.xml'
+            'app/etc/local.xml',
+            '.gitignore',
+            '.gitattributes',
+            '.gitmodules',
+            '.git',
+            'modman',
+            'composer.json',
+            'composer.lock',
+            '.htaccess',
+            '.htpasswd'
         );
 
     /**
@@ -91,7 +100,11 @@ class Core implements EventSubscriberInterface
     {
         return array(
             Events::PRE_DEPLOY_CORE_UPDATE  => 'backupFiles',
-            Events::POST_DEPLOY_CORE_UPDATE => 'restoreBackup'
+            Events::PRE_DEPLOY_CORE_UNINSTALL  => 'backupFiles',
+            Events::PRE_DEPLOY_CORE_INSTALL  => 'backupFiles',
+            Events::POST_DEPLOY_CORE_UPDATE => 'restoreBackup',
+            Events::POST_DEPLOY_CORE_UNINSTALL => 'restoreBackup',
+            Events::POST_DEPLOY_CORE_INSTALL => 'restoreBackup'
         );
     }
 
@@ -111,6 +124,7 @@ class Core implements EventSubscriberInterface
             $this->getBackupDir(),
             $event->getIO()
         );
+        $this->getFs()->emptyDirectory(Config::getInstance()->getMagentoRootDir());
         $this->printInfo('starting core deployment', $event->getIO());
     }
 
@@ -159,10 +173,10 @@ class Core implements EventSubscriberInterface
     protected function moveFiles($sourceRoot, $targetRoot, IOInterface $io)
     {
         foreach ($this->getFiles() as $item) {
-            $this->printInfo($item, $io);
             $source = $this->getFs()->joinFileUris($sourceRoot, $item);
             $target = $this->getFs()->joinFileUris($targetRoot, $item);
-            if (file_exists($source)) {
+            if (file_exists($source) && !is_link($source)) {
+                $this->printInfo($item, $io);
                 if (file_exists($target)) {
                     $this->getFs()->remove(
                         $target
@@ -184,7 +198,10 @@ class Core implements EventSubscriberInterface
      */
     protected function getFiles()
     {
-        return $this->persistent;
+        return array_merge(
+            $this->persistent,
+            Config::getInstance()->getPersistentFiles()
+        );
     }
 
     /**

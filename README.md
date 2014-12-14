@@ -18,6 +18,8 @@ magento-theme (currently just the same as magento-module)
 
 ## Core Installer
 
+### Installation
+
 to Install the Magento Core require magento/core in your composer.json.  
 Magento will be copied to the Magento root dir (Default: 'magento')  
 
@@ -29,6 +31,43 @@ Magento will be copied to the Magento root dir (Default: 'magento')
     },  
     "extra": {  
         "magento-root-dir": "magento"  
+    }  
+}
+```
+
+### Persistent Files
+
+By default, the Installer will erase the whole magento root dir on every update  
+There are several persistent files and directories, that will be backed up and restored after core deployment:  
+
+var  
+media  
+app/etc/local.xml  
+.gitignore  
+.gitattributes  
+.gitmodules  
+.git  
+modman  
+composer.json  
+composer.lock  
+.htaccess  
+.htpasswd  
+
+You can also define additional Files to be persistent such as local Modules or other configuration files in the root dir
+
+```json
+{
+    "require": {  
+        "bragento/magento-composer-installer": "~1",  
+        "magento/core": "~1.9"  
+    },  
+    "extra": {  
+        "magento-root-dir": "magento",
+        "persitent-files": [
+            "somefile",
+            "app/code/local/Vendor/SomeModule",
+            "app/etc/modules/Vendor_SomeModule.xml"
+        ]
     }  
 }
 ```
