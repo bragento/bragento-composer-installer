@@ -167,14 +167,14 @@ class Factory
             $overwriteConfig = Config::getInstance()
                 ->getDeployStrategyOverwrite();
 
-            self::$overwrites = [];
+            self::$overwrites = array();
             foreach ($overwriteConfig as $key => $value) {
                 $nameParts = Filesystem::getInstance()->getPathParts($key);
                 if (count($nameParts) === 2) {
                     $vendor = $nameParts[0];
                     $name = $nameParts[1];
                     if (!isset(self::$overwrites[$vendor])) {
-                        self::$overwrites[$vendor] = [];
+                        self::$overwrites[$vendor] = array();
                     }
                     self::$overwrites[$vendor][$name] = $value;
                 }
