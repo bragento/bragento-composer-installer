@@ -4,7 +4,7 @@
 [![Code Climate](https://codeclimate.com/github/bragento/bragento-composer-installer.png)](https://codeclimate.com/github/bragento/bragento-composer-installer)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/bragento/bragento-composer-installer/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/bragento/bragento-composer-installer/?branch=develop)
 
-[![Latest Stable Version](https://poser.pugx.org/bragento/magento-composer-installer/v/stable.svg)](https://packagist.org/packages/bragento/magento-composer-installer) [![License](https://poser.pugx.org/bragento/magento-composer-installer/license.svg)](https://packagist.org/packages/bragento/magento-composer-installer)
+[![License](https://poser.pugx.org/bragento/magento-composer-installer/license.svg)](https://packagist.org/packages/bragento/magento-composer-installer)
 
 
 
