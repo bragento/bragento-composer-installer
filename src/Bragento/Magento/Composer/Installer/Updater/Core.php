@@ -196,7 +196,10 @@ class Core implements EventSubscriberInterface
      */
     protected function getFiles()
     {
-        return $this->persistent;
+        return array_merge(
+            $this->persistent,
+            Config::getInstance()->getPersistentFiles()
+        );
     }
 
     /**

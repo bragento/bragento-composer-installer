@@ -37,6 +37,8 @@ class Config
     const MAGENTO_FORCE_KEY = 'magento-force';
     const OVERRIDE_FORCE = 'override';
 
+    const PERSISTENT_FILES_KEY = 'persistent-files';
+
     /**
      * _instance
      *
@@ -108,6 +110,17 @@ class Config
     public function getMagentoOverride()
     {
         return $this->getExtraValue(self::MAGENTO_FORCE_KEY);
+    }
+
+    /**
+     * getPersistentFiles
+     *
+     * @return array
+     */
+    public function getPersistentFiles()
+    {
+        $files = $this->getExtraValue(self::PERSISTENT_FILES_KEY);
+        return $files !== null ? $files : [];
     }
 
     /**
