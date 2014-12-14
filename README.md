@@ -63,7 +63,7 @@ You can also define additional Files to be persistent such as local Modules or o
     },  
     "extra": {  
         "magento-root-dir": "magento",
-        "persitent-files": [
+        "persistent-files": [
             "somefile",
             "app/code/local/Vendor/SomeModule",
             "app/etc/modules/Vendor_SomeModule.xml"
