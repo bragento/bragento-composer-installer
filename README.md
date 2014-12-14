@@ -79,11 +79,8 @@ You can also define additional Files to be persistent such as local Modules or o
 
 Just require the Modules in your composer.json.
 
-Modules are currently all deployed with symlink strategy (Except under Windows they should be copied - not tested yet)  
-Support for deploying all or just some specific modules by copy strategy will be added later
-
 Many composer installable Magento extensions are listed under <a href="http://packages.firegento.com">packages.firegento.com</a>  
-There is also an example of how to add a package directly from a github (or any git) Repository
+There is also an example of how to add a composer package directly from a github (or any git) Repository
 
 ```json
 {
