@@ -51,6 +51,7 @@ class Core implements EventSubscriberInterface
             '.gitmodules',
             '.git',
             'modman',
+            '.modman',
             'composer.json',
             'composer.lock',
             '.htaccess',
