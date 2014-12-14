@@ -202,7 +202,7 @@ class Config
      * @param array  $array
      * @param bool   $required
      *
-     * @return null
+     * @return mixed
      * @throws Exception\ConfigKeyNotDefinedException
      */
     protected function getValueFromArray($key, array $array, $required = false)
@@ -224,7 +224,7 @@ class Config
      * @param string $key
      * @param bool   $required
      *
-     * @return null
+     * @return mixed
      */
     protected function getExtraValue($key, $required = false)
     {
