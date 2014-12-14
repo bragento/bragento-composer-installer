@@ -15,6 +15,8 @@
 namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
 use Bragento\Magento\Composer\Installer\Deploy\Manager\PackageTypes;
+use Bragento\Magento\Composer\Installer\Project\Config;
+use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
@@ -38,12 +40,24 @@ class Factory
 
     const NS = '\\Bragento\\Magento\\Composer\\Installer\\Deploy\\Strategy\\';
 
+    protected static $allowedStrategies
+        = array(
+            self::STRATEGY_SYMLINK,
+            self::STRATEGY_COPY,
+            self::STRATEGY_NONE
+        );
+
     /**
      * deployStrategies
      *
      * @var array
      */
     protected static $deployStrategies;
+
+    /**
+     * @var array
+     */
+    protected static $overwrites;
 
     /**
      * _composer
@@ -98,7 +112,7 @@ class Factory
 
                 case PackageTypes::MAGENTO_MODULE:
                 case PackageTypes::MAGENTO_THEME:
-                    $strategy = self::STRATEGY_SYMLINK;
+                    $strategy = self::getPackageDeployStrategy($package);
                     break;
 
                 default:
@@ -118,6 +132,100 @@ class Factory
         }
 
         return self::$deployStrategies[$package->getName()];
+    }
+
+    /**
+     * getPackageDeployStrategy
+     *
+     * @param PackageInterface $package
+     *
+     * @return string
+     */
+    protected static function getPackageDeployStrategy(
+        PackageInterface $package
+    ) {
+        $nameParts = Filesystem::getInstance()
+            ->getPathParts($package->getName());
+
+        if (count($nameParts) !== 2) {
+            return self::getDefaultStrategy();
+        }
+
+        return self::normalizeStrategy(
+            self::getOverwrite($nameParts[0], $nameParts[1])
+        );
+    }
+
+    /**
+     * getOverwrites
+     *
+     * @return array
+     */
+    protected static function getOverwrites()
+    {
+        if (null === self::$overwrites) {
+            $overwriteConfig = Config::getInstance()
+                ->getDeployStrategyOverwrite();
+
+            self::$overwrites = [];
+            foreach ($overwriteConfig as $key => $value) {
+                $nameParts = Filesystem::getInstance()->getPathParts($key);
+                if (count($nameParts) === 2) {
+                    $vendor = $nameParts[0];
+                    $name = $nameParts[1];
+                    if (!isset(self::$overwrites[$vendor])) {
+                        self::$overwrites[$vendor] = [];
+                    }
+                    self::$overwrites[$vendor][$name] = $value;
+                }
+            }
+        }
+
+        return self::$overwrites;
+    }
+
+    /**
+     * getOverwrite
+     *
+     * @param $vendor
+     * @param $name
+     *
+     * @return string
+     */
+    protected static function getOverwrite($vendor, $name)
+    {
+        $overwrites = self::getOverwrites();
+        if (!isset($overwrites[$vendor])
+            || !isset($overwrites[$vendor][$name])
+        ) {
+            return self::getDefaultStrategy();
+        }
+
+        return $overwrites[$vendor][$name];
+    }
+
+    /**
+     * normalizeStrategy
+     *
+     * @param $strategy
+     *
+     * @return string
+     */
+    protected static function normalizeStrategy($strategy)
+    {
+        return ucfirst(strtolower($strategy));
+    }
+
+    /**
+     * getDefaultStrategy
+     *
+     * @return string
+     */
+    protected static function getDefaultStrategy()
+    {
+        return self::normalizeStrategy(
+            Config::getInstance()->getDeployStrategy()
+        );
     }
 
     /**

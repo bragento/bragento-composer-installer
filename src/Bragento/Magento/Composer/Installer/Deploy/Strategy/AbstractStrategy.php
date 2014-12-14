@@ -26,6 +26,7 @@ use Composer\EventDispatcher\EventDispatcher;
 use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
 use Composer\Script\PackageEvent;
+use ReflectionClass;
 use Symfony\Component\Finder\SplFileInfo;
 
 
@@ -202,6 +203,17 @@ abstract class AbstractStrategy
     }
 
     /**
+     * getName
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        $reflect = new ReflectionClass($this);
+        return strtolower($reflect->getShortName());
+    }
+
+    /**
      * getPackage
      *
      * @return PackageInterface
@@ -234,7 +246,8 @@ abstract class AbstractStrategy
             $this->getPackage(),
             $this->getAction(),
             $this->getSourceDir(),
-            $this->getDestDir()
+            $this->getDestDir(),
+            $this->getName()
         );
 
         $event = new PackageEvent(
@@ -320,10 +333,26 @@ abstract class AbstractStrategy
     {
         try {
             foreach ($this->getMappingsArray() as $src => $dest) {
-                $this->createDelegate(
-                    $this->getFullPath($this->getSourceDir(), $src),
-                    $this->getFullPath($this->getDestDir(), $dest)
-                );
+                $src = $this->getFullPath($this->getSourceDir(), $src);
+                $dest = $this->getFullPath($this->getDestDir(), $dest);
+                if ($this->getFs()->exists($dest)) {
+                    if (!$override = Config::getInstance()->isForcedOverride()) {
+                        $override = $this->getIo()
+                            ->ask(
+                                sprintf(
+                                    "Destination already exists. Replace %s ? [y/n] ",
+                                    $dest
+                                )
+                            );
+                    }
+                    if ($override) {
+                        $this->getFs()->remove($dest);
+                    } else {
+                        return;
+                    }
+                }
+                $this->getFs()->ensureDirectoryExists(dirname($dest));
+                $this->createDelegate($src, $dest);
             }
         } catch (\Exception $e) {
             $this->io->write(sprintf('<error>%s</error>', $e->getMessage()));
@@ -463,7 +492,10 @@ abstract class AbstractStrategy
      *
      * @param string $delegate
      *
-     * @return void
+     * @return mixed
      */
-    abstract protected function removeDelegate($delegate);
+    protected function removeDelegate($delegate)
+    {
+        $this->getFs()->remove($delegate);
+    }
 }

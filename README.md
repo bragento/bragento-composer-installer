@@ -63,7 +63,7 @@ You can also define additional Files to be persistent such as local Modules or o
     },  
     "extra": {  
         "magento-root-dir": "magento",
-        "persitent-files": [
+        "persistent-files": [
             "somefile",
             "app/code/local/Vendor/SomeModule",
             "app/etc/modules/Vendor_SomeModule.xml"
@@ -75,10 +75,12 @@ You can also define additional Files to be persistent such as local Modules or o
 
 ## Module Installer
 
+### Install a Module
+
 Just require the Modules in your composer.json.
 
 Modules are currently all deployed with symlink strategy (Except under Windows they should be copied - not tested yet)  
-Support for deploying all or just som specific modules by copy strategy will be added later
+Support for deploying all or just some specific modules by copy strategy will be added later
 
 Many composer installable Magento extensions are listed under <a href="http://packages.firegento.com">packages.firegento.com</a>  
 There is also an example of how to add a package directly from a github (or any git) Repository
@@ -106,3 +108,51 @@ There is also an example of how to add a package directly from a github (or any 
     }  
 }
 ```
+
+### Change Deploy Strategy
+
+By default, all Modules are deployed by symlink. You can change this behaviour with the config key 'magento-deploystrategy'  
+
+Possible values are:  
+symlink  
+copy  
+none  (will just install the Module but not deploy it to magento root)
+
+```json
+{ 
+    "extra": {  
+        "magento-deploystrategy": "copy"  
+    }  
+}
+```
+
+### Overwrite Deploy Strategy per Module
+
+You can also overwrite the Deploy Strategy for specific Modules under the config key magento-deploystrategy-overwrite  
+
+```json
+{ 
+    "repositories": [
+            {
+                "type": "composer",
+                "url": "packages.firegento.com"
+            }
+        ],
+        "require": {  
+            "bragento/magento-composer-installer": "~1",  
+            "magento/core": "~1.9",
+            "firegento/magesetup": "~2"
+        },  
+    "extra": {  
+        "magento-deploystrategy": "symlink",
+        "magento-deploystrategy-overwrite": {
+            "firegento/magesetup": "copy"
+        }
+    }  
+}
+```
+
+## Contributing
+
+make pull requests solely from the develop Branch.  
+run the tests before making a pull request

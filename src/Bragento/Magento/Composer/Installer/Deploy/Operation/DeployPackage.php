@@ -14,6 +14,7 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy\Operation;
 
+use Bragento\Magento\Composer\Installer\Deploy\Strategy\Factory;
 use Composer\DependencyResolver\Operation\OperationInterface;
 use Composer\Package\PackageInterface;
 use Symfony\Component\Finder\SplFileInfo;
@@ -59,23 +60,31 @@ class DeployPackage implements OperationInterface
     protected $destDir;
 
     /**
+     * @var string
+     */
+    protected $deployStrategy;
+
+    /**
      * construct deploy Operation
      *
      * @param PackageInterface $package      Package to deploy
      * @param string           $deployAction Deploy Action
      * @param SplFileInfo      $sourceDir    Source Directory
      * @param SplFileInfo      $destDir      Destination Directory
+     * @param string           $deployStrategy
      */
     public function __construct(
         PackageInterface $package,
         $deployAction,
         SplFileInfo $sourceDir,
-        SplFileInfo $destDir
+        SplFileInfo $destDir,
+        $deployStrategy = Factory::STRATEGY_SYMLINK
     ) {
         $this->package = $package;
         $this->deployAction = $deployAction;
         $this->sourceDir = $sourceDir;
         $this->destDir = $destDir;
+        $this->deployStrategy = $deployStrategy;
     }
 
     /**
@@ -114,11 +123,12 @@ class DeployPackage implements OperationInterface
     public function __toString()
     {
         return sprintf(
-            "Deployment of %s %s (%s) [%s]",
+            "Deployment of %s %s (%s) [%s] <%s>",
             $this->package->getType(),
             $this->package->getName(),
             $this->package->getPrettyVersion(),
-            $this->deployAction
+            $this->deployAction,
+            $this->deployStrategy
         );
     }
 
