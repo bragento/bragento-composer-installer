@@ -18,7 +18,6 @@ use Bragento\Magento\Composer\Installer\Mapping\Composer;
 use Bragento\Magento\Composer\Installer\Mapping\Factory;
 use Bragento\Magento\Composer\Installer\Mapping\Modman;
 
-
 /**
  * Class MappingTest
  *
@@ -31,6 +30,11 @@ use Bragento\Magento\Composer\Installer\Mapping\Modman;
  */
 class MappingTest extends AbstractMappingTest
 {
+    /**
+     * @var Modman
+     */
+    protected $object;
+
     protected function getMappingName()
     {
         return 'global';
@@ -39,18 +43,26 @@ class MappingTest extends AbstractMappingTest
     /**
      * testResolveMappings
      *
+     * @param $mappings
+     * @param $files
+     * @param $expected
+     *
      * @return void
+     *
+     * @dataProvider testMappingsDataProvider
      */
-    public function testResolveMappings()
+    public function testResolveMappings($mappings, $files, $expected)
     {
-        $this->copyFiles('modman');
+        $this->toBuildDir();
+        $this->createTestFiles($files);
 
-        $modman = new Modman(
-            $this->getBuildDir(),
-            $this->getTestPackage()
-        );
+        $actual = $this->getTestObject()->resolveMappings($mappings);
 
-        $this->assertEquals(2, count($modman->getResolvedMappingsArray()));
+        while (($act = each($actual)) !== false
+            && ($exp = each($expected)) !== false) {
+            $this->assertEquals($exp['key'], $act['key']);
+            $this->assertEquals($exp['value'], $act['value']);
+        }
     }
 
     public function testFactoryGetModmanMap()
@@ -125,4 +137,21 @@ class MappingTest extends AbstractMappingTest
             $this->getBuildDir()
         );
     }
-} 
+
+    /**
+     * getTestObject
+     *
+     * @return Modman
+     */
+    protected function getTestObject()
+    {
+        if (null === $this->object) {
+            $this->object = new Modman(
+                $this->getBuildDir(),
+                $this->getTestPackage()
+            );
+        }
+
+        return $this->object;
+    }
+}

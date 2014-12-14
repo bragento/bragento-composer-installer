@@ -93,20 +93,20 @@ abstract class AbstractMapping
      *
      * @return array
      */
-    protected function resolveMappings(array $mappings)
+    public function resolveMappings(array $mappings)
     {
         $translatedMap = array();
         foreach ($mappings as $src => $dest) {
             if (String::contains($src, '*')) {
-                $glob = $this->getModuleDir() . DIRECTORY_SEPARATOR . $src;
-                foreach (glob($glob) as $file) {
-                    $newSrcParts = explode('/', $file);
-                    foreach (explode('/', $this->getModuleDir()) as $part) {
-                        array_shift($newSrcParts);
-                    }
-                    $newSrc = implode('/', $newSrcParts);
-                    $newDest = $this->getFs()->joinFileUris($dest, basename($file));
-                    $translatedMap[$newSrc] = $newDest;
+                foreach (glob($this->getFs()->joinFileUris($this->getModuleDir(), $src)) as $file) {
+                    $fileSrc = $this->getFs()->rmAbsPathPart(
+                        $file,
+                        $this->getModuleDir()
+                    );
+                    $translatedMap[$fileSrc] = $this->getFs()->joinFileUris(
+                        $dest,
+                        basename($file)
+                    );
                 }
             } else {
                 if ($this->getFs()->endsWithDs($dest)) {

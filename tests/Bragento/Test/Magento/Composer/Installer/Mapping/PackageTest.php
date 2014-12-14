@@ -13,8 +13,8 @@
  */
 
 namespace Bragento\Test\Magento\Composer\Installer\Mapping;
-use Bragento\Magento\Composer\Installer\Mapping\Package;
 
+use Bragento\Magento\Composer\Installer\Mapping\Package;
 
 /**
  * Class PackageTest
@@ -109,4 +109,4 @@ class PackageTest extends AbstractMappingTest
 
         $mapping->getMappingsArray();
     }
-} 
+}

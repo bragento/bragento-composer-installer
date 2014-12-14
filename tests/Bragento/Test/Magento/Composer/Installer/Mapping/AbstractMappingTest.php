@@ -13,7 +13,7 @@
  */
 
 namespace Bragento\Test\Magento\Composer\Installer\Mapping;
-use Bragento\Test\Magento\Composer\Installer\AbstractTest;
+
 use Composer\Package\Package;
 
 /**
@@ -26,7 +26,7 @@ use Composer\Package\Package;
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
  */
-abstract class AbstractMappingTest extends AbstractTest
+abstract class AbstractMappingTest extends MappingDataProvider
 {
     abstract protected function getMappingName();
 
@@ -52,4 +52,4 @@ abstract class AbstractMappingTest extends AbstractTest
 
         return $package;
     }
-} 
+}

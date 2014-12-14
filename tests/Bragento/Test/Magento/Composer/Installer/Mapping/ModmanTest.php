@@ -15,7 +15,6 @@
 namespace Bragento\Test\Magento\Composer\Installer\Mapping;
 
 use Bragento\Magento\Composer\Installer\Mapping\Modman;
-use Composer\Package\Package;
 
 /**
  * Class ModmanTest
@@ -91,4 +90,4 @@ class ModmanTest extends AbstractMappingTest
         );
         $modmanMapping->getResolvedMappingsArray();
     }
-} 
+}

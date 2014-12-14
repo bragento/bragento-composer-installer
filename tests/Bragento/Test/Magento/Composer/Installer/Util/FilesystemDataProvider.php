@@ -42,6 +42,19 @@ abstract class FilesystemDataProvider extends AbstractUnitTest
     }
 
     /**
+     * provideSymlinkTestFiles
+     *
+     * @return array
+     */
+    public function provideEmtpyDirTestData()
+    {
+        return array(
+            array('test1dir', array('file1', 'file2', 'file3')),
+            array('test2dir', array())
+        );
+    }
+
+    /**
      * joinFilePathsProvider
      *
      * @return array
