@@ -40,7 +40,9 @@ class Symlink extends AbstractStrategy
     {
         if ($this->getFs()->exists($dest)) {
             if (!$override = Config::getInstance()->isForcedOverride()) {
-                $override = $this->getIo()->ask(sprintf("Destination already exists. Replace %s ? [y/n] ", $dest));
+                $override = $this->getIo()
+                    ->ask(sprintf("Destination already exists. Replace %s ? [y/n] ",
+                            $dest));
             }
             if ($override) {
                 $this->getFs()->remove($dest);
@@ -62,6 +64,8 @@ class Symlink extends AbstractStrategy
      */
     protected function removeDelegate($delegate)
     {
-        $this->getFs()->remove($delegate);
+        if ($this->getFs()->exists($delegate) && is_link($delegate)) {
+            $this->getFs()->remove($delegate);
+        }
     }
 }

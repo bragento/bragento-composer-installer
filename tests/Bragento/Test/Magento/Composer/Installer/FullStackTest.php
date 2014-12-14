@@ -64,7 +64,8 @@ class FullStackTest extends AbstractTest
             'media/test',
             'app/etc/local.xml',
             '.gitignore',
-            'randomtestfile'
+            '.gitattributes',
+            '.gitmodules'
         );
 
     /**

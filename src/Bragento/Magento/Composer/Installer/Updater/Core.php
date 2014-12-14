@@ -45,7 +45,14 @@ class Core implements EventSubscriberInterface
         = array(
             'var',
             'media',
-            'app/etc/local.xml'
+            'app/etc/local.xml',
+            '.gitignore',
+            '.gitattributes',
+            '.gitmodules',
+            '.git',
+            'modman',
+            'composer.json',
+            'composer.lock'
         );
 
     /**
@@ -111,6 +118,7 @@ class Core implements EventSubscriberInterface
             $this->getBackupDir(),
             $event->getIO()
         );
+        $this->getFs()->emptyDirectory(Config::getInstance()->getMagentoRootDir());
         $this->printInfo('starting core deployment', $event->getIO());
     }
 
@@ -159,10 +167,10 @@ class Core implements EventSubscriberInterface
     protected function moveFiles($sourceRoot, $targetRoot, IOInterface $io)
     {
         foreach ($this->getFiles() as $item) {
-            $this->printInfo($item, $io);
             $source = $this->getFs()->joinFileUris($sourceRoot, $item);
             $target = $this->getFs()->joinFileUris($targetRoot, $item);
-            if (file_exists($source)) {
+            if (file_exists($source) && !is_link($source)) {
+                $this->printInfo($item, $io);
                 if (file_exists($target)) {
                     $this->getFs()->remove(
                         $target

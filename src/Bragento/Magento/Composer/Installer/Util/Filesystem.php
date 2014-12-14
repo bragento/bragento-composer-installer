@@ -44,7 +44,9 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      */
     public function emptyDirectory($dir)
     {
-        $this->remove($dir);
+        if ($this->exists($dir)) {
+            $this->remove($dir);
+        }
         $this->ensureDirectoryExists($dir);
     }
 
