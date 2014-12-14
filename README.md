@@ -5,6 +5,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/bragento/bragento-composer-installer/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/bragento/bragento-composer-installer/?branch=develop)
 
 [![License](https://poser.pugx.org/bragento/magento-composer-installer/license.svg)](https://packagist.org/packages/bragento/magento-composer-installer)
+[![License](https://www.bountysource.com/badge/tracker?tracker_id=4289269)](https://www.bountysource.com/trackers/4289269-bragento-bragento-composer-installer)
 
 
 

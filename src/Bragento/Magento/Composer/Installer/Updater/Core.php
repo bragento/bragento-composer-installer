@@ -128,6 +128,24 @@ class Core implements EventSubscriberInterface
     }
 
     /**
+     * onPostDeployCoreUpdate
+     *
+     * @param PackageEvent $event
+     *
+     * @return void
+     */
+    public function restoreBackup(PackageEvent $event)
+    {
+        $this->printInfo('restore persistent files', $event->getIO());
+        $this->moveFiles(
+            $this->getBackupDir(),
+            Config::getInstance()->getMagentoRootDir(),
+            $event->getIO()
+        );
+        $this->getFs()->remove($this->getBackupDir());
+    }
+
+    /**
      * printInfo
      *
      * @param string      $text
@@ -201,23 +219,5 @@ class Core implements EventSubscriberInterface
             $this->persistent,
             Config::getInstance()->getPersistentFiles()
         );
-    }
-
-    /**
-     * onPostDeployCoreUpdate
-     *
-     * @param PackageEvent $event
-     *
-     * @return void
-     */
-    public function restoreBackup(PackageEvent $event)
-    {
-        $this->printInfo('restore persistent files', $event->getIO());
-        $this->moveFiles(
-            $this->getBackupDir(),
-            Config::getInstance()->getMagentoRootDir(),
-            $event->getIO()
-        );
-        $this->getFs()->remove($this->getBackupDir());
     }
 }
