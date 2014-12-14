@@ -130,25 +130,23 @@ none  (will just install the Module but not deploy it to magento root)
 
 You can also overwrite the Deploy Strategy for specific Modules under the config key magento-deploystrategy-overwrite  
 
-In the following example, we will Install the MagentoUnitTesting Module from Techdivision, which will not work properly when only symlinked to magento root.  
-
 ```json
 { 
     "repositories": [
             {
-                "type": "git",
-                "url": "https://github.com/techdivision/TechDivision_MagentoUnitTesting.git"
+                "type": "composer",
+                "url": "packages.firegento.com"
             }
         ],
         "require": {  
             "bragento/magento-composer-installer": "~1",  
             "magento/core": "~1.9",
-            "techdivision/techdivision_magentounittesting": "dev-github@dev"
+            "firegento/magesetup": "~2"
         },  
     "extra": {  
         "magento-deploystrategy": "symlink",
         "magento-deploystrategy-overwrite": {
-            "techdivision/techdivision_magentounittesting": "copy"
+            "firegento/magesetup": "copy"
         }
     }  
 }
