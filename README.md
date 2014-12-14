@@ -48,6 +48,7 @@ app/etc/local.xml
 .gitmodules  
 .git  
 modman  
+.modman  
 composer.json  
 composer.lock  
 .htaccess  
