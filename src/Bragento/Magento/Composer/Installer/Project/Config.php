@@ -134,7 +134,7 @@ class Config
      */
     public function getDeployStrategyOverwrite()
     {
-        $strategies = $this->getExtraValue(self::DEPLOY_STRATEGY_KEY);
+        $strategies = $this->getExtraValue(self::DEPLOY_STRATEGY_OVERWRITE_KEY);
         return is_array($strategies) ? $strategies : [];
     }
 

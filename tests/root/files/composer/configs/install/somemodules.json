@@ -20,6 +20,9 @@
         "connect20/aw_fps": "*"
     },
     "extra": {
-        "magento-force": "override"
+        "magento-force": "override",
+        "magento-deploystrategy-overwrite": {
+            "firegento/magesetup": "copy"
+        }
     }
 }
