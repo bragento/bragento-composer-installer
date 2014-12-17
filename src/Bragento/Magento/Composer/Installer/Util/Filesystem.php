@@ -64,6 +64,9 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
     public function remove($path)
     {
         if (false === file_exists($path)) {
+            if (is_link($path)) {
+                unlink($path);
+            }
             return;
         }
 
