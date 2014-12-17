@@ -24,7 +24,21 @@ namespace Bragento\Magento\Composer\Installer\Util;
  */
 class Gitignore
 {
+    /**
+     * unix line break
+     */
     const LINE_BREAK = '\r\n';
+
+    /**
+     * Directory Separators
+     */
+    const DS = '\\/';
+
+    /**
+     * @var Gitignore[]
+     */
+    protected static $instances;
+
     /**
      * @var string[]
      */
@@ -43,13 +57,30 @@ class Gitignore
     /**
      * @param string $filePath
      */
-    public function __construct($filePath)
+    protected function __construct($filePath)
     {
         $this->filePath = $filePath;
 
         if (file_exists($filePath)) {
             $this->lines = array_flip(file($filePath, FILE_IGNORE_NEW_LINES));
         }
+    }
+
+    /**
+     * edit
+     *
+     * @param $filePath
+     *
+     * @return Gitignore
+     */
+    public static function edit($filePath)
+    {
+        $filePath = rtrim(trim($filePath), self::DS);
+        if (!isset(self::$instances[$filePath])) {
+            self::$instances[$filePath] = new Gitignore($filePath);
+        }
+
+        return self::$instances[$filePath];
     }
 
     /**
