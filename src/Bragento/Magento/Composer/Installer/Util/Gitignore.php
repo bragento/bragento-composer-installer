@@ -79,6 +79,7 @@ class Gitignore
      */
     public function addEntry($entry)
     {
+        $entry = $this->normalizeEntry($entry);
         if (!$this->hasEntry($entry)) {
             $this->lines[$entry] = $entry;
             $this->setHasChanges();
@@ -94,6 +95,7 @@ class Gitignore
      */
     public function removeEntry($entry)
     {
+        $entry = $this->normalizeEntry($entry);
         if (!$this->hasEntry($entry)) {
             unset($this->lines[$entry]);
             $this->setHasChanges();
