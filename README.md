@@ -40,24 +40,13 @@ Magento will be copied to the Magento root dir (Default: 'magento')
 
 ### Persistent Files
 
-By default, the Installer will erase the whole magento root dir on every update  
 There are several persistent files and directories, that will be backed up and restored after core deployment:  
 
 var  
 media  
 app/etc/local.xml  
-.gitignore  
-.gitattributes  
-.gitmodules  
-.git  
-modman  
-.modman  
-composer.json  
-composer.lock  
-.htaccess  
-.htpasswd  
 
-You can also define additional Files to be persistent such as local Modules or other configuration files in the root dir
+You can also define additional Files to be persistent such as local Modules  
 
 ```json
 {
@@ -149,6 +138,18 @@ You can also overwrite the Deploy Strategy for specific Modules under the config
         "magento-deploystrategy-overwrite": {
             "firegento/magesetup": "copy"
         }
+    }  
+}
+```
+
+### Auto Append Gitignore
+
+You can define that deployed files will be automatically added to .gitignore in magento root
+
+```json
+{
+    "extra": {  
+        "auto-append-gitignore": true
     }  
 }
 ```
