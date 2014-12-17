@@ -103,10 +103,14 @@ abstract class AbstractMapping
                         $file,
                         $this->getModuleDir()
                     );
-                    $translatedMap[$fileSrc] = $this->getFs()->joinFileUris(
-                        $dest,
-                        basename($file)
-                    );
+                    $translatedMap[$this->getFs()->trimDs($fileSrc)]
+                        = $this->getFs()->trimDs(
+                            $this->getFs()->joinFileUris(
+                                $dest,
+                                basename($file),
+                                false
+                            )
+                        );
                 }
             } else {
                 if ($this->getFs()->endsWithDs($dest)) {
@@ -116,11 +120,12 @@ abstract class AbstractMapping
                     } else {
                         $dest = $this->getFs()->joinFileUris(
                             $dest,
-                            basename($src)
+                            basename($src),
+                            false
                         );
                     }
                 }
-                $translatedMap[$src] = $dest;
+                $translatedMap[$this->getFs()->trimDs($src)] = $this->getFs()->trimDs($dest);
             }
         }
 

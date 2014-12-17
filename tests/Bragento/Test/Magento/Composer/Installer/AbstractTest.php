@@ -15,6 +15,7 @@
 namespace Bragento\Test\Magento\Composer\Installer;
 
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Class AbstractTest
@@ -28,6 +29,8 @@ use Bragento\Magento\Composer\Installer\Util\Filesystem;
  */
 abstract class AbstractTest extends \PHPUnit_Framework_TestCase
 {
+    const VFS_ROOT = 'root';
+
     const TEST_ROOT_DIR = 'root';
 
     const BUILD_ROOT = 'build';
@@ -45,6 +48,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->getFilesystem()->emptyDirectory($this->getBuildDir());
+        vfsStream::setup(self::VFS_ROOT);
     }
 
     protected function toBuildDir()

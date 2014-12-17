@@ -16,11 +16,13 @@ namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
 use Bragento\Magento\Composer\Installer\Deploy\Exception\UnknownActionException;
 use Bragento\Magento\Composer\Installer\Deploy\Manager\Actions;
+use Bragento\Magento\Composer\Installer\Deploy\Manager\PackageTypes;
 use Bragento\Magento\Composer\Installer\Deploy\Operation\DeployPackage;
 use Bragento\Magento\Composer\Installer\Deploy\State;
 use Bragento\Magento\Composer\Installer\Mapping;
 use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
+use Bragento\Magento\Composer\Installer\Util\Gitignore;
 use Composer\Composer;
 use Composer\EventDispatcher\EventDispatcher;
 use Composer\IO\IOInterface;
@@ -28,7 +30,6 @@ use Composer\Package\PackageInterface;
 use Composer\Script\PackageEvent;
 use ReflectionClass;
 use Symfony\Component\Finder\SplFileInfo;
-
 
 /**
  * Class AbstractStrategy
@@ -127,12 +128,12 @@ abstract class AbstractStrategy
     /**
      * construct Deploy Strategy
      *
-     * @param PackageInterface         $package   Package to deploy
+     * @param PackageInterface         $package Package to deploy
      * @param SplFileInfo              $sourceDir Source Directory
-     * @param SplFileInfo              $destDir   Destination Directory
-     * @param string                   $action    Deploy Action
-     * @param \Composer\Composer       $composer  composer instance
-     * @param \Composer\IO\IOInterface $io        IO Interface
+     * @param SplFileInfo              $destDir Destination Directory
+     * @param string                   $action Deploy Action
+     * @param \Composer\Composer       $composer composer instance
+     * @param \Composer\IO\IOInterface $io IO Interface
      */
     public function __construct(
         PackageInterface $package,
@@ -163,6 +164,8 @@ abstract class AbstractStrategy
     {
         $this->dispatchActionEvent(self::EVENT_TIMING_PRE);
 
+        $this->prepareDeployment();
+
         switch ($this->getAction()) {
             case Actions::INSTALL:
                 $this->makeInstall();
@@ -181,6 +184,28 @@ abstract class AbstractStrategy
         }
 
         $this->dispatchActionEvent(self::EVENT_TIMING_POST);
+    }
+
+    /**
+     * isCoreDeployment
+     *
+     * @return bool
+     */
+    public function isCoreDeployment()
+    {
+        return $this->getPackage()->getType() === PackageTypes::MAGENTO_CORE;
+    }
+
+    /**
+     * prepareDeployment
+     *
+     * @return void
+     */
+    protected function prepareDeployment()
+    {
+        if ($this->isCoreDeployment()) {
+            $this->getIo()->write('<info>starting core deployment</info>');
+        }
     }
 
     /**
@@ -322,6 +347,26 @@ abstract class AbstractStrategy
         $this->createDelegates();
         $this->getState()->setMapping($this->getMappingsArray());
         $this->getState()->save();
+        if (Config::getInstance()->getAutoappendGitignore()) {
+            $this->getGitignore()
+                ->addEntries($this->getMappingsArray())
+                ->persist();
+        }
+    }
+
+    /**
+     * getGitignore
+     *
+     * @return Gitignore
+     */
+    protected function getGitignore()
+    {
+        return Gitignore::edit(
+            $this->getFs()->joinFileUris(
+                $this->getDestDir(),
+                Gitignore::FILENAME
+            )
+        );
     }
 
     /**
@@ -336,7 +381,8 @@ abstract class AbstractStrategy
                 $src = $this->getFullPath($this->getSourceDir(), $src);
                 $dest = $this->getFullPath($this->getDestDir(), $dest);
                 if ($this->getFs()->exists($dest)) {
-                    if (!$override = Config::getInstance()->isForcedOverride()) {
+                    if (!$override = Config::getInstance()->isForcedOverride()
+                    ) {
                         $override = $this->getIo()
                             ->ask(
                                 sprintf(
@@ -364,7 +410,7 @@ abstract class AbstractStrategy
      *
      * @return array
      */
-    protected function getMappingsArray()
+    public function getMappingsArray()
     {
         return $this->getMapping()->getResolvedMappingsArray();
     }
@@ -444,14 +490,19 @@ abstract class AbstractStrategy
     /**
      * makeUninstall
      *
-     * @param bool $deleteState
+     * @param bool $noUpdate
      *
      * @return void
      */
-    protected function makeUninstall($deleteState = false)
+    protected function makeUninstall($noUpdate = false)
     {
         $this->removeDelegates();
-        if ($deleteState) {
+        if ($noUpdate) {
+            if (Config::getInstance()->getAutoappendGitignore()) {
+                $this->getGitignore()
+                    ->removeEntries($this->getDeployedDelegatesMapping())
+                    ->persist();
+            }
             $this->getState()->delete();
         }
     }
@@ -465,8 +516,11 @@ abstract class AbstractStrategy
     {
         if (is_array($this->getDeployedDelegatesMapping())) {
             foreach ($this->getDeployedDelegatesMapping() as $source => $destination) {
-                $filePath = $this->getFullPath(Config::getInstance()->getMagentoRootDir(), $destination);
-                if ($this->getFs()->exists($filePath)) {
+                $filePath = $this->getFullPath(
+                    $this->getDestDir(),
+                    $destination
+                );
+                if (is_link($filePath) || $this->getFs()->exists($filePath)) {
                     $this->removeDelegate($filePath);
                 }
             }

@@ -1,10 +1,13 @@
 # Magento Composer Installer
 
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/bragento/bragento-composer-installer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/bragento/bragento-composer-installer.svg?branch=develop)](https://travis-ci.org/bragento/bragento-composer-installer)
 [![Code Climate](https://codeclimate.com/github/bragento/bragento-composer-installer.png)](https://codeclimate.com/github/bragento/bragento-composer-installer)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/bragento/bragento-composer-installer/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/bragento/bragento-composer-installer/?branch=develop)
 
-[![Latest Stable Version](https://poser.pugx.org/bragento/magento-composer-installer/v/stable.svg)](https://packagist.org/packages/bragento/magento-composer-installer) [![License](https://poser.pugx.org/bragento/magento-composer-installer/license.svg)](https://packagist.org/packages/bragento/magento-composer-installer)
+[![License](https://poser.pugx.org/bragento/magento-composer-installer/license.svg)](https://packagist.org/packages/bragento/magento-composer-installer)
+[![License](https://www.bountysource.com/badge/tracker?tracker_id=4289269)](https://www.bountysource.com/trackers/4289269-bragento-bragento-composer-installer)
 
 
 
@@ -37,24 +40,13 @@ Magento will be copied to the Magento root dir (Default: 'magento')
 
 ### Persistent Files
 
-By default, the Installer will erase the whole magento root dir on every update  
 There are several persistent files and directories, that will be backed up and restored after core deployment:  
 
 var  
 media  
 app/etc/local.xml  
-.gitignore  
-.gitattributes  
-.gitmodules  
-.git  
-modman  
-.modman  
-composer.json  
-composer.lock  
-.htaccess  
-.htpasswd  
 
-You can also define additional Files to be persistent such as local Modules or other configuration files in the root dir
+You can also define additional Files to be persistent such as local Modules  
 
 ```json
 {
@@ -131,21 +123,33 @@ You can also overwrite the Deploy Strategy for specific Modules under the config
 ```json
 { 
     "repositories": [
-            {
-                "type": "composer",
-                "url": "packages.firegento.com"
-            }
-        ],
-        "require": {  
-            "bragento/magento-composer-installer": "~1",  
-            "magento/core": "~1.9",
-            "firegento/magesetup": "~2"
-        },  
+        {
+            "type": "composer",
+            "url": "packages.firegento.com"
+        }
+    ],
+    "require": {  
+        "bragento/magento-composer-installer": "~1",  
+        "magento/core": "~1.9",
+        "firegento/magesetup": "~2"
+    },  
     "extra": {  
         "magento-deploystrategy": "symlink",
         "magento-deploystrategy-overwrite": {
             "firegento/magesetup": "copy"
         }
+    }  
+}
+```
+
+### Auto Append Gitignore
+
+You can define that deployed files will be automatically added to .gitignore in magento root
+
+```json
+{
+    "extra": {  
+        "auto-append-gitignore": true
     }  
 }
 ```

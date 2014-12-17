@@ -151,9 +151,13 @@ class Factory
             return self::getDefaultStrategy();
         }
 
-        return self::normalizeStrategy(
+        $strategy = self::normalizeStrategy(
             self::getOverwrite($nameParts[0], $nameParts[1])
         );
+
+        return in_array($strategy, self::$allowedStrategies)
+            ? $strategy
+            : self::getDefaultStrategy();
     }
 
     /**
@@ -223,9 +227,13 @@ class Factory
      */
     protected static function getDefaultStrategy()
     {
-        return self::normalizeStrategy(
+        $strategy = self::normalizeStrategy(
             Config::getInstance()->getDeployStrategy()
         );
+
+        return in_array($strategy, self::$allowedStrategies)
+            ? $strategy
+            : self::STRATEGY_SYMLINK;
     }
 
     /**

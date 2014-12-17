@@ -43,6 +43,8 @@ class Config
     const DEPLOY_STRATEGY_KEY = 'magento-deploystrategy';
     const DEPLOY_STRATEGY_OVERWRITE_KEY = 'magento-deploystrategy-overwrite';
 
+    const AUTOAPPEND_GITIGNORE_KEY = 'auto-append-gitignore';
+
     /**
      * _instance
      *
@@ -125,6 +127,17 @@ class Config
     {
         $strategy = $this->getExtraValue(self::DEPLOY_STRATEGY_KEY);
         return null === $strategy ? Factory::STRATEGY_SYMLINK : $strategy;
+    }
+
+    /**
+     * getAutoappendGitignore
+     *
+     * @return boolean
+     */
+    public function getAutoappendGitignore()
+    {
+        return null !== $this->getExtraValue(self::AUTOAPPEND_GITIGNORE_KEY)
+            && false !== $this->getExtraValue(self::AUTOAPPEND_GITIGNORE_KEY);
     }
 
     /**
