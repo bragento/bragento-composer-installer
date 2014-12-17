@@ -111,6 +111,7 @@ class Gitignore
                 )
             );
         }
+        $this->unsetHasChanges();
 
         return $this;
     }
@@ -240,19 +241,15 @@ class Gitignore
         } else {
             $entryPathParts = Filesystem::getInstance()->getPathParts($entry);
             foreach ($this->getEntries() as $givenEntry) {
-                $givenEntryParts = Filesystem::getInstance()
-                    ->getPathParts($givenEntry);
-
-                if (!count($givenEntryParts)) {
-                    continue;
-                }
-
-                $i = 0;
-                while (
-                    array_shift($givenEntryParts) === $entryPathParts[$i++]
-                ) {
-                    if (!count($givenEntryParts)) {
-                        return true;
+                $givenEntryParts = Filesystem::getInstance()->getPathParts(
+                    $this->normalizeEntry($givenEntry)
+                );
+                if (count($givenEntryParts)) {
+                    $i = 0;
+                    while (array_shift($givenEntryParts) === $entryPathParts[$i++]) {
+                        if (!count($givenEntryParts)) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -280,7 +277,7 @@ class Gitignore
      */
     protected function normalizeEntry($entry)
     {
-        return trim($entry);
+        return Filesystem::getInstance()->removeLeadingDotPath(trim($entry));
     }
 
     /**

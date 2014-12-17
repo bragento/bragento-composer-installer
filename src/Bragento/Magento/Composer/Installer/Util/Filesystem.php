@@ -242,6 +242,21 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
     }
 
     /**
+     * joinPathParts
+     *
+     * @param array $parts
+     *
+     * @return string
+     */
+    public function joinPathParts(array $parts)
+    {
+        return implode(
+            self::DS,
+            $parts
+        );
+    }
+
+    /**
      * rmAbsPathPart
      *
      * @param $path
@@ -389,6 +404,22 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
     public function trimDs($path)
     {
         return trim($path, '/\\');
+    }
+
+    /**
+     * removeLeadingDotPath
+     *
+     * @param $path
+     *
+     * @return string
+     */
+    public function removeLeadingDotPath($path)
+    {
+        $parts = $this->getPathParts($path);
+        if ($parts[0] === '.') {
+            array_shift($parts);
+        }
+        return $this->joinPathParts($parts);
     }
 
     /**
