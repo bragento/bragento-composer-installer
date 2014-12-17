@@ -499,10 +499,10 @@ abstract class AbstractStrategy
     {
         $this->removeDelegates();
         if ($noUpdate) {
-            $this->getState()->delete();
             if (Config::getInstance()->getAutoappendGitignore()) {
-                $this->getGitignore()->removeEntries($this->getMappingsArray());
+                $this->getGitignore()->removeEntries($this->getDeployedDelegatesMapping());
             }
+            $this->getState()->delete();
         }
     }
 
