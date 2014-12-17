@@ -410,7 +410,7 @@ class Manager implements EventSubscriberInterface
      */
     protected function getTargetDir()
     {
-        return Config::getInstance()->getMagentoRootDir();
+        return $this->getDeploymentDir();
     }
 
     private function dispatchEvent($name)

@@ -31,7 +31,6 @@ use Composer\Script\PackageEvent;
 use ReflectionClass;
 use Symfony\Component\Finder\SplFileInfo;
 
-
 /**
  * Class AbstractStrategy
  *
@@ -351,7 +350,9 @@ abstract class AbstractStrategy
         $this->createDelegates();
         $this->getState()->setMapping($this->getMappingsArray());
         $this->getState()->save();
-        $this->getGitignore()->addEntries($this->getMappingsArray());
+        if (Config::getInstance()->getAutoappendGitignore()) {
+            $this->getGitignore()->addEntries($this->getMappingsArray());
+        }
     }
 
     /**
@@ -363,7 +364,7 @@ abstract class AbstractStrategy
     {
         return Gitignore::edit(
             $this->getFs()->joinFileUris(
-                $this->getDeploymentDir(),
+                $this->getDestDir(),
                 Gitignore::FILENAME
             )
         );
@@ -499,7 +500,9 @@ abstract class AbstractStrategy
         $this->removeDelegates();
         if ($noUpdate) {
             $this->getState()->delete();
-            $this->getGitignore()->removeEntries($this->getMappingsArray());
+            if (Config::getInstance()->getAutoappendGitignore()) {
+                $this->getGitignore()->removeEntries($this->getMappingsArray());
+            }
         }
     }
 
@@ -511,11 +514,11 @@ abstract class AbstractStrategy
     protected function removeDelegates()
     {
         if (is_array($this->getDeployedDelegatesMapping())) {
-            foreach (
-                $this->getDeployedDelegatesMapping() as $source => $destination
-            ) {
-                $filePath = $this->getFullPath(Config::getInstance()
-                        ->getMagentoRootDir(), $destination);
+            foreach ($this->getDeployedDelegatesMapping() as $source => $destination) {
+                $filePath = $this->getFullPath(
+                    Config::getInstance()->getMagentoRootDir(),
+                    $destination
+                );
                 if ($this->getFs()->exists($filePath)) {
                     $this->removeDelegate($filePath);
                 }
