@@ -86,16 +86,6 @@ class Gitignore
     }
 
     /**
-     * __desctruct
-     *
-     * @return void
-     */
-    public function __destruct()
-    {
-        $this->persist();
-    }
-
-    /**
      * reload
      *
      * @return $this

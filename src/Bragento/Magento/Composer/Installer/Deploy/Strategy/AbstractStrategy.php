@@ -351,7 +351,9 @@ abstract class AbstractStrategy
         $this->getState()->setMapping($this->getMappingsArray());
         $this->getState()->save();
         if (Config::getInstance()->getAutoappendGitignore()) {
-            $this->getGitignore()->addEntries($this->getMappingsArray());
+            $this->getGitignore()
+                ->addEntries($this->getMappingsArray())
+                ->persist();
         }
     }
 
@@ -500,7 +502,9 @@ abstract class AbstractStrategy
         $this->removeDelegates();
         if ($noUpdate) {
             if (Config::getInstance()->getAutoappendGitignore()) {
-                $this->getGitignore()->removeEntries($this->getDeployedDelegatesMapping());
+                $this->getGitignore()
+                    ->removeEntries($this->getDeployedDelegatesMapping())
+                    ->persist();
             }
             $this->getState()->delete();
         }
