@@ -517,7 +517,7 @@ abstract class AbstractStrategy
         if (is_array($this->getDeployedDelegatesMapping())) {
             foreach ($this->getDeployedDelegatesMapping() as $source => $destination) {
                 $filePath = $this->getFullPath(
-                    Config::getInstance()->getMagentoRootDir(),
+                    $this->getDestDir(),
                     $destination
                 );
                 if ($this->getFs()->exists($filePath)) {
