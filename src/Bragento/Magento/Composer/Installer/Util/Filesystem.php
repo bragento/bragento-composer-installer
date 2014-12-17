@@ -190,14 +190,15 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
     /**
      * joinFileUris
      *
-     * @param $path
-     * @param $name
+     * @param      $path
+     * @param      $name
+     * @param bool $keepLeadingDs
      *
      * @return string
      */
-    public function joinFileUris($path, $name)
+    public function joinFileUris($path, $name, $keepLeadingDs = true)
     {
-        $prefix = $this->startsWithDs($path) ? self::DS : '';
+        $prefix = $this->startsWithDs($path) && $keepLeadingDs ? self::DS : '';
         $suffix = $this->endsWithDs($name) ? self::DS : '';
         return $this->normalizePath(
             $prefix . implode(
@@ -376,6 +377,18 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
     public function removeTrailingDs($path)
     {
         return rtrim($path, '/\\');
+    }
+
+    /**
+     * trimDs
+     *
+     * @param $path
+     *
+     * @return string
+     */
+    public function trimDs($path)
+    {
+        return trim($path, '/\\');
     }
 
     /**
