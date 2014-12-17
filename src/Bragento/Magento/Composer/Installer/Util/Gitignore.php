@@ -35,6 +35,11 @@ class Gitignore
     const DS = '\\/';
 
     /**
+     * Gitignore File Name
+     */
+    const FILENAME = '.gitignore';
+
+    /**
      * @var Gitignore[]
      */
     protected static $instances;
@@ -118,6 +123,20 @@ class Gitignore
     }
 
     /**
+     * addEntries
+     *
+     * @param array $entries
+     *
+     * @return void
+     */
+    public function addEntries(array $entries)
+    {
+        foreach ($entries as $entry) {
+            $this->addEntry($entry);
+        }
+    }
+
+    /**
      * removeEntry
      *
      * @param string $entry
@@ -130,6 +149,20 @@ class Gitignore
         if (!$this->hasEntry($entry)) {
             unset($this->lines[$entry]);
             $this->setHasChanges();
+        }
+    }
+
+    /**
+     * removeEntries
+     *
+     * @param array $entries
+     *
+     * @return void
+     */
+    public function removeEntries(array $entries)
+    {
+        foreach ($entries as $entry) {
+            $this->removeEntry($entry);
         }
     }
 

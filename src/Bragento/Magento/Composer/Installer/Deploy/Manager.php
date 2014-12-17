@@ -22,6 +22,7 @@ use Bragento\Magento\Composer\Installer\Deploy\Strategy\Factory;
 use Bragento\Magento\Composer\Installer\Exception\NotInitializedException;
 use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
+use Bragento\Magento\Composer\Installer\Util\Gitignore;
 use Composer\Composer;
 use Composer\DependencyResolver\Operation\UninstallOperation;
 use Composer\EventDispatcher\EventSubscriberInterface;
@@ -425,27 +426,6 @@ class Manager implements EventSubscriberInterface
     }
 
     /**
-     * deployCoreEntry
-     *
-     * @param Entry $entry
-     *
-     * @throws Exception\UnknownActionException
-     * @return Entry
-     */
-    protected function deployEntry(Entry $entry)
-    {
-        if (null !== $entry) {
-            $entry->getDeployStrategy()->doDeploy();
-            $this->addDeployedPackage(
-                $entry->getDeployStrategy()->getPackage()
-            );
-            $entry = null;
-        }
-
-        return $entry;
-    }
-
-    /**
      * addDeployedPackage
      *
      * @param PackageInterface $package
@@ -470,13 +450,41 @@ class Manager implements EventSubscriberInterface
         while (count($entries)) {
             /** @var Entry $entry */
             $entry = array_shift($entries);
+            $this->deployEntry($entry);
+        }
+
+        return $entries;
+    }
+
+    /**
+     * deployCoreEntry
+     *
+     * @param Entry $entry
+     *
+     * @throws Exception\UnknownActionException
+     * @return Entry
+     */
+    protected function deployEntry(Entry &$entry)
+    {
+        if (null !== $entry) {
             $entry->getDeployStrategy()->doDeploy();
             $this->addDeployedPackage(
                 $entry->getDeployStrategy()->getPackage()
             );
+            $entry = null;
         }
 
-        return $entries;
+        return $entry;
+    }
+
+    /**
+     * getDeploymentDir
+     *
+     * @return SplFileInfo
+     */
+    protected function getDeploymentDir()
+    {
+        return Config::getInstance()->getMagentoRootDir();
     }
 
     /**

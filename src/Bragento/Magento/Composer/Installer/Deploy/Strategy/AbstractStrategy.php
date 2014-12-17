@@ -22,6 +22,7 @@ use Bragento\Magento\Composer\Installer\Deploy\State;
 use Bragento\Magento\Composer\Installer\Mapping;
 use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
+use Bragento\Magento\Composer\Installer\Util\Gitignore;
 use Composer\Composer;
 use Composer\EventDispatcher\EventDispatcher;
 use Composer\IO\IOInterface;
@@ -350,6 +351,22 @@ abstract class AbstractStrategy
         $this->createDelegates();
         $this->getState()->setMapping($this->getMappingsArray());
         $this->getState()->save();
+        $this->getGitignore()->addEntries($this->getMappingsArray());
+    }
+
+    /**
+     * getGitignore
+     *
+     * @return Gitignore
+     */
+    protected function getGitignore()
+    {
+        return Gitignore::edit(
+            $this->getFs()->joinFileUris(
+                $this->getDeploymentDir(),
+                Gitignore::FILENAME
+            )
+        );
     }
 
     /**
@@ -393,7 +410,7 @@ abstract class AbstractStrategy
      *
      * @return array
      */
-    protected function getMappingsArray()
+    public function getMappingsArray()
     {
         return $this->getMapping()->getResolvedMappingsArray();
     }
@@ -473,15 +490,16 @@ abstract class AbstractStrategy
     /**
      * makeUninstall
      *
-     * @param bool $deleteState
+     * @param bool $noUpdate
      *
      * @return void
      */
-    protected function makeUninstall($deleteState = false)
+    protected function makeUninstall($noUpdate = false)
     {
         $this->removeDelegates();
-        if ($deleteState) {
+        if ($noUpdate) {
             $this->getState()->delete();
+            $this->getGitignore()->removeEntries($this->getMappingsArray());
         }
     }
 
