@@ -90,7 +90,7 @@ class Gitignore
      *
      * @return void
      */
-    public function __desctruct()
+    public function __destruct()
     {
         $this->persist();
     }
@@ -132,6 +132,7 @@ class Gitignore
             );
         }
         $this->unsetHasChanges();
+        $this->reload();
     }
 
     /**

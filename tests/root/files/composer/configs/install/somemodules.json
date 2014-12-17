@@ -23,6 +23,7 @@
         "magento-force": "override",
         "magento-deploystrategy-overwrite": {
             "firegento/magesetup": "copy"
-        }
+        },
+        "auto-append-gitignore": true
     }
 }
