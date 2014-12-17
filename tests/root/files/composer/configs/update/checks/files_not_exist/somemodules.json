@@ -1,3 +1,4 @@
 [
-    "app/code/community/FireGento/MageSetup/etc/config.xml"
+    "app/code/community/FireGento/MageSetup/etc/config.xml",
+    "app/code/community/FireGento/Debug/etc/config.xml"
 ]

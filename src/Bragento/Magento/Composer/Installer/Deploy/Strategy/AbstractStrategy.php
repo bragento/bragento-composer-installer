@@ -520,7 +520,7 @@ abstract class AbstractStrategy
                     $this->getDestDir(),
                     $destination
                 );
-                if ($this->getFs()->exists($filePath)) {
+                if ((file_exists($filePath) && is_link($filePath)) || $this->getFs()->exists($filePath)) {
                     $this->removeDelegate($filePath);
                 }
             }
