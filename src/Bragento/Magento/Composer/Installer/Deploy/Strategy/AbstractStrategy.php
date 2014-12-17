@@ -204,9 +204,6 @@ abstract class AbstractStrategy
     protected function prepareDeployment()
     {
         if ($this->isCoreDeployment()) {
-            $this->getFs()->emptyDirectory(
-                Config::getInstance()->getMagentoRootDir()
-            );
             $this->getIo()->write('<info>starting core deployment</info>');
         }
     }

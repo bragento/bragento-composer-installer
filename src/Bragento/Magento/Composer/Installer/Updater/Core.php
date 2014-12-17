@@ -45,17 +45,7 @@ class Core implements EventSubscriberInterface
         = array(
             'var',
             'media',
-            'app/etc/local.xml',
-            '.gitignore',
-            '.gitattributes',
-            '.gitmodules',
-            '.git',
-            'modman',
-            '.modman',
-            'composer.json',
-            'composer.lock',
-            '.htaccess',
-            '.htpasswd'
+            'app/etc/local.xml'
         );
 
     /**
