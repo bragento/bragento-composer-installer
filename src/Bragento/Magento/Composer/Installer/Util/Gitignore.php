@@ -27,7 +27,7 @@ class Gitignore
     /**
      * unix line break
      */
-    const LINE_BREAK = '\r\n';
+    const LINE_BREAK = "\r\n";
 
     /**
      * Directory Separators
@@ -65,10 +65,7 @@ class Gitignore
     protected function __construct($filePath)
     {
         $this->filePath = $filePath;
-
-        if (file_exists($filePath)) {
-            $this->lines = array_flip(file($filePath, FILE_IGNORE_NEW_LINES));
-        }
+        $this->reload();
     }
 
     /**
@@ -95,15 +92,46 @@ class Gitignore
      */
     public function __desctruct()
     {
+        $this->persist();
+    }
+
+    /**
+     * reload
+     *
+     * @return $this
+     */
+    public function reload()
+    {
+        $this->lines = array();
+        if (file_exists($this->getFilePath())) {
+            $this->lines = array_flip(
+                file(
+                    $this->getFilePath(),
+                    FILE_IGNORE_NEW_LINES
+                )
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * saveChanges
+     *
+     * @return void
+     */
+    public function persist()
+    {
         if ($this->hasChanges()) {
             file_put_contents(
                 $this->getFilePath(),
                 implode(
                     self::LINE_BREAK,
-                    array_flip($this->lines)
+                    $this->getEntries()
                 )
             );
         }
+        $this->unsetHasChanges();
     }
 
     /**
@@ -111,15 +139,17 @@ class Gitignore
      *
      * @param string $entry
      *
-     * @return void
+     * @return $this
      */
     public function addEntry($entry)
     {
         $entry = $this->normalizeEntry($entry);
-        if (!$this->hasEntry($entry)) {
+        if (!$this->isIgnored($entry)) {
             $this->lines[$entry] = $entry;
             $this->setHasChanges();
         }
+
+        return $this;
     }
 
     /**
@@ -127,13 +157,15 @@ class Gitignore
      *
      * @param array $entries
      *
-     * @return void
+     * @return $this
      */
     public function addEntries(array $entries)
     {
         foreach ($entries as $entry) {
             $this->addEntry($entry);
         }
+
+        return $this;
     }
 
     /**
@@ -141,15 +173,17 @@ class Gitignore
      *
      * @param string $entry
      *
-     * @return void
+     * @return $this
      */
     public function removeEntry($entry)
     {
         $entry = $this->normalizeEntry($entry);
-        if (!$this->hasEntry($entry)) {
+        if ($this->hasEntry($entry)) {
             unset($this->lines[$entry]);
             $this->setHasChanges();
         }
+
+        return $this;
     }
 
     /**
@@ -157,13 +191,25 @@ class Gitignore
      *
      * @param array $entries
      *
-     * @return void
+     * @return $this
      */
     public function removeEntries(array $entries)
     {
         foreach ($entries as $entry) {
             $this->removeEntry($entry);
         }
+
+        return $this;
+    }
+
+    /**
+     * getEntries
+     *
+     * @return string[]
+     */
+    public function getEntries()
+    {
+        return array_keys($this->lines);
     }
 
     /**
@@ -176,6 +222,42 @@ class Gitignore
     public function hasEntry($entry)
     {
         return isset($this->lines[$this->normalizeEntry($entry)]);
+    }
+
+    /**
+     * isIgnored
+     *
+     * @param $entry
+     *
+     * @return bool
+     */
+    public function isIgnored($entry)
+    {
+        $entry = $this->normalizeEntry($entry);
+        if ($this->hasEntry($entry)) {
+            return true;
+        } else {
+            $entryPathParts = Filesystem::getInstance()->getPathParts($entry);
+            foreach ($this->getEntries() as $givenEntry) {
+                $givenEntryParts = Filesystem::getInstance()
+                    ->getPathParts($givenEntry);
+
+                if (!count($givenEntryParts)) {
+                    continue;
+                }
+
+                $i = 0;
+                while (
+                    array_shift($givenEntryParts) === $entryPathParts[$i++]
+                ) {
+                    if (!count($givenEntryParts)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
