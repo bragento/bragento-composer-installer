@@ -5,6 +5,7 @@
     "type": "composer-plugin",
     "license": "OSL-3.0",
     "homepage": "https://github.com/bragento/bragento-composer-installer",
+    "minium-stability": "stable",
     "authors": [
         {
             "name": "David Verholen",
@@ -17,10 +18,10 @@
         "symfony/filesystem": "~2"
     },
     "require-dev": {
-        "phpunit/phpunit": "@stable",
-        "composer/composer": "~1@alpha",
-        "codeclimate/php-test-reporter": "~0.1@stable",
-        "mikey179/vfsStream": "~1"
+        "phpunit/phpunit": "*",
+        "composer/composer": "*@alpha",
+        "codeclimate/php-test-reporter": "*",
+        "mikey179/vfsStream": "*"
     },
     "replace": {
         "magento-hackathon/magento-composer-installer": "*"
