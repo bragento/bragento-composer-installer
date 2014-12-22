@@ -115,14 +115,17 @@ abstract class AbstractMapping
             } else {
                 if ($this->getFs()->endsWithDs($dest)) {
                     if ($this->getFs()->endsWithDs($src)) {
-                        $dest = $this->getFs()->removeTrailingDs($dest);
                         $src = $this->getFs()->removeTrailingDs($src);
                     } else {
-                        $dest = $this->getFs()->joinFileUris(
-                            $dest,
-                            basename($src),
-                            false
-                        );
+                        if (is_file($src)) {
+                            $dest = $this->getFs()->joinFileUris(
+                                $dest,
+                                basename($src),
+                                false
+                            );
+                        } else {
+                            $dest = $this->getFs()->removeTrailingDs($dest);
+                        }
                     }
                 }
                 $translatedMap[$this->getFs()->trimDs($src)] = $this->getFs()->trimDs($dest);

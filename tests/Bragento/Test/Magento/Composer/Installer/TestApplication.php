@@ -13,8 +13,9 @@
  */
 
 namespace Bragento\Test\Magento\Composer\Installer;
-use Composer\IO\IOInterface;
 
+use Composer\Console\Application;
+use Composer\IO\IOInterface;
 
 /**
  * Class TestApplication
@@ -26,10 +27,10 @@ use Composer\IO\IOInterface;
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
  */
-class TestApplication extends \Composer\Console\Application
+class TestApplication extends Application
 {
     public function setIo(IOInterface $io)
     {
         $this->io = $io;
     }
-} 
+}

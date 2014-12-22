@@ -17,7 +17,6 @@ namespace Bragento\Test\Magento\Composer\Installer;
 use Composer\Config;
 use Composer\IO\IOInterface;
 
-
 /**
  * Class TestIO
  *
@@ -89,12 +88,8 @@ class TestIO implements IOInterface
      */
     public function write($messages, $newline = true)
     {
-        if (is_array($messages)) {
-            foreach ($messages as $message) {
-                printf("%s\n", $message);
-            }
-        } else {
-            printf("%s\n", $messages);
+        foreach (is_array($messages) ? $messages : array($messages) as $message) {
+            printf("%s\n", $message);
         }
     }
 
@@ -147,17 +142,21 @@ class TestIO implements IOInterface
      * validated data when the data is valid and throw an exception
      * otherwise.
      *
-     * @param string|array $question  The question to ask
+     * @param string|array $question The question to ask
      * @param callback     $validator A PHP callback
-     * @param bool|integer $attempts  Max number of times to ask before giving up (false by default, which means infinite)
-     * @param string       $default   The default answer if none is given by the user
+     * @param bool|integer $attempts Max number of times to ask before giving up (false by default, which means infinite)
+     * @param string       $default The default answer if none is given by the user
      *
      * @return mixed
      *
      * @throws \Exception When any of the validators return an error
      */
-    public function askAndValidate($question, $validator, $attempts = false, $default = null)
-    {
+    public function askAndValidate(
+        $question,
+        $validator,
+        $attempts = false,
+        $default = null
+    ) {
 
     }
 
@@ -214,8 +213,11 @@ class TestIO implements IOInterface
      * @param string $username       The username
      * @param string $password       The password
      */
-    public function setAuthentication($repositoryName, $username, $password = null)
-    {
+    public function setAuthentication(
+        $repositoryName,
+        $username,
+        $password = null
+    ) {
 
     }
 

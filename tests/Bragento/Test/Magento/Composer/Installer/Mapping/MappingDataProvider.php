@@ -35,9 +35,15 @@ abstract class MappingDataProvider extends AbstractTest
                 array('app/etc' => 'app/etc')
             ),
             array(
-                array('app/etc/modules' => 'app/etc/'),
+                array(
+                    'app/etc/modules' => 'app/etc/modules/',
+                    'dir' => 'app/etc/'
+                ),
                 array(),
-                array('app/etc/modules' => 'app/etc/modules')
+                array(
+                    'app/etc/modules' => 'app/etc/modules',
+                    'dir' => 'app/etc'
+                )
             ),
             array(
                 array(
