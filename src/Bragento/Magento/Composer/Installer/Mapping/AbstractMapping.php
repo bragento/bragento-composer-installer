@@ -99,20 +99,29 @@ abstract class AbstractMapping
         $translatedMap = array();
         foreach ($mappings as $src => $dest) {
             foreach (glob($this->getFs()->joinFileUris($this->getModuleDir(), $src)) as $path) {
-                foreach ($this->getFinder()->in($path)->files() as $file) {
+                if (is_dir($path)) {
+                    foreach ($this->getFinder()->in($path)->files() as $file) {
+                        $fileSrc = $this->getFs()->rmAbsPathPart(
+                            $file,
+                            $this->getModuleDir()
+                        );
+                        $fileDest = $this->getFs()->joinFileUris(
+                            $dest,
+                            $this->getFs()->rmAbsPathPart(
+                                $fileSrc,
+                                $src
+                            )
+                        );
+                        $translatedMap[$this->getFs()->trimDs($fileSrc)]
+                            = $this->getFs()->trimDs($fileDest);
+                    }
+                } else {
                     $fileSrc = $this->getFs()->rmAbsPathPart(
-                        $file,
+                        $path,
                         $this->getModuleDir()
                     );
-                    $fileDest = $this->getFs()->joinFileUris(
-                        $dest,
-                        $this->getFs()->rmAbsPathPart(
-                            $fileSrc,
-                            $src
-                        )
-                    );
                     $translatedMap[$this->getFs()->trimDs($fileSrc)]
-                        = $this->getFs()->trimDs($fileDest);
+                        = $this->getFs()->trimDs($dest);
                 }
             }
         }

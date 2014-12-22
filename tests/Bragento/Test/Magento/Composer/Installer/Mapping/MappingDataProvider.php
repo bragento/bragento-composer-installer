@@ -50,13 +50,15 @@ abstract class MappingDataProvider extends AbstractTest
             ),
             array(
                 array(
-                    'src/app/code/local/Vendor/Module/*' => 'app/code/local/Vendor/Module/'
+                    'src/app/code/local/Vendor/Module/*' => 'app/code/local/Vendor/Module/',
+                    '.htaccess' => '/'
                 ),
                 array(
                     'src/app/code/local/Vendor/Module/etc/config.xml',
                     'src/app/code/local/Vendor/Module/Model/Test.php',
                     'src/app/code/local/Vendor/Module/Block/Test.php',
-                    'src/app/code/local/Vendor/Module/controllers/TestController.php'
+                    'src/app/code/local/Vendor/Module/controllers/TestController.php',
+                    '.htaccess'
                 ),
                 array(
                     'src/app/code/local/Vendor/Module/Block/Test.php' => 'app/code/local/Vendor/Module/Block/Test.php',
