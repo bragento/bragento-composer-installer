@@ -17,6 +17,7 @@ namespace Bragento\Magento\Composer\Installer\Mapping;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Bragento\Magento\Composer\Installer\Util\String;
 use Composer\Package\PackageInterface;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**
@@ -97,42 +98,36 @@ abstract class AbstractMapping
     {
         $translatedMap = array();
         foreach ($mappings as $src => $dest) {
-            if (String::contains($src, '*')) {
-                foreach (glob($this->getFs()->joinFileUris($this->getModuleDir(), $src)) as $file) {
+            foreach (glob($this->getFs()->joinFileUris($this->getModuleDir(), $src)) as $path) {
+                foreach ($this->getFinder()->in($path)->files() as $file) {
                     $fileSrc = $this->getFs()->rmAbsPathPart(
                         $file,
                         $this->getModuleDir()
                     );
+                    $fileDest = $this->getFs()->joinFileUris(
+                        $dest,
+                        $this->getFs()->rmAbsPathPart(
+                            $fileSrc,
+                            $src
+                        )
+                    );
                     $translatedMap[$this->getFs()->trimDs($fileSrc)]
-                        = $this->getFs()->trimDs(
-                            $this->getFs()->joinFileUris(
-                                $dest,
-                                basename($file),
-                                false
-                            )
-                        );
+                        = $this->getFs()->trimDs($fileDest);
                 }
-            } else {
-                if ($this->getFs()->endsWithDs($dest)) {
-                    if ($this->getFs()->endsWithDs($src)) {
-                        $src = $this->getFs()->removeTrailingDs($src);
-                    } else {
-                        if (is_file($src)) {
-                            $dest = $this->getFs()->joinFileUris(
-                                $dest,
-                                basename($src),
-                                false
-                            );
-                        } else {
-                            $dest = $this->getFs()->removeTrailingDs($dest);
-                        }
-                    }
-                }
-                $translatedMap[$this->getFs()->trimDs($src)] = $this->getFs()->trimDs($dest);
             }
         }
 
         return $translatedMap;
+    }
+
+    /**
+     * getFinder
+     *
+     * @return Finder
+     */
+    protected function getFinder()
+    {
+        return new Finder();
     }
 
     /**

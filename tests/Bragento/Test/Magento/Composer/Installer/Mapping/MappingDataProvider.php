@@ -31,18 +31,21 @@ abstract class MappingDataProvider extends AbstractTest
         return array(
             array(
                 array('app/etc/' => 'app/etc/'),
-                array(),
-                array('app/etc' => 'app/etc')
+                array('app/etc/Test_Module.xml'),
+                array('app/etc/Test_Module.xml' => 'app/etc/Test_Module.xml')
             ),
             array(
                 array(
                     'app/etc/modules' => 'app/etc/modules/',
                     'dir' => 'app/etc/'
                 ),
-                array(),
                 array(
-                    'app/etc/modules' => 'app/etc/modules',
-                    'dir' => 'app/etc'
+                    'app/etc/modules/Test_Module.xml',
+                    'dir/Test_Module.xml'
+                ),
+                array(
+                    'app/etc/modules/Test_Module.xml' => 'app/etc/modules/Test_Module.xml',
+                    'dir/Test_Module.xml' => 'app/etc/Test_Module.xml'
                 )
             ),
             array(
@@ -51,15 +54,15 @@ abstract class MappingDataProvider extends AbstractTest
                 ),
                 array(
                     'src/app/code/local/Vendor/Module/etc/config.xml',
-                    'src/app/code/local/Vendor/Module/Model/Test',
-                    'src/app/code/local/Vendor/Module/Block/Test',
-                    'src/app/code/local/Vendor/Module/controllers/TestController'
+                    'src/app/code/local/Vendor/Module/Model/Test.php',
+                    'src/app/code/local/Vendor/Module/Block/Test.php',
+                    'src/app/code/local/Vendor/Module/controllers/TestController.php'
                 ),
                 array(
-                    'src/app/code/local/Vendor/Module/Block' => 'app/code/local/Vendor/Module/Block',
-                    'src/app/code/local/Vendor/Module/Model' => 'app/code/local/Vendor/Module/Model',
-                    'src/app/code/local/Vendor/Module/controllers' => 'app/code/local/Vendor/Module/controllers',
-                    'src/app/code/local/Vendor/Module/etc' => 'app/code/local/Vendor/Module/etc'
+                    'src/app/code/local/Vendor/Module/Block/Test.php' => 'app/code/local/Vendor/Module/Block/Test.php',
+                    'src/app/code/local/Vendor/Module/Model/Test.php' => 'app/code/local/Vendor/Module/Model/Test.php',
+                    'src/app/code/local/Vendor/Module/controllers/TestController.php' => 'app/code/local/Vendor/Module/controllers/TestController.php',
+                    'src/app/code/local/Vendor/Module/etc/config.xml' => 'app/code/local/Vendor/Module/etc/config.xml'
                 )
             )
         );
