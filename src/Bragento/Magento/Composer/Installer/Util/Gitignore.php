@@ -236,7 +236,7 @@ class Gitignore
                 );
                 if (count($givenEntryParts)) {
                     $i = 0;
-                    while (array_shift($givenEntryParts) === $entryPathParts[$i++]) {
+                    while (isset($entryPathParts[$i]) && array_shift($givenEntryParts) === $entryPathParts[$i++]) {
                         if (!count($givenEntryParts)) {
                             return true;
                         }
