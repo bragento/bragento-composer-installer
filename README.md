@@ -3,7 +3,6 @@
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/bragento/bragento-composer-installer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Build Status](https://travis-ci.org/bragento/bragento-composer-installer.svg?branch=2.0)](https://travis-ci.org/bragento/bragento-composer-installer)
-[![Code Climate](https://codeclimate.com/github/bragento/bragento-composer-installer.png)](https://codeclimate.com/github/bragento/bragento-composer-installer)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/bragento/bragento-composer-installer/badges/quality-score.png?b=2.0)](https://scrutinizer-ci.com/g/bragento/bragento-composer-installer/?branch=2.0)
 
 [![License](https://poser.pugx.org/bragento/magento-composer-installer/license.svg)](https://packagist.org/packages/bragento/magento-composer-installer)
