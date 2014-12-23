@@ -13,9 +13,6 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
-use Exception;
-use Underscore\Types\Arrays;
-
 /**
  * Class DeployStrategyNotFoundException
  *
@@ -25,21 +22,7 @@ use Underscore\Types\Arrays;
  * @license  http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link     http://github.com/davidverholen
  */
-class DeployStrategyNotFoundException extends \Exception
+class DeployStrategyNotFoundException extends \Bragento\Magento\Composer\Installer\Exception
 {
-    public function __construct(
-        $deployStrategy,
-        $code = 0,
-        Exception $previous = null
-    ) {
-        $message = Arrays::implode([
-            'Deploy Strategy not found: ',
-            $deployStrategy
-        ]);
-        parent::__construct(
-            $message,
-            $code,
-            $previous
-        );
-    }
+    protected $messagePrefix = 'Deploy Strategy not found: ';
 }

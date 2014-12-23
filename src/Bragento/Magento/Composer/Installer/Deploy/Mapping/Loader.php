@@ -54,7 +54,7 @@ class Loader implements FilesystemAwareInterface
         } elseif ($this->isPackageXmlMapping($package)) {
             return $this->parseMapping(new PackageXml(), $package);
         } else {
-            throw new MappingNotFoundException($package);
+            throw new MappingNotFoundException($package->getName());
         }
     }
 
@@ -79,11 +79,9 @@ class Loader implements FilesystemAwareInterface
      */
     protected function isModmanMapping(Package $package)
     {
-        return $this->getFilesystem()->exists(
-            Uri::join([
-                $package->getTargetDir(),
-                Modman::MODMAN_FILENAME
-            ], DIRECTORY_SEPARATOR)
+        return $this->checkPackageFileExists(
+            $package,
+            Modman::MODMAN_FILENAME
         );
     }
 
@@ -112,10 +110,26 @@ class Loader implements FilesystemAwareInterface
      */
     protected function isPackageXmlMapping(Package $package)
     {
+        return $this->checkPackageFileExists(
+            $package,
+            PackageXml::PACKAGEXML_FILENAME
+        );
+    }
+
+    /**
+     * checkFileExists
+     *
+     * @param Package $package
+     * @param         $file
+     *
+     * @return bool
+     */
+    protected function checkPackageFileExists(Package $package, $file)
+    {
         return $this->getFilesystem()->exists(
             Uri::join([
                 $package->getTargetDir(),
-                PackageXml::PACKAGEXML_FILENAME
+                $file
             ], DIRECTORY_SEPARATOR)
         );
     }
