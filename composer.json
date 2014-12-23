@@ -14,14 +14,20 @@
         }
     ],
     "require": {
+        "php": ">=5.4",
         "composer-plugin-api": "~1",
-        "symfony/filesystem": "~2"
+        "symfony/filesystem": "~2",
+        "anahkiasen/underscore-php": "~1",
+        "eloquent/enumeration": "~5",
+        "eloquent/composer-config-reader": "~2",
+        "mnapoli/php-di": "~4"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
         "composer/composer": "*@alpha",
         "codeclimate/php-test-reporter": "*",
-        "mikey179/vfsStream": "*"
+        "mikey179/vfsStream": "*",
+        "symfony/process": "~2"
     },
     "replace": {
         "magento-hackathon/magento-composer-installer": "*"
@@ -39,7 +45,7 @@
     "extra": {
         "class": "Bragento\\Magento\\Composer\\Installer\\Plugin",
         "branch-alias": {
-            "dev-develop": "1.2.x-dev"
+            "dev-develop": "2.0.x-dev"
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * None.php
+ * Composer.php
  *
  * PHP Version 5
  *
@@ -11,31 +11,32 @@
  * @link     http://github.com/davidverholen
  */
 
-namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
+namespace Bragento\Magento\Composer\Installer\Deploy\Mapping\Parser;
 
-use Bragento\Magento\Composer\Installer\Deploy\Mapping\Mappable;
-use Bragento\Magento\Composer\Installer\Deploy\Mapping\MappableTrait;
-use Symfony\Component\Finder\SplFileInfo;
+use Composer\Package\Package;
 
 /**
- * Class None
+ * Class Composer
  *
  * @category Bragento_MagentoComposerInstaller
- * @package  Bragento\Magento\Composer\Installer\Deploy\Strategy
+ * @package  Bragento\Magento\Composer\Installer\Deploy\Mapping\Parser
  * @author   David Verholen <david@verholen.com>
  * @license  http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link     http://github.com/davidverholen
  */
-class None implements Deployable, Mappable
+class Composer implements Parsable
 {
-    use MappableTrait;
+    const MAP_KEY = 'map';
 
     /**
-     * deploy
+     * parse
      *
-     * @return mixed
+     * @param Package $package
+     *
+     * @return array
      */
-    public function deploy()
+    public function parse(Package $package)
     {
+        // TODO: Implement parse() method.
     }
 }

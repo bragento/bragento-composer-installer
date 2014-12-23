@@ -1,6 +1,6 @@
 <?php
 /**
- * None.php
+ * DeployStrategyNotFoundException.php
  *
  * PHP Version 5
  *
@@ -13,12 +13,11 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
-use Bragento\Magento\Composer\Installer\Deploy\Mapping\Mappable;
-use Bragento\Magento\Composer\Installer\Deploy\Mapping\MappableTrait;
-use Symfony\Component\Finder\SplFileInfo;
+use Exception;
+use Underscore\Types\Arrays;
 
 /**
- * Class None
+ * Class DeployStrategyNotFoundException
  *
  * @category Bragento_MagentoComposerInstaller
  * @package  Bragento\Magento\Composer\Installer\Deploy\Strategy
@@ -26,16 +25,21 @@ use Symfony\Component\Finder\SplFileInfo;
  * @license  http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link     http://github.com/davidverholen
  */
-class None implements Deployable, Mappable
+class DeployStrategyNotFoundException extends \Exception
 {
-    use MappableTrait;
-
-    /**
-     * deploy
-     *
-     * @return mixed
-     */
-    public function deploy()
-    {
+    public function __construct(
+        $deployStrategy,
+        $code = 0,
+        Exception $previous = null
+    ) {
+        $message = Arrays::implode([
+            'Deploy Strategy not found: ',
+            $deployStrategy
+        ]);
+        parent::__construct(
+            $message,
+            $code,
+            $previous
+        );
     }
 }

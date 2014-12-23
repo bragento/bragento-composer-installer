@@ -4,41 +4,43 @@
  *
  * PHP Version 5
  *
- * @category  Bragento_MagentoComposerInstaller
- * @package   Bragento\Magento\Composer\Installer\Deploy\Strategy
- * @author    David Verholen <david.verholen@brandung.de>
- * @copyright 2014 Brandung GmbH & Co. KG
- * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
- * @link      http://www.brandung.de
+ * @category Bragento_MagentoComposerInstaller
+ * @package  Bragento_MagentoComposerInstaller
+ * @author   David Verholen <david@verholen.com>
+ * @license  http://opensource.org/licenses/OSL-3.0 OSL-3.0
+ * @link     http://github.com/davidverholen
  */
 
 namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
-use Bragento\Magento\Composer\Installer\Project\Config;
-
+use Bragento\Magento\Composer\Installer\Deploy\Mapping\Mappable;
+use Bragento\Magento\Composer\Installer\Deploy\Mapping\MappableTrait;
+use Bragento\Magento\Composer\Installer\DI\FilesystemAwareInterface;
+use Bragento\Magento\Composer\Installer\DI\FilesystemAwareTrait;
 
 /**
  * Class Copy
  *
- * @category  Bragento_MagentoComposerInstaller
- * @package   Bragento\Magento\Composer\Installer\Deploy\Strategy
- * @author    David Verholen <david.verholen@brandung.de>
- * @copyright 2014 Brandung GmbH & Co. KG
- * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
- * @link      http://www.brandung.de
+ * @category Bragento_MagentoComposerInstaller
+ * @package  Bragento\Magento\Composer\Installer\Deploy\Strategy
+ * @author   David Verholen <david@verholen.com>
+ * @license  http://opensource.org/licenses/OSL-3.0 OSL-3.0
+ * @link     http://github.com/davidverholen
  */
-class Copy extends AbstractStrategy
+class Copy implements Deployable, Mappable, FilesystemAwareInterface
 {
+    use FilesystemAwareTrait;
+    use MappableTrait;
+
     /**
-     * createDelegate
-     *
-     * @param string $src
-     * @param string $dest
+     * deploy
      *
      * @return mixed
      */
-    protected function createDelegate($src, $dest)
+    public function deploy()
     {
-        $this->getFs()->copy($src, $dest);
+        foreach ($this->getMapping() as $source => $target) {
+            $this->getFilesystem()->copy($source, $target);
+        }
     }
 }

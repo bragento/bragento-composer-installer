@@ -1,6 +1,6 @@
 <?php
 /**
- * None.php
+ * IOInterfaceAwareInterface.php
  *
  * PHP Version 5
  *
@@ -11,31 +11,34 @@
  * @link     http://github.com/davidverholen
  */
 
-namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
+namespace Bragento\Magento\Composer\Installer\DI;
 
-use Bragento\Magento\Composer\Installer\Deploy\Mapping\Mappable;
-use Bragento\Magento\Composer\Installer\Deploy\Mapping\MappableTrait;
-use Symfony\Component\Finder\SplFileInfo;
+use Composer\IO\IOInterface;
 
 /**
- * Class None
+ * Interfaceŝ IOInterfaceAwareInterface
  *
  * @category Bragento_MagentoComposerInstaller
- * @package  Bragento\Magento\Composer\Installer\Deploy\Strategy
+ * @package  Bragento\Magento\Composer\Installer\DI
  * @author   David Verholen <david@verholen.com>
  * @license  http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link     http://github.com/davidverholen
  */
-class None implements Deployable, Mappable
+interface IOInterfaceAwareInterface
 {
-    use MappableTrait;
+    /**
+     * setIOInterface
+     *
+     * @param IOInterface $io
+     *
+     * @return void
+     */
+    public function setIOInterface(IOInterface $io);
 
     /**
-     * deploy
+     * getIOInterface
      *
-     * @return mixed
+     * @return IOInterface
      */
-    public function deploy()
-    {
-    }
+    public function getIOInterface();
 }
