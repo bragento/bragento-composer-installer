@@ -218,7 +218,7 @@ class FullStackTest extends AbstractTest
     ) {
         copy(
             $this->getComposerConfigFile($name, $mode),
-            $this->getTestResDir('build/composer.json')
+            $this->getBuildDir() . DIRECTORY_SEPARATOR . 'composer.json'
         );
     }
 

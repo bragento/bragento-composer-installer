@@ -2,6 +2,8 @@
   "name": "bragento/magento-composer-installer",
   "description": "Composer installer for Magento modules",
   "keywords": [
+    "bragento",
+    "brandung",
     "composer",
     "installer",
     "magento"
