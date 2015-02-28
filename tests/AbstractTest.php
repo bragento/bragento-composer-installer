@@ -64,7 +64,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
     protected function getBuildDir()
     {
         return $this->getFilesystem()
-            ->getDir($this->getTestDir(self::BUILD_ROOT));
+            ->getDir(TEST_BUILD_DIR);
 
     }
 
@@ -89,9 +89,9 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      *
      * @return string
      */
-    protected function getTestDir($url)
+    protected function getTestResDir($url)
     {
-        return TEST_BASE_DIR .
+        return TEST_RES_BASE_DIR .
         DIRECTORY_SEPARATOR .
         $url;
     }

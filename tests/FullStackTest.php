@@ -218,7 +218,7 @@ class FullStackTest extends AbstractTest
     ) {
         copy(
             $this->getComposerConfigFile($name, $mode),
-            $this->getTestDir('build/composer.json')
+            $this->getTestResDir('build/composer.json')
         );
     }
 
@@ -235,7 +235,7 @@ class FullStackTest extends AbstractTest
         $mode = self::MODE_INSTALL
     ) {
         return $this->getFilesystem()->getFile(
-            $this->getTestDir(self::COMPOSER_CONFIG_DIR . $mode),
+            $this->getTestResDir(self::COMPOSER_CONFIG_DIR . $mode),
             $name
         );
     }
@@ -344,7 +344,7 @@ class FullStackTest extends AbstractTest
      */
     protected function getChecks($mode, $type, $configFileName)
     {
-        $checkFile = $this->getTestDir(
+        $checkFile = $this->getTestResDir(
             self::COMPOSER_CONFIG_DIR .
             $mode . DIRECTORY_SEPARATOR .
             self::CHECKS_DIR .
