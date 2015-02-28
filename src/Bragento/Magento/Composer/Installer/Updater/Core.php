@@ -14,6 +14,7 @@
 
 namespace Bragento\Magento\Composer\Installer\Updater;
 
+use Bragento\Magento\Composer\Installer\Deploy\Event\DeployEvent;
 use Bragento\Magento\Composer\Installer\Deploy\Events;
 use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
@@ -62,6 +63,9 @@ class Core implements EventSubscriberInterface
      */
     protected $fs;
 
+    /**
+     * construct
+     */
     public function __construct()
     {
         $this->fs = new Filesystem();
@@ -102,11 +106,11 @@ class Core implements EventSubscriberInterface
     /**
      * onPreDeployCoreUpdate
      *
-     * @param PackageEvent $event
+     * @param DeployEvent $event
      *
      * @return void
      */
-    public function backupFiles(PackageEvent $event)
+    public function backupFiles(DeployEvent $event)
     {
         $this->printInfo('backup persistent files', $event->getIO());
         $this->getFs()->ensureDirectoryExists($this->getBackupDir());
@@ -120,11 +124,11 @@ class Core implements EventSubscriberInterface
     /**
      * onPostDeployCoreUpdate
      *
-     * @param PackageEvent $event
+     * @param DeployEvent $event
      *
      * @return void
      */
-    public function restoreBackup(PackageEvent $event)
+    public function restoreBackup(DeployEvent $event)
     {
         $this->printInfo('restore persistent files', $event->getIO());
         $this->moveFiles(

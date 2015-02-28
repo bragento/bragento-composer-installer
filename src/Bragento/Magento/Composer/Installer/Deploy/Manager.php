@@ -14,6 +14,7 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy;
 
+use Bragento\Magento\Composer\Installer\Deploy\Event\DeployEvent;
 use Bragento\Magento\Composer\Installer\Deploy\Manager\Actions;
 use Bragento\Magento\Composer\Installer\Deploy\Manager\Entry;
 use Bragento\Magento\Composer\Installer\Deploy\Manager\PackageTypes;
@@ -22,7 +23,6 @@ use Bragento\Magento\Composer\Installer\Deploy\Strategy\Factory;
 use Bragento\Magento\Composer\Installer\Exception\NotInitializedException;
 use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
-use Bragento\Magento\Composer\Installer\Util\Gitignore;
 use Composer\Composer;
 use Composer\DependencyResolver\Operation\UninstallOperation;
 use Composer\EventDispatcher\EventSubscriberInterface;
@@ -493,11 +493,11 @@ class Manager implements EventSubscriberInterface
      * add Entries of uninstalled packages, since they are not
      * in local repository anymore
      *
-     * @param PackageEvent $event
+     * @param DeployEvent $event
      *
      * @return void
      */
-    public function onPostPackageUninstall(PackageEvent $event)
+    public function onPostPackageUninstall(DeployEvent $event)
     {
         /** @var UninstallOperation $operation */
         $operation = $event->getOperation();
@@ -509,6 +509,11 @@ class Manager implements EventSubscriberInterface
         );
     }
 
+    /**
+     * getDeployedPackages
+     *
+     * @return array|\Composer\Package\PackageInterface[]
+     */
     public function getDeployedPackages()
     {
         return $this->deployedPackages;

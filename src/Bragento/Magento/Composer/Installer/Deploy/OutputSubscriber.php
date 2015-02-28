@@ -14,6 +14,7 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy;
 
+use Bragento\Magento\Composer\Installer\Deploy\Event\DeployEvent;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Script\PackageEvent;
@@ -84,11 +85,10 @@ class OutputSubscriber implements EventSubscriberInterface
      *
      * use operations toString method to output deploy events
      *
-     * @param PackageEvent $event
+     * @param DeployEvent $event
      *
-     * @return void
      */
-    public function onPreDeploy(PackageEvent $event)
+    public function onPreDeploy(DeployEvent $event)
     {
         $operation = $event->getOperation();
         $this->io->write(sprintf("<info>%s</info>", $operation));

@@ -13,6 +13,7 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy;
 
+use Bragento\Magento\Composer\Installer\Deploy\Event\DeployEvent;
 use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\EventDispatcher\EventSubscriberInterface;
@@ -72,9 +73,9 @@ class Validate implements EventSubscriberInterface
     /**
      * validateDeployment
      *
-     * @return void
+     * @param DeployEvent $event
      */
-    public function checkDeployment()
+    public function checkDeployment(DeployEvent $event)
     {
         $root = Config::getInstance()->getMagentoRootDir();
         $deployedPackages = Manager::getInstance()->getDeployedPackages();
