@@ -287,8 +287,6 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      * @param string $source
      * @param string $destination
      * @param bool   $copyOnWindows
-     *
-     * @return void
      */
     public function symlink($source, $destination, $copyOnWindows = true)
     {

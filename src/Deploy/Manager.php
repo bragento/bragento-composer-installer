@@ -29,7 +29,6 @@ use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
 use Composer\Script\Event;
-use Composer\Script\PackageEvent;
 use Composer\Script\ScriptEvents;
 use Symfony\Component\Finder\SplFileInfo;
 

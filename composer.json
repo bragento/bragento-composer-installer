@@ -1,45 +1,49 @@
 {
-    "name": "bragento/magento-composer-installer",
-    "description": "Composer installer for Magento modules",
-    "keywords": [ "composer", "installer", "magento"],
-    "type": "composer-plugin",
-    "license": "OSL-3.0",
-    "homepage": "https://github.com/bragento/bragento-composer-installer",
-    "minium-stability": "stable",
-    "authors": [
-        {
-            "name": "David Verholen",
-            "email": "david.verholen@brandung.de",
-            "homepage": "http://www.agentur-brandung.de"
-        }
-    ],
-    "require": {
-        "composer-plugin-api": "~1",
-        "symfony/filesystem": "~2"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "*",
-        "composer/composer": "*@dev",
-        "codeclimate/php-test-reporter": "*",
-        "mikey179/vfsStream": "*"
-    },
-    "replace": {
-        "magento-hackathon/magento-composer-installer": "*"
-    },
-    "autoload": {
-        "psr-0": {
-            "Bragento\\Magento\\Composer\\Installer": "src/"
-        }
-    },
-    "autoload-dev":{
-        "psr-0":{
-            "Bragento\\Test\\Magento\\Composer\\Installer":"tests/"
-        }
-    },
-    "extra": {
-        "class": "Bragento\\Magento\\Composer\\Installer\\Plugin",
-        "branch-alias": {
-            "dev-develop": "1.2.x-dev"
-        }
+  "name": "bragento/magento-composer-installer",
+  "description": "Composer installer for Magento modules",
+  "keywords": [
+    "composer",
+    "installer",
+    "magento"
+  ],
+  "type": "composer-plugin",
+  "license": "OSL-3.0",
+  "homepage": "https://github.com/bragento/bragento-composer-installer",
+  "minium-stability": "stable",
+  "authors": [
+    {
+      "name": "David Verholen",
+      "email": "david.verholen@brandung.de",
+      "homepage": "http://www.agentur-brandung.de"
     }
+  ],
+  "require": {
+    "composer-plugin-api": "~1",
+    "symfony/filesystem": "~2"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "*",
+    "composer/composer": "*@dev",
+    "codeclimate/php-test-reporter": "*",
+    "mikey179/vfsStream": "*"
+  },
+  "replace": {
+    "magento-hackathon/magento-composer-installer": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Bragento\\Magento\\Composer\\Installer\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Bragento\\Test\\Magento\\Composer\\Installer\\": "tests"
+    }
+  },
+  "extra": {
+    "class": "Bragento\\Magento\\Composer\\Installer\\Plugin",
+    "branch-alias": {
+      "dev-develop": "1.2.x-dev"
+    }
+  }
 }

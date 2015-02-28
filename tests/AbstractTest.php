@@ -93,8 +93,6 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
     {
         return TEST_BASE_DIR .
         DIRECTORY_SEPARATOR .
-        self::TEST_ROOT_DIR .
-        DIRECTORY_SEPARATOR .
         $url;
     }
 

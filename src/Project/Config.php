@@ -179,7 +179,7 @@ class Config
      */
     public function getVendorDir()
     {
-        return self::$composer->getConfig()->get('vendor-dir');
+        return self::$composer->getConfig()->get('vendor-dir', 1);
     }
 
     /**

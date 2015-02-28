@@ -40,6 +40,9 @@ class Factory
 
     const NS = '\\Bragento\\Magento\\Composer\\Installer\\Deploy\\Strategy\\';
 
+    /**
+     * @var array
+     */
     protected static $allowedStrategies
         = array(
             self::STRATEGY_SYMLINK,
