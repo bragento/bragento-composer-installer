@@ -240,6 +240,8 @@ class TestIO implements IOInterface
      */
     public function writeError($messages, $newline = true)
     {
+        $messages = is_array($messages) ? $messages : array($messages);
+
         $errorMessages = array();
         foreach ($messages as $message) {
             $errorMessages[] = sprintf('<error>%s</error>', $message);
