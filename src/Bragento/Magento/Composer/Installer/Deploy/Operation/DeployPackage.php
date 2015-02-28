@@ -31,7 +31,7 @@ use Symfony\Component\Finder\SplFileInfo;
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
  */
-class DeployPackage implements OperationInterface, PolicyInterface
+class DeployPackage extends Pool implements OperationInterface, PolicyInterface
 {
     /**
      * package
