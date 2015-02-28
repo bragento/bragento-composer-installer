@@ -16,6 +16,8 @@ namespace Bragento\Magento\Composer\Installer\Deploy\Operation;
 
 use Bragento\Magento\Composer\Installer\Deploy\Strategy\Factory;
 use Composer\DependencyResolver\Operation\OperationInterface;
+use Composer\DependencyResolver\PolicyInterface;
+use Composer\DependencyResolver\Pool;
 use Composer\Package\PackageInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -29,7 +31,7 @@ use Symfony\Component\Finder\SplFileInfo;
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
  */
-class DeployPackage implements OperationInterface
+class DeployPackage implements OperationInterface, PolicyInterface
 {
     /**
      * package
@@ -170,5 +172,56 @@ class DeployPackage implements OperationInterface
     public function getDeployAction()
     {
         return $this->deployAction;
+    }
+
+    /**
+     * versionCompare
+     *
+     * @param PackageInterface $a
+     * @param PackageInterface $b
+     * @param                  $operator
+     *
+     * @return void
+     */
+    public function versionCompare(
+        PackageInterface $a,
+        PackageInterface $b,
+        $operator
+    ) {
+        // TODO: Implement versionCompare() method.
+    }
+
+    /**
+     * findUpdatePackages
+     *
+     * @param Pool             $pool
+     * @param array            $installedMap
+     * @param PackageInterface $package
+     *
+     * @return void
+     */
+    public function findUpdatePackages(
+        Pool $pool,
+        array $installedMap,
+        PackageInterface $package
+    ) {
+        // TODO: Implement findUpdatePackages() method.
+    }
+
+    /**
+     * selectPreferedPackages
+     *
+     * @param Pool  $pool
+     * @param array $installedMap
+     * @param array $literals
+     *
+     * @return void
+     */
+    public function selectPreferedPackages(
+        Pool $pool,
+        array $installedMap,
+        array $literals
+    ) {
+        // TODO: Implement selectPreferedPackages() method.
     }
 }

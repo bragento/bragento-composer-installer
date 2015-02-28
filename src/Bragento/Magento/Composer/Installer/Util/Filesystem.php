@@ -270,12 +270,9 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      */
     public function rmAbsPathPart($path, $root)
     {
-        $pathParts = $this->getPathParts(
-            $this->normalizePath($path)
-        );
+        $pathParts = $this->getPathParts($this->normalizePath($path));
 
-        foreach ($this->getPathParts($this->normalizePath($root)) as $rootPart)
-        {
+        foreach ($this->getPathParts($this->normalizePath($root)) as $rootPart) {
             if (count($pathParts) && $rootPart === $pathParts[0]) {
                 array_shift($pathParts);
             }
@@ -419,7 +416,7 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
     public function removeLeadingDotPath($path)
     {
         $parts = $this->getPathParts($path);
-        if ($parts[0] === '.') {
+        if (array_key_exists(0, $parts) && $parts[0] === '.') {
             array_shift($parts);
         }
         return $this->joinPathParts($parts);

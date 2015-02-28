@@ -267,7 +267,7 @@ class Gitignore
      */
     protected function normalizeEntry($entry)
     {
-        return Filesystem::getInstance()->removeLeadingDotPath(str_replace('\\', '/', trim($entry)));
+        return Filesystem::getInstance()->removeLedadingDotPath(trim($entry));
     }
 
     /**
