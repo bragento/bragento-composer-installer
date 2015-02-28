@@ -133,7 +133,7 @@ class MappingTest extends AbstractMappingTest
     {
         $dir = sprintf('files/mappings/global/%s', $name);
         $this->getFilesystem()->copy(
-            $this->getTestDir($dir),
+            $this->getTestResDir($dir),
             $this->getBuildDir()
         );
     }

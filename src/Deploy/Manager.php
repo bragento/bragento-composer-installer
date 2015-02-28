@@ -14,7 +14,6 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy;
 
-use Bragento\Magento\Composer\Installer\Deploy\Event\DeployEvent;
 use Bragento\Magento\Composer\Installer\Deploy\Manager\Actions;
 use Bragento\Magento\Composer\Installer\Deploy\Manager\Entry;
 use Bragento\Magento\Composer\Installer\Deploy\Manager\PackageTypes;
@@ -26,10 +25,10 @@ use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Composer;
 use Composer\DependencyResolver\Operation\UninstallOperation;
 use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\Installer\PackageEvents;
 use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
 use Composer\Script\Event;
-use Composer\Script\ScriptEvents;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**
@@ -154,7 +153,7 @@ class Manager implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            ScriptEvents::POST_PACKAGE_UNINSTALL => 'onPostPackageUninstall'
+            PackageEvents::POST_PACKAGE_UNINSTALL => 'onPostPackageUninstall',
         );
     }
 
@@ -492,11 +491,9 @@ class Manager implements EventSubscriberInterface
      * add Entries of uninstalled packages, since they are not
      * in local repository anymore
      *
-     * @param DeployEvent $event
-     *
-     * @return void
+     * @param \Composer\EventDispatcher\Event|Event $event
      */
-    public function onPostPackageUninstall(DeployEvent $event)
+    public function onPostPackageUninstall(\Composer\EventDispatcher\Event $event)
     {
         /** @var UninstallOperation $operation */
         $operation = $event->getOperation();

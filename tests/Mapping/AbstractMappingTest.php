@@ -34,15 +34,15 @@ abstract class AbstractMappingTest extends MappingDataProvider
     {
         $file = sprintf('files/mappings/%s', $this->getMappingName());
         return $this->getFilesystem()->getFile(
-            $this->getTestDir($file),
+            $this->getTestResDir($file),
             $name
         );
     }
 
     protected function copyMappingsFileToBuildDir($name)
     {
-        $target = sprintf('build/%s', $this->getMappingName());
-        copy($this->getMappingsFile($name), $this->getTestDir($target));
+        $target = sprintf('%s/%s', $this->getBuildDir(), $this->getMappingName());
+        copy($this->getMappingsFile($name), $target);
     }
 
     protected function getTestPackage($extra = array())

@@ -1,5 +1,5 @@
 vendor
-build
+build/logs
 composer.lock
 composer.phar
-tests/root/build
+
