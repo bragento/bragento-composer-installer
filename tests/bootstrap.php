@@ -1,3 +1,2 @@
 <?php
-define('TEST_BASE_DIR', __DIR__);
-require_once TEST_BASE_DIR . '/../vendor/autoload.php';
+define('TEST_BASE_DIR', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . 'tests');
