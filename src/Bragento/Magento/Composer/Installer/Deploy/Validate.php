@@ -18,6 +18,7 @@ use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
+use Composer\Script\Event;
 
 /**
  * Class Validate
@@ -73,9 +74,9 @@ class Validate implements EventSubscriberInterface
     /**
      * validateDeployment
      *
-     * @param DeployEvent $event
+     * @param Event $event
      */
-    public function checkDeployment(DeployEvent $event)
+    public function checkDeployment(Event $event)
     {
         $root = Config::getInstance()->getMagentoRootDir();
         $deployedPackages = Manager::getInstance()->getDeployedPackages();
