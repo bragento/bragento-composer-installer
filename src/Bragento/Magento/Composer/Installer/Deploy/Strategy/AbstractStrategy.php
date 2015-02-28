@@ -14,6 +14,7 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy\Strategy;
 
+use Bragento\Magento\Composer\Installer\Deploy\Event\DeployEvent;
 use Bragento\Magento\Composer\Installer\Deploy\Exception\UnknownActionException;
 use Bragento\Magento\Composer\Installer\Deploy\Manager\Actions;
 use Bragento\Magento\Composer\Installer\Deploy\Manager\PackageTypes;
@@ -24,6 +25,7 @@ use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Bragento\Magento\Composer\Installer\Util\Gitignore;
 use Composer\Composer;
+use Composer\DependencyResolver\Pool;
 use Composer\EventDispatcher\EventDispatcher;
 use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
@@ -275,11 +277,10 @@ abstract class AbstractStrategy
             $this->getName()
         );
 
-        $event = new PackageEvent(
+        $event = new DeployEvent(
             $name,
             $this->getComposer(),
             $this->getIo(),
-            false,
             $operation
         );
 

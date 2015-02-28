@@ -19,7 +19,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "*",
-        "composer/composer": "*@alpha",
+        "composer/composer": "*@dev",
         "codeclimate/php-test-reporter": "*",
         "mikey179/vfsStream": "*"
     },
