@@ -20,8 +20,8 @@
     }
   ],
   "require": {
-    "composer-plugin-api": "~1",
-    "symfony/filesystem": "~2"
+    "composer-plugin-api": "*",
+    "symfony/filesystem": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "*",
