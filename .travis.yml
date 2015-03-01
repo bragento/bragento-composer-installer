@@ -10,7 +10,7 @@ matrix:
   allow_failures:
   - php: hhvm
 before_script:
-- phpenv config-add .travis.php.ini
+- echo "memory_limit=2048M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
 - composer selfupdate
 - composer clearcache
 - composer install --no-interaction
