@@ -16,6 +16,7 @@ namespace Bragento\Test\Magento\Composer\Installer\Mapping;
 
 use Bragento\Magento\Composer\Installer\Mapping\Composer;
 use Bragento\Magento\Composer\Installer\Mapping\Factory;
+use Bragento\Magento\Composer\Installer\Mapping\MapEntity;
 use Bragento\Magento\Composer\Installer\Mapping\Modman;
 
 /**
@@ -58,10 +59,10 @@ class MappingTest extends AbstractMappingTest
 
         $actual = $this->getTestObject()->resolveMappings($mappings);
 
-        while (($act = each($actual)) !== false
-            && ($exp = each($expected)) !== false) {
-            $this->assertEquals($exp['key'], $act['key']);
-            $this->assertEquals($exp['value'], $act['value']);
+        /** @var MapEntity $map */
+        foreach($actual as $map) {
+            $this->assertArrayHasKey($map->getSource(), $expected);
+            $this->assertEquals($expected[$map->getSource()], $map->getTarget());
         }
     }
 

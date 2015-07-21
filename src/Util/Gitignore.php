@@ -13,6 +13,8 @@
 
 namespace Bragento\Magento\Composer\Installer\Util;
 
+use Bragento\Magento\Composer\Installer\Mapping\MapEntity;
+
 /**
  * Class Gitignore
  *
@@ -153,8 +155,9 @@ class Gitignore
      */
     public function addEntries(array $entries)
     {
-        foreach ($entries as $entry) {
-            $this->addEntry($entry);
+        /** @var MapEntity $map */
+        foreach ($entries as $map) {
+            $this->addEntry($map->getTarget());
         }
 
         return $this;
@@ -187,8 +190,9 @@ class Gitignore
      */
     public function removeEntries(array $entries)
     {
-        foreach ($entries as $entry) {
-            $this->removeEntry($entry);
+        /** @var MapEntity $map */
+        foreach ($entries as $map) {
+            $this->removeEntry($map->getTarget());
         }
 
         return $this;

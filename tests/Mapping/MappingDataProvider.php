@@ -13,6 +13,7 @@
 
 namespace Bragento\Test\Magento\Composer\Installer\Mapping;
 
+use Bragento\Magento\Composer\Installer\Mapping\MapEntity;
 use Bragento\Test\Magento\Composer\Installer\AbstractTest;
 
 /**
@@ -30,14 +31,14 @@ abstract class MappingDataProvider extends AbstractTest
     {
         return array(
             array(
-                array('app/etc/' => 'app/etc/'),
+                array(new MapEntity('app/etc/', 'app/etc/')),
                 array(),
                 array('app/etc' => 'app/etc')
             ),
             array(
                 array(
-                    'app/etc/modules' => 'app/etc/modules/',
-                    'dir' => 'app/etc/'
+                    new MapEntity('app/etc/modules', 'app/etc/modules/'),
+                    new MapEntity('dir', 'app/etc/')
                 ),
                 array(),
                 array(
@@ -47,7 +48,7 @@ abstract class MappingDataProvider extends AbstractTest
             ),
             array(
                 array(
-                    'src/app/code/local/Vendor/Module/*' => 'app/code/local/Vendor/Module/'
+                    new MapEntity('src/app/code/local/Vendor/Module/*', 'app/code/local/Vendor/Module/')
                 ),
                 array(
                     'src/app/code/local/Vendor/Module/etc/config.xml',

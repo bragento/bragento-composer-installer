@@ -34,7 +34,7 @@ abstract class AbstractMapping
     /**
      * _mappings
      *
-     * @var array
+     * @var MapEntity[]
      */
     protected $mappingsArray;
 
@@ -79,7 +79,7 @@ abstract class AbstractMapping
      *
      * parse mappings like wildcards
      *
-     * @return array
+     * @return MapEntity[]
      */
     public function getResolvedMappingsArray()
     {
@@ -91,26 +91,31 @@ abstract class AbstractMapping
      *
      * @param array $mappings
      *
-     * @return array
+     * @return MapEntity[]
      */
     public function resolveMappings(array $mappings)
     {
         $translatedMap = array();
-        foreach ($mappings as $src => $dest) {
+        /** @var MapEntity $map */
+        foreach ($mappings as $map) {
+            $src = $map->getSource();
+            $dest = $map->getTarget();
             if (String::contains($src, '*')) {
                 foreach (glob($this->getFs()->joinFileUris($this->getModuleDir(), $src)) as $file) {
                     $fileSrc = $this->getFs()->rmAbsPathPart(
                         $file,
                         $this->getModuleDir()
                     );
-                    $translatedMap[$this->getFs()->trimDs($fileSrc)]
-                        = $this->getFs()->trimDs(
+                    $translatedMap[] = new MapEntity(
+                        $this->getFs()->trimDs($fileSrc),
+                        $this->getFs()->trimDs(
                             $this->getFs()->joinFileUris(
                                 $dest,
                                 basename($file),
                                 false
                             )
-                        );
+                        )
+                    );
                 }
             } else {
                 if ($this->getFs()->endsWithDs($dest)) {
@@ -128,7 +133,10 @@ abstract class AbstractMapping
                         }
                     }
                 }
-                $translatedMap[$this->getFs()->trimDs($src)] = $this->getFs()->trimDs($dest);
+                $translatedMap[] = new MapEntity(
+                    $this->getFs()->trimDs($src),
+                    $this->getFs()->trimDs($dest)
+                );
             }
         }
 
@@ -148,7 +156,7 @@ abstract class AbstractMapping
     /**
      * getMappingsArray
      *
-     * @return array
+     * @return MapEntity[]
      */
     public function getMappingsArray()
     {
@@ -164,12 +172,7 @@ abstract class AbstractMapping
      *
      * get the mappings from the source and return them
      *
-     * * $example = array(
-     * *    $source1 => $target1,
-     * *    $source2 => target2
-     * * )
-     *
-     * @return array
+     * @return MapEntity[]
      */
     abstract protected function parseMappings();
 

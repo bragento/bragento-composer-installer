@@ -13,6 +13,7 @@
 
 namespace Bragento\Magento\Composer\Installer\Deploy;
 
+use Bragento\Magento\Composer\Installer\Mapping\MapEntity;
 use Bragento\Magento\Composer\Installer\Project\Config;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\EventDispatcher\EventSubscriberInterface;
@@ -86,10 +87,12 @@ class Validate implements EventSubscriberInterface
             if (!isset($state[State::MAPPINGS_KEY])) {
                 continue;
             }
-            $map = $state[State::MAPPINGS_KEY];
-            foreach ($map as $source => $destination) {
+            $mappings = $state[State::MAPPINGS_KEY];
+
+            /** @var MapEntity $map */
+            foreach ($mappings as $map) {
                 $deployedFile = $this->getFs()
-                    ->joinFileUris($root, $destination);
+                    ->joinFileUris($root, $map->getTarget());
 
                 if (!file_exists($deployedFile)) {
                     $this->getIo()->write(

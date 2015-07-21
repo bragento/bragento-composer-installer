@@ -49,7 +49,7 @@ class Modman extends AbstractMapping
      * * )
      *
      * @throws MappingParseException
-     * @return array
+     * @return MapEntity[]
      */
     protected function parseMappings()
     {
@@ -80,7 +80,8 @@ class Modman extends AbstractMapping
                     )
                 );
             }
-            $map[$parts[0]] = $parts[1];
+
+            $map[] = new MapEntity($parts[0], $parts[1]);
             $file->next();
         }
 

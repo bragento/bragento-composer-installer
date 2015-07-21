@@ -13,6 +13,7 @@
 
 namespace Bragento\Test\Magento\Composer\Installer\Util;
 
+use Bragento\Magento\Composer\Installer\Mapping\MapEntity;
 use Bragento\Magento\Composer\Installer\Util\Gitignore;
 use org\bovigo\vfs\vfsStream;
 
@@ -89,8 +90,16 @@ class GitignoreTest extends GitignoreDataProvider
         );
         $this->getTestObject()->reload();
         $this->getTestObject()->removeEntries($toRemove);
+
+        /** @var MapEntity $toRemoveEntry */
+        foreach($toRemove as $toRemoveEntry) {
+            if(($key = array_search($toRemoveEntry->getTarget(), $entries)) !== false) {
+                unset($entries[$key]);
+            }
+        }
+
         $this->assertSame(
-            array_values(array_diff($entries, $toRemove)),
+            array_values($entries),
             array_values($this->getTestObject()->getEntries())
         );
     }
