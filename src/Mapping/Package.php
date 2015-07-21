@@ -65,14 +65,9 @@ class Package extends AbstractMapping
      *
      * get the mappings from the source and return them
      *
-     * * $example = array(
-     * *    $source1 => $target1,
-     * *    $source2 => target2
-     * * )
-     *
      * @throws Exception\InvalidTargetException
      * @throws \Exception
-     * @return array
+     * @return MapEntity[]
      */
     protected function parseMappings()
     {
@@ -94,7 +89,7 @@ class Package extends AbstractMapping
                             . DIRECTORY_SEPARATOR
                             . $elementPath;
 
-                        $map[$relativePath] = $relativePath;
+                        $map[] = new MapEntity($relativePath, $relativePath);
                     }
                 }
             }

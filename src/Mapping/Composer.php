@@ -35,12 +35,7 @@ class Composer extends AbstractMapping
      *
      * get the mappings from the source and return them
      *
-     * * $example = array(
-     * *    $source1 => $target1,
-     * *    $source2 => target2
-     * * )
-     *
-     * @return array
+     * @return MapEntity[]
      */
     protected function parseMappings()
     {
@@ -60,14 +55,15 @@ class Composer extends AbstractMapping
      *
      * @param array $composerMap
      *
-     * @return array
+     * @return MapEntity[]
      */
     protected function translateComposerMapping(array $composerMap)
     {
         $map = array();
         foreach ($composerMap as $mapEntry) {
-            $map[$mapEntry[0]] = $mapEntry[1];
+            $map[] = new MapEntity($mapEntry[0], $mapEntry[1]);
         }
+
         return $map;
     }
 }

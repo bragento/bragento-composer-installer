@@ -240,14 +240,9 @@ class TestIO implements IOInterface
      */
     public function writeError($messages, $newline = true)
     {
-        $messages = is_array($messages) ? $messages : array($messages);
-
-        $errorMessages = array();
-        foreach ($messages as $message) {
-            $errorMessages[] = sprintf('<error>%s</error>', $message);
+        foreach (is_array($messages) ? $messages : array($messages) as $message) {
+            $this->write($message, $newline);
         }
-
-        $this->write($errorMessages, $newline);
     }
 
     /**

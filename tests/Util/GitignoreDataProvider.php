@@ -1,5 +1,5 @@
 <?php
- /**
+/**
  * GitignoreDataProvider.php
  *
  * PHP Version 5
@@ -13,6 +13,7 @@
 
 namespace Bragento\Test\Magento\Composer\Installer\Util;
 
+use Bragento\Magento\Composer\Installer\Mapping\MapEntity;
 use Bragento\Test\Magento\Composer\Installer\AbstractUnitTest;
 
 /**
@@ -60,15 +61,15 @@ abstract class GitignoreDataProvider extends AbstractUnitTest
         return array(
             array(
                 array(
-                    'file1',
-                    'file2',
-                    'dir1/file1',
-                    'file1',
-                    'file2',
-                    'dir1/file1',
-                    'dir2',
-                    'dir2/file1',
-                    'dir2/file2'
+                    new MapEntity('', 'file1'),
+                    new MapEntity('', 'file2'),
+                    new MapEntity('', 'dir1/file1'),
+                    new MapEntity('', 'file1'),
+                    new MapEntity('', 'file2'),
+                    new MapEntity('', 'dir1/file1'),
+                    new MapEntity('', 'dir2'),
+                    new MapEntity('', 'dir2/file1'),
+                    new MapEntity('', 'dir2/file2')
                 ),
                 array(
                     'file1',
@@ -95,8 +96,8 @@ abstract class GitignoreDataProvider extends AbstractUnitTest
                     'dir1/file1'
                 ),
                 array(
-                    'file1',
-                    'file2'
+                    new MapEntity('', 'file1'),
+                    new MapEntity('', 'file2')
                 )
             )
         );

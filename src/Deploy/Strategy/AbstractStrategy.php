@@ -378,9 +378,10 @@ abstract class AbstractStrategy
     protected function createDelegates()
     {
         try {
-            foreach ($this->getMappingsArray() as $src => $dest) {
-                $src = $this->getFullPath($this->getSourceDir(), $src);
-                $dest = $this->getFullPath($this->getDestDir(), $dest);
+            /** @var Mapping\MapEntity $map */
+            foreach ($this->getMappingsArray() as $map) {
+                $src = $this->getFullPath($this->getSourceDir(), $map->getSource());
+                $dest = $this->getFullPath($this->getDestDir(), $map->getTarget());
                 if ($this->getFs()->exists($dest)) {
                     if (!$override = Config::getInstance()->isForcedOverride()
                     ) {
@@ -409,7 +410,7 @@ abstract class AbstractStrategy
     /**
      * getMappingsArray
      *
-     * @return array
+     * @return Mapping\MapEntity[]
      */
     public function getMappingsArray()
     {
@@ -516,10 +517,11 @@ abstract class AbstractStrategy
     protected function removeDelegates()
     {
         if (is_array($this->getDeployedDelegatesMapping())) {
-            foreach ($this->getDeployedDelegatesMapping() as $source => $destination) {
+            /** @var Mapping\MapEntity $map */
+            foreach ($this->getDeployedDelegatesMapping() as $map) {
                 $filePath = $this->getFullPath(
                     $this->getDestDir(),
-                    $destination
+                    $map->getTarget()
                 );
                 if (is_link($filePath) || $this->getFs()->exists($filePath)) {
                     $this->removeDelegate($filePath);

@@ -24,7 +24,7 @@ namespace Bragento\Magento\Composer\Installer\Util;
  * @license   http://opensource.org/licenses/OSL-3.0 OSL-3.0
  * @link      http://www.brandung.de
  */
-class String
+class StringUtil
 {
     /**
      * startsWith

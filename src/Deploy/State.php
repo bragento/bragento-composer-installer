@@ -15,6 +15,7 @@
 namespace Bragento\Magento\Composer\Installer\Deploy;
 
 use Bragento\Magento\Composer\Installer\Deploy\Strategy\AbstractStrategy;
+use Bragento\Magento\Composer\Installer\Mapping\MapEntity;
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
 use Composer\Package\PackageInterface;
 
@@ -157,7 +158,7 @@ class State
         );
         file_put_contents(
             $this->getStateFilePath(),
-            json_encode($state)
+            serialize($state)
         );
     }
 
@@ -201,7 +202,7 @@ class State
     {
         $stateFilePath = Manager::getInstance()->getStateFilePath($package);
         if (file_exists($stateFilePath)) {
-            return (array)json_decode(
+            return (array)unserialize(
                 file_get_contents(
                     $stateFilePath
                 )
