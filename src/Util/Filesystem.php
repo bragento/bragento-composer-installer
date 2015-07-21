@@ -186,8 +186,8 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      */
     public function endsWithDs($path)
     {
-        return String::endsWith($path, '/')
-        || String::endsWith($path, '\\');
+        return StringUtil::endsWith($path, '/')
+        || StringUtil::endsWith($path, '\\');
     }
 
     /**
@@ -223,8 +223,8 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      */
     public function startsWithDs($path)
     {
-        return String::startsWith($path, '/')
-        || String::startsWith($path, '\\');
+        return StringUtil::startsWith($path, '/')
+        || StringUtil::startsWith($path, '\\');
     }
 
     /**

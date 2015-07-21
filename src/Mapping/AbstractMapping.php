@@ -15,7 +15,7 @@
 namespace Bragento\Magento\Composer\Installer\Mapping;
 
 use Bragento\Magento\Composer\Installer\Util\Filesystem;
-use Bragento\Magento\Composer\Installer\Util\String;
+use Bragento\Magento\Composer\Installer\Util\StringUtil;
 use Composer\Package\PackageInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -100,7 +100,7 @@ abstract class AbstractMapping
         foreach ($mappings as $map) {
             $src = $map->getSource();
             $dest = $map->getTarget();
-            if (String::contains($src, '*')) {
+            if (StringUtil::contains($src, '*')) {
                 foreach (glob($this->getFs()->joinFileUris($this->getModuleDir(), $src)) as $file) {
                     $fileSrc = $this->getFs()->rmAbsPathPart(
                         $file,
