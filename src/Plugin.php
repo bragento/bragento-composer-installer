@@ -20,7 +20,7 @@ use Bragento\Magento\Composer\Installer\Project\Config;
 use Composer\Composer;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
-use Composer\Script\CommandEvent;
+use Composer\Script\Event;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\ScriptEvents;
 
@@ -102,11 +102,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     /**
      * onPostInstallCmd
      *
-     * @param CommandEvent $event
+     * @param Event $event
      *
      * @return void
      */
-    public function onPostInstallCmd(CommandEvent $event)
+    public function onPostInstallCmd(Event $event)
     {
         $event->getIO()->write('<info>post install:</info>');
         Deploy\Manager::getInstance()->doDeploy();
@@ -115,11 +115,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     /**
      * onPostUpdateCmd
      *
-     * @param CommandEvent $event
+     * @param Event $event
      *
      * @return void
      */
-    public function onPostUpdateCmd(CommandEvent $event)
+    public function onPostUpdateCmd(Event $event)
     {
         $event->getIO()->write('<info>post update:</info>');
         Deploy\Manager::getInstance()->doDeploy();
